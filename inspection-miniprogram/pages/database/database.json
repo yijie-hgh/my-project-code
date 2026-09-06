@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "数据库管理",
+  "usingComponents": {
+    "empty-state": "/components/empty-state/index"
+  }
+}

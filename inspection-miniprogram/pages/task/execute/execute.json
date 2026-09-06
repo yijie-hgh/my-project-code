@@ -1,0 +1,7 @@
+{
+  "usingComponents": {
+    "check-in": "/components/check-in/index",
+    "inspection-item": "/components/inspection-item/index"
+  },
+  "navigationBarTitleText": "巡检执行"
+}

@@ -1,0 +1,167 @@
+/* pages/login/login.wxss */
+.login-page {
+  min-height: 100vh;
+  background: #f5f6fa;
+  display: flex;
+  flex-direction: column;
+}
+.login-header {
+  position: relative; height: 420rpx; overflow: hidden;
+}
+.header-bg {
+  position: absolute; top: 0; left: 0; right: 0; height: 100%;
+  background: linear-gradient(135deg, #1d4ed8, #2563eb, #3b82f6);
+  border-radius: 0 0 60rpx 60rpx;
+}
+.logo-area {
+  position: relative; z-index: 1;
+  display: flex; flex-direction: column; align-items: center;
+  padding-top: 120rpx;
+}
+.logo-icon {
+  width: 120rpx; height: 120rpx; border-radius: 30rpx;
+  background: rgba(255,255,255,0.2); backdrop-filter: blur(10rpx);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 64rpx; margin-bottom: 20rpx;
+}
+.logo-title { font-size: 44rpx; font-weight: 700; color: #fff; letter-spacing: 4rpx; }
+.logo-subtitle { font-size: 24rpx; color: rgba(255,255,255,0.7); margin-top: 8rpx; letter-spacing: 2rpx; }
+
+.login-form {
+  margin: -60rpx 40rpx 0; background: #fff;
+  border-radius: 28rpx; padding: 40rpx;
+  box-shadow: 0 8rpx 40rpx rgba(0,0,0,0.08);
+  position: relative; z-index: 2;
+}
+.form-title { font-size: 40rpx; font-weight: 700; color: #1f2937; margin-bottom: 32rpx; }
+
+/* 登录Tab */
+.login-tabs {
+  display: flex; gap: 12rpx; margin-bottom: 32rpx; flex-wrap: wrap;
+}
+.login-tab {
+  flex: 1; min-width: 140rpx; text-align: center; padding: 18rpx 0;
+  font-size: 26rpx; color: #6b7280;
+  border-radius: 12rpx; background: #f9fafb;
+}
+.login-tab.active {
+  background: #2563eb; color: #fff; font-weight: 600;
+}
+
+.input-group { margin-bottom: 24rpx; }
+.input-item {
+  display: flex; align-items: center;
+  background: #f9fafb; border-radius: 16rpx;
+  padding: 0 24rpx; margin-bottom: 24rpx;
+  border: 2rpx solid #e5e7eb;
+}
+.input-icon { font-size: 36rpx; margin-right: 16rpx; }
+.input-field { flex: 1; height: 96rpx; font-size: 30rpx; }
+
+/* 短信验证码 */
+.sms-item { position: relative; }
+.sms-btn {
+  flex-shrink: 0;
+  padding: 0 20rpx;
+  height: 56rpx;
+  line-height: 56rpx;
+  font-size: 24rpx;
+  color: #2563eb;
+  background: #eff6ff;
+  border-radius: 12rpx;
+  margin-left: 16rpx;
+}
+.sms-btn.disabled { color: #9ca3af; background: #f3f4f6; }
+
+/* 忘记密码 */
+.forgot-row {
+  display: flex; justify-content: flex-end;
+  margin: -12rpx 0 24rpx;
+}
+.forgot-link { font-size: 26rpx; color: #2563eb; }
+
+/* 第三方登录 */
+.third-party-login {
+  display: flex; flex-direction: column; align-items: center;
+  padding: 40rpx 0; margin-bottom: 24rpx;
+}
+.tp-icon-large { font-size: 80rpx; margin-bottom: 20rpx; }
+.tp-desc { font-size: 26rpx; color: #6b7280; margin-bottom: 8rpx; }
+
+.agree-row { margin-bottom: 32rpx; }
+.agree-label { display: flex; align-items: center; font-size: 24rpx; color: #6b7280; }
+.protocol-link { color: #2563eb; }
+
+.login-btn { height: 96rpx; font-size: 34rpx; letter-spacing: 8rpx; }
+.wx-login-btn {
+  display: flex; align-items: center; justify-content: center;
+  height: 96rpx; background: #07c160; color: #fff;
+  border-radius: 48rpx; font-size: 32rpx; border: none;
+}
+.wx-login-btn::after { border: none; }
+.wx-icon { font-size: 40rpx; margin-right: 12rpx; }
+.feishu-login-btn {
+  display: flex; align-items: center; justify-content: center;
+  height: 96rpx; background: #3370ff; color: #fff;
+  border-radius: 48rpx; font-size: 32rpx; border: none;
+}
+.feishu-login-btn::after { border: none; }
+.feishu-icon { font-size: 40rpx; margin-right: 12rpx; }
+
+.divider-row { display: flex; align-items: center; margin: 32rpx 0; }
+.divider-line { flex: 1; height: 1rpx; background: #e5e7eb; }
+.divider-text { font-size: 24rpx; color: #9ca3af; padding: 0 24rpx; }
+
+.quick-login-row { display: flex; gap: 20rpx; margin-bottom: 24rpx; flex-wrap: wrap; }
+.quick-btn {
+  flex: 1; min-width: 120rpx; height: 72rpx;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 36rpx; font-size: 26rpx;
+  border: 2rpx solid;
+}
+.quick-account { border-color: #2563eb; color: #2563eb; background: #eff6ff; }
+.quick-sms { border-color: #f59e0b; color: #f59e0b; background: #fffbeb; }
+.quick-wx { border-color: #07c160; color: #07c160; background: #f0fdf4; }
+.quick-feishu { border-color: #3370ff; color: #3370ff; background: #eff5ff; }
+
+.register-link {
+  text-align: center; font-size: 26rpx; color: #2563eb; padding: 16rpx 0;
+}
+
+.login-footer {
+  flex: 1; display: flex; align-items: flex-end; justify-content: center;
+  padding-bottom: 40rpx; font-size: 22rpx; color: #9ca3af;
+}
+
+/* 忘记密码弹窗 */
+.modal-mask {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5); z-index: 1000;
+  display: flex; align-items: center; justify-content: center;
+}
+.modal-content {
+  width: 85%; background: #fff; border-radius: 24rpx;
+  overflow: hidden; max-height: 90vh;
+}
+.modal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 32rpx; border-bottom: 1rpx solid #f3f4f6;
+}
+.modal-title { font-size: 32rpx; font-weight: 700; color: #1f2937; }
+.modal-close { font-size: 36rpx; color: #9ca3af; padding: 8rpx; }
+.modal-body { padding: 32rpx; }
+.modal-body .input-item { margin-bottom: 20rpx; }
+.modal-body .input-field { height: 88rpx; }
+.modal-footer {
+  display: flex; gap: 24rpx; padding: 0 32rpx 32rpx;
+}
+.modal-btn-cancel {
+  flex: 1; height: 80rpx; font-size: 30rpx;
+  background: #f3f4f6; color: #6b7280; border-radius: 40rpx; border: none;
+}
+.modal-btn-cancel::after { border: none; }
+.modal-btn-confirm {
+  flex: 1; height: 80rpx; font-size: 30rpx;
+  background: #2563eb; color: #fff; border-radius: 40rpx; border: none;
+}
+.modal-btn-confirm::after { border: none; }

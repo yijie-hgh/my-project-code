@@ -1,0 +1,367 @@
+/* pages/drone/drone.wxss - 无人机巡检科技感UI */
+.drone-page {
+  background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+  min-height: 100vh;
+  padding-bottom: 160rpx;
+}
+
+/* 顶部说明卡片 */
+.drone-intro {
+  position: relative;
+  margin: 24rpx;
+  border-radius: 24rpx;
+  overflow: hidden;
+}
+.intro-bg {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(135deg, #0c4a6e, #0284c7, #06b6d4);
+  opacity: 0.9;
+}
+.intro-content {
+  position: relative;
+  display: flex;
+  padding: 36rpx;
+  align-items: flex-start;
+}
+.intro-icon {
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: 24rpx;
+  background: rgba(255,255,255,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 52rpx;
+  margin-right: 24rpx;
+  flex-shrink: 0;
+  box-shadow: 0 0 30rpx rgba(6, 182, 212, 0.6);
+}
+.intro-title {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 12rpx;
+}
+.intro-desc {
+  font-size: 24rpx;
+  color: rgba(255,255,255,0.85);
+  line-height: 1.6;
+}
+
+/* 卡片适配深色 */
+.drone-card {
+  background: rgba(30, 41, 59, 0.9);
+  margin: 0 24rpx 24rpx;
+  border: 1rpx solid rgba(6, 182, 212, 0.2);
+}
+.drone-card .card-title {
+  color: #e2e8f0;
+}
+.drone-card .card-title::before {
+  background: linear-gradient(180deg, #06b6d4, #0284c7);
+}
+.drone-card .text-sub { color: #94a3b8 !important; }
+.drone-card .text-gray { color: #64748b !important; }
+
+/* 功能网格 */
+.func-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24rpx 0;
+}
+.func-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.func-icon {
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 44rpx;
+  margin-bottom: 12rpx;
+}
+.icon-route { background: rgba(2, 132, 199, 0.2); box-shadow: 0 0 20rpx rgba(2, 132, 199, 0.3); }
+.icon-video { background: rgba(239, 68, 68, 0.2); box-shadow: 0 0 20rpx rgba(239, 68, 68, 0.3); }
+.icon-auto { background: rgba(16, 185, 129, 0.2); box-shadow: 0 0 20rpx rgba(16, 185, 129, 0.3); }
+.icon-ai { background: rgba(168, 85, 247, 0.2); box-shadow: 0 0 20rpx rgba(168, 85, 247, 0.3); }
+.func-item:active .func-icon { transform: scale(0.9); }
+.func-name {
+  font-size: 24rpx;
+  color: #cbd5e1;
+}
+
+/* 无人机状态面板 */
+.drone-status {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 24rpx;
+}
+.status-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.status-circle {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 50%;
+  border: 8rpx solid rgba(6, 182, 212, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12rpx;
+  background: rgba(6, 182, 212, 0.08);
+}
+.status-circle.status-active {
+  border-color: #06b6d4;
+  box-shadow: 0 0 30rpx rgba(6, 182, 212, 0.5);
+  animation: status-pulse 2s ease-in-out infinite;
+}
+@keyframes status-pulse {
+  0%, 100% { box-shadow: 0 0 20rpx rgba(6, 182, 212, 0.3); }
+  50% { box-shadow: 0 0 40rpx rgba(6, 182, 212, 0.7); }
+}
+.status-num {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #06b6d4;
+}
+.status-info-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 120rpx;
+}
+.status-big {
+  font-size: 36rpx;
+  font-weight: 700;
+  margin-bottom: 12rpx;
+}
+.status-label {
+  font-size: 22rpx;
+  color: #94a3b8;
+}
+.gps-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20rpx 24rpx;
+  background: rgba(6, 182, 212, 0.08);
+  border-radius: 12rpx;
+}
+.gps-label {
+  font-size: 26rpx;
+  color: #cbd5e1;
+}
+.gps-value {
+  font-size: 26rpx;
+  font-weight: 600;
+}
+
+/* 倒计时遮罩 */
+.countdown-mask {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.85);
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.countdown-num {
+  font-size: 200rpx;
+  font-weight: 700;
+  color: #06b6d4;
+  text-shadow: 0 0 60rpx rgba(6, 182, 212, 0.8);
+  animation: countdown-zoom 1s ease-in-out;
+}
+@keyframes countdown-zoom {
+  0% { transform: scale(2); opacity: 0; }
+  50% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(1.2); opacity: 0.8; }
+}
+.countdown-text {
+  font-size: 32rpx;
+  color: #94a3b8;
+  margin-top: 30rpx;
+}
+
+/* 实时画面 */
+.live-tag {
+  display: flex;
+  align-items: center;
+  background: rgba(239, 68, 68, 0.2);
+  padding: 4rpx 16rpx;
+  border-radius: 8rpx;
+}
+.live-dot {
+  width: 12rpx;
+  height: 12rpx;
+  border-radius: 50%;
+  background: #ef4444;
+  margin-right: 8rpx;
+  animation: live-blink 1s ease-in-out infinite;
+}
+@keyframes live-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+.live-tag text {
+  font-size: 22rpx;
+  color: #ef4444;
+  font-weight: 600;
+}
+.live-view {
+  position: relative;
+  height: 440rpx;
+  border-radius: 16rpx;
+  overflow: hidden;
+  background: #0f172a;
+}
+.live-bg {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(180deg, #1e3a5f 0%, #0f172a 60%, #1a2e1a 100%);
+}
+.live-grid {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image:
+    linear-gradient(rgba(6, 182, 212, 0.1) 1rpx, transparent 1rpx),
+    linear-gradient(90deg, rgba(6, 182, 212, 0.1) 1rpx, transparent 1rpx);
+  background-size: 40rpx 40rpx;
+}
+.live-crosshair {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80rpx;
+  height: 80rpx;
+}
+.crosshair-h {
+  position: absolute;
+  top: 50%; left: -20rpx; right: -20rpx;
+  height: 2rpx;
+  background: rgba(6, 182, 212, 0.6);
+}
+.crosshair-v {
+  position: absolute;
+  left: 50%; top: -20rpx; bottom: -20rpx;
+  width: 2rpx;
+  background: rgba(6, 182, 212, 0.6);
+}
+.live-overlay-tl, .live-overlay-tr, .live-overlay-bl, .live-overlay-br {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  gap: 6rpx;
+  font-size: 20rpx;
+  color: #06b6d4;
+  text-shadow: 0 1rpx 2rpx rgba(0,0,0,0.8);
+}
+.live-overlay-tl { top: 16rpx; left: 16rpx; }
+.live-overlay-tr { top: 16rpx; right: 16rpx; text-align: right; align-items: flex-end; }
+.live-overlay-bl { bottom: 16rpx; left: 16rpx; }
+.live-overlay-br { bottom: 16rpx; right: 16rpx; text-align: right; align-items: flex-end; }
+.live-target {
+  position: absolute;
+  top: 40%; left: 30%;
+  width: 160rpx;
+  height: 120rpx;
+}
+.target-box {
+  width: 100%;
+  height: 100%;
+  border: 4rpx solid #f59e0b;
+  border-radius: 8rpx;
+  animation: target-blink 1s ease-in-out infinite;
+}
+@keyframes target-blink {
+  0%, 100% { border-color: #f59e0b; }
+  50% { border-color: transparent; }
+}
+.target-label {
+  position: absolute;
+  top: -30rpx; left: 0;
+  font-size: 20rpx;
+  color: #f59e0b;
+  background: rgba(0,0,0,0.6);
+  padding: 2rpx 10rpx;
+  border-radius: 4rpx;
+  white-space: nowrap;
+}
+
+/* 航线列表 */
+.route-item {
+  background: rgba(15, 23, 42, 0.6);
+  border-radius: 16rpx;
+  padding: 24rpx;
+  margin-top: 16rpx;
+  border: 1rpx solid rgba(6, 182, 212, 0.15);
+}
+.route-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12rpx;
+}
+.route-name-box {
+  display: flex;
+  align-items: center;
+}
+.route-icon {
+  font-size: 36rpx;
+  margin-right: 12rpx;
+}
+.route-name {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #e2e8f0;
+}
+.route-mid {
+  display: flex;
+  gap: 20rpx;
+  flex-wrap: wrap;
+  margin-bottom: 12rpx;
+}
+.route-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.route-btn {
+  background: linear-gradient(135deg, #0284c7, #06b6d4) !important;
+  color: #fff !important;
+}
+.route-btn.disabled {
+  opacity: 0.5;
+  background: #475569 !important;
+}
+
+/* 底部按钮 */
+.drone-bottom {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  padding: 20rpx 24rpx;
+  padding-bottom: calc(20rpx + env(safe-area-inset-bottom));
+  background: linear-gradient(180deg, transparent, #0f172a 40%);
+  z-index: 100;
+}
+.takeoff-btn {
+  box-shadow: 0 0 40rpx rgba(6, 182, 212, 0.5);
+  font-size: 34rpx;
+}
+.takeoff-btn.btn-danger {
+  box-shadow: 0 0 40rpx rgba(239, 68, 68, 0.5);
+}
+.btn-icon {
+  margin-right: 12rpx;
+  font-size: 36rpx;
+}

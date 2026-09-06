@@ -1,0 +1,93 @@
+<!--pages/project/detail/detail.wxml-->
+<view class="page-bg" wx:if="{{detail}}">
+  <!-- 项目信息卡片 -->
+  <view class="info-header">
+    <view class="info-top">
+      <view class="info-name-row">
+        <text class="info-name">{{detail.projectName}}</text>
+        <text class="tag {{detail.statusInfo.tag}}">{{detail.statusInfo.text}}</text>
+      </view>
+      <view class="info-code">项目编码：{{detail.projectCode}}</view>
+    </view>
+    <view class="info-desc" wx:if="{{detail.description}}">{{detail.description}}</view>
+    <view class="info-time">创建时间：{{detail.createTimeText}}</view>
+  </view>
+
+  <!-- 统计卡片 -->
+  <view class="stats-card">
+    <view class="stat-block">
+      <text class="stat-num">{{detail.pointCount || 0}}</text>
+      <text class="stat-label">巡检点数</text>
+    </view>
+    <view class="stat-block">
+      <text class="stat-num">{{detail.taskCount || 0}}</text>
+      <text class="stat-label">任务数</text>
+    </view>
+    <view class="stat-block">
+      <text class="stat-num text-primary">{{detail.completionRate || 0}}%</text>
+      <text class="stat-label">完成率</text>
+    </view>
+  </view>
+
+  <!-- 完成率进度条 -->
+  <view class="card rate-card">
+    <view class="card-title">项目完成率</view>
+    <view class="big-progress">
+      <view class="big-progress-fill" style="width: {{detail.completionRate || 0}}%; background: {{(detail.completionRate || 0) >= 90 ? 'linear-gradient(90deg,#10b981,#34d399)' : (detail.completionRate || 0) >= 75 ? 'linear-gradient(90deg,#2563eb,#3b82f6)' : 'linear-gradient(90deg,#f59e0b,#fbbf24)'}};"></view>
+    </view>
+    <view class="rate-text">{{detail.completionRate || 0}}% 已完成</view>
+  </view>
+
+  <!-- 关联巡检点列表 -->
+  <view class="card">
+    <view class="card-title">关联巡检点（{{points.length}}）</view>
+    <empty-state wx:if="{{points.length === 0}}" text="暂无关联巡检点" icon="📍"></empty-state>
+    <view wx:for="{{points}}" wx:key="id" class="point-item" data-id="{{item.id}}" bindtap="goPointDetail">
+      <view class="point-item-top">
+        <text class="point-item-name text-ellipsis">{{item.pointName}}</text>
+        <text class="tag {{item.lastResult === '异常' ? 'tag-danger' : 'tag-success'}}" wx:if="{{item.lastResult}}">{{item.lastResult}}</text>
+      </view>
+      <view class="point-item-info">
+        <text class="text-sub text-sm">📍 {{item.location}}</text>
+        <text class="text-sub text-sm">🧾 {{item.checkItems || 0}}项</text>
+      </view>
+      <view class="point-item-time" wx:if="{{item.lastInspectTime}}">
+        <text class="text-gray text-sm">最后巡检：{{item.lastTimeText}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部操作按钮 -->
+  <view class="bottom-actions">
+    <view class="btn btn-outline" style="flex:1;margin-right:20rpx;" bindtap="onEdit">编辑</view>
+    <view class="btn btn-danger" style="flex:1;" bindtap="onDelete">删除</view>
+  </view>
+
+  <!-- 编辑弹窗 -->
+  <view wx:if="{{showForm}}" class="modal-mask" bindtap="onCloseForm">
+    <view class="modal-content" catchtap="stopPropagation">
+      <view class="modal-header">
+        <text class="modal-title">编辑项目</text>
+        <text class="modal-close" bindtap="onCloseForm">✕</text>
+      </view>
+      <view class="modal-body">
+        <view class="form-item">
+          <text class="form-label">项目名称<text class="required">*</text></text>
+          <input class="form-input" placeholder="请输入项目名称" value="{{form.projectName}}" data-field="projectName" bindinput="onFormInput" />
+        </view>
+        <view class="form-item">
+          <text class="form-label">项目编码<text class="required">*</text></text>
+          <input class="form-input" placeholder="请输入项目编码" value="{{form.projectCode}}" data-field="projectCode" bindinput="onFormInput" />
+        </view>
+        <view class="form-item">
+          <text class="form-label">项目描述</text>
+          <textarea class="form-textarea" placeholder="请输入项目描述（选填）" value="{{form.description}}" data-field="description" bindinput="onFormInput" maxlength="200"></textarea>
+        </view>
+      </view>
+      <view class="modal-footer">
+        <view class="btn btn-plain btn-sm" style="flex:1;margin-right:20rpx;" bindtap="onCloseForm">取消</view>
+        <view class="btn btn-primary btn-sm" style="flex:1;" bindtap="onSubmitForm">确定</view>
+      </view>
+    </view>
+  </view>
+</view>

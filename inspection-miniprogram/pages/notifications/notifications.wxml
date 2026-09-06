@@ -1,0 +1,42 @@
+<!--pages/notifications/notifications.wxml-->
+<view class="page-bg">
+  <!-- 顶部操作 -->
+  <view class="top-bar">
+    <view class="unread-badge" wx:if="{{unreadCount > 0}}">{{unreadCount}}条未读</view>
+    <view class="top-actions">
+      <view class="top-btn" bindtap="onSubscribe">🔔 订阅</view>
+      <view class="top-btn" bindtap="onMarkAllRead">全部已读</view>
+      <view class="top-btn danger" bindtap="onClearAll">清空</view>
+    </view>
+  </view>
+
+  <!-- 筛选 -->
+  <scroll-view scroll-x class="filter-bar">
+    <view wx:for="{{typeOptions}}" wx:key="value" class="filter-item {{filterType === item.value ? 'active' : ''}}" data-type="{{item.value}}" bindtap="onFilterChange">{{item.label}}</view>
+  </scroll-view>
+
+  <!-- 消息列表 -->
+  <view wx:if="{{messages.length > 0}}" class="msg-list">
+    <view wx:for="{{messages}}" wx:key="id" class="msg-item {{item.read ? 'read' : 'unread'}}" data-id="{{item.id}}" bindtap="onMarkRead">
+      <view class="msg-icon">{{item.icon}}</view>
+      <view class="msg-body">
+        <view class="msg-header">
+          <text class="msg-title">{{item.title}}</text>
+          <text class="msg-type-tag">{{item.typeName}}</text>
+        </view>
+        <text class="msg-content">{{item.content}}</text>
+        <view class="msg-footer">
+          <text class="msg-time">{{item.time}}</text>
+          <text class="msg-delete" data-id="{{item.id}}" catchtap="onDeleteMessage">删除</text>
+        </view>
+      </view>
+      <view wx:if="{{!item.read}}" class="unread-dot"></view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view wx:else class="empty-wrap">
+    <view class="empty-icon">📭</view>
+    <view class="empty-text">暂无消息</view>
+  </view>
+</view>

@@ -1,0 +1,26 @@
+/* pages/notifications/notifications.wxss */
+.page-bg { padding: 20rpx; padding-bottom: 120rpx; }
+.top-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20rpx; }
+.unread-badge { font-size: 24rpx; color: #ef4444; background: #fef2f2; padding: 8rpx 20rpx; border-radius: 20rpx; }
+.top-actions { display: flex; gap: 16rpx; }
+.top-btn { font-size: 24rpx; color: #2563eb; background: #eff6ff; padding: 8rpx 20rpx; border-radius: 20rpx; }
+.top-btn.danger { color: #ef4444; background: #fef2f2; }
+.filter-bar { white-space: nowrap; margin-bottom: 20rpx; }
+.filter-item { display: inline-block; padding: 10rpx 24rpx; background: #fff; border-radius: 20rpx; font-size: 24rpx; color: #6b7280; margin-right: 12rpx; }
+.filter-item.active { background: #2563eb; color: #fff; }
+.msg-list { display: flex; flex-direction: column; gap: 16rpx; }
+.msg-item { display: flex; background: #fff; border-radius: 16rpx; padding: 24rpx; position: relative; box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.04); }
+.msg-item.unread { border-left: 6rpx solid #2563eb; }
+.msg-icon { font-size: 40rpx; margin-right: 16rpx; flex-shrink: 0; }
+.msg-body { flex: 1; min-width: 0; }
+.msg-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8rpx; }
+.msg-title { font-size: 28rpx; font-weight: 600; color: #1f2937; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.msg-type-tag { font-size: 20rpx; color: #6b7280; background: #f3f4f6; padding: 2rpx 12rpx; border-radius: 8rpx; margin-left: 12rpx; }
+.msg-content { font-size: 26rpx; color: #6b7280; display: block; margin-bottom: 12rpx; white-space: pre-wrap; word-break: break-all; }
+.msg-footer { display: flex; justify-content: space-between; align-items: center; }
+.msg-time { font-size: 22rpx; color: #d1d5db; }
+.msg-delete { font-size: 22rpx; color: #ef4444; padding: 4rpx 16rpx; }
+.unread-dot { width: 16rpx; height: 16rpx; border-radius: 50%; background: #ef4444; position: absolute; top: 20rpx; right: 20rpx; }
+.empty-wrap { text-align: center; padding: 120rpx 0; }
+.empty-icon { font-size: 80rpx; margin-bottom: 20rpx; }
+.empty-text { font-size: 28rpx; color: #9ca3af; }

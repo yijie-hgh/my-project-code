@@ -1,0 +1,132 @@
+<!--pages/point/detail/detail.wxml-->
+<view class="page-bg" wx:if="{{detail}}">
+  <!-- 顶部信息卡片 -->
+  <view class="info-header">
+    <view class="info-top">
+      <view class="info-name-row">
+        <text class="info-name">{{detail.pointName}}</text>
+        <text class="tag {{detail.statusInfo.tag}}">{{detail.statusInfo.text}}</text>
+      </view>
+      <view class="info-code">编码：{{detail.pointCode}}</view>
+    </view>
+    <view class="info-tag-row">
+      <view class="header-tag">
+        <text class="header-tag-icon">📂</text>
+        <text>{{detail.projectName}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 详细信息 -->
+  <view class="card">
+    <view class="card-title">基本信息</view>
+    <view class="detail-row">
+      <text class="detail-label">位置</text>
+      <text class="detail-value">{{detail.location || '—'}}</text>
+    </view>
+    <view class="detail-row">
+      <text class="detail-label">经度</text>
+      <text class="detail-value">{{detail.longitude || '—'}}</text>
+    </view>
+    <view class="detail-row">
+      <text class="detail-label">纬度</text>
+      <text class="detail-value">{{detail.latitude || '—'}}</text>
+    </view>
+    <view class="detail-row">
+      <text class="detail-label">NFC标签</text>
+      <view class="detail-value-wrap">
+        <text class="tag tag-info" wx:if="{{detail.nfcTag}}">📡 {{detail.nfcTag}}</text>
+        <text wx:else>—</text>
+      </view>
+    </view>
+    <view class="detail-row">
+      <text class="detail-label">二维码</text>
+      <view class="detail-value-wrap">
+        <text class="tag tag-primary" wx:if="{{detail.qrcode}}">🔳 {{detail.qrcode}}</text>
+        <text wx:else>—</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 巡检项列表 -->
+  <view class="card">
+    <view class="card-title">巡检项（{{detail.items.length}}）</view>
+    <empty-state wx:if="{{detail.items.length === 0}}" text="暂无巡检项" icon="🧾"></empty-state>
+    <view wx:for="{{detail.items}}" wx:key="id" class="inspect-item">
+      <view class="inspect-item-top">
+        <text class="inspect-item-name">{{item.itemName}}</text>
+        <text class="tag {{item.requiredTag}}">{{item.requiredText}}</text>
+      </view>
+      <view class="inspect-item-tags">
+        <text class="mini-info">类型：{{item.typeText}}</text>
+        <text class="mini-info" wx:if="{{item.unit}}">单位：{{item.unit}}</text>
+      </view>
+      <view class="inspect-standard" wx:if="{{item.standard}}">
+        <text class="standard-label">标准：</text>
+        <text class="standard-value">{{item.standard}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 最后巡检记录 -->
+  <view class="card" wx:if="{{detail.lastInspectTime}}">
+    <view class="card-title">最后巡检记录</view>
+    <view class="record-box">
+      <view class="record-row">
+        <text class="record-label">巡检时间</text>
+        <text class="record-value">{{detail.lastInspectTimeText}}</text>
+      </view>
+      <view class="record-row">
+        <text class="record-label">巡检结果</text>
+        <text class="tag {{detail.lastResult === '异常' ? 'tag-danger' : 'tag-success'}}">{{detail.lastResult}}</text>
+      </view>
+      <view class="record-row">
+        <text class="record-label">距今</text>
+        <text class="record-value">{{detail.lastTimeText}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部操作按钮 -->
+  <view class="bottom-actions">
+    <view class="btn btn-outline" bindtap="onEdit">编辑</view>
+    <view class="btn btn-primary" bindtap="onGenerateQrcode">生成二维码</view>
+    <view class="btn btn-danger" bindtap="onDelete">删除</view>
+  </view>
+
+  <!-- 编辑弹窗 -->
+  <view wx:if="{{showForm}}" class="modal-mask" bindtap="onCloseForm">
+    <view class="modal-content" catchtap="stopPropagation">
+      <view class="modal-header">
+        <text class="modal-title">编辑巡检点</text>
+        <text class="modal-close" bindtap="onCloseForm">✕</text>
+      </view>
+      <view class="modal-body">
+        <view class="form-item">
+          <text class="form-label">巡检点名称<text class="required">*</text></text>
+          <input class="form-input" placeholder="请输入巡检点名称" value="{{form.pointName}}" data-field="pointName" bindinput="onFormInput" />
+        </view>
+        <view class="form-item">
+          <text class="form-label">巡检点编码<text class="required">*</text></text>
+          <input class="form-input" placeholder="请输入巡检点编码" value="{{form.pointCode}}" data-field="pointCode" bindinput="onFormInput" />
+        </view>
+        <view class="form-item">
+          <text class="form-label">位置</text>
+          <input class="form-input" placeholder="请输入位置信息" value="{{form.location}}" data-field="location" bindinput="onFormInput" />
+        </view>
+        <view class="form-item">
+          <text class="form-label">NFC标签</text>
+          <input class="form-input" placeholder="请输入NFC标签" value="{{form.nfcTag}}" data-field="nfcTag" bindinput="onFormInput" />
+        </view>
+        <view class="form-item">
+          <text class="form-label">二维码编号</text>
+          <input class="form-input" placeholder="请输入二维码编号" value="{{form.qrcode}}" data-field="qrcode" bindinput="onFormInput" />
+        </view>
+      </view>
+      <view class="modal-footer">
+        <view class="btn btn-plain btn-sm" style="flex:1;margin-right:20rpx;" bindtap="onCloseForm">取消</view>
+        <view class="btn btn-primary btn-sm" style="flex:1;" bindtap="onSubmitForm">确定</view>
+      </view>
+    </view>
+  </view>
+</view>

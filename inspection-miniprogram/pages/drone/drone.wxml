@@ -1,0 +1,150 @@
+<!--pages/drone/drone.wxml-->
+<view class="page-bg drone-page">
+  <!-- 顶部说明卡片 -->
+  <view class="drone-intro">
+    <view class="intro-bg"></view>
+    <view class="intro-content">
+      <view class="intro-icon">🚁</view>
+      <view class="intro-text">
+        <view class="intro-title">无人机智能巡检</view>
+        <view class="intro-desc">通过无人机搭载高清摄像头与传感器，进行高空及大范围设备巡检。支持航线规划、实时图传、自动巡检与AI图像识别，覆盖人工难以到达的区域。</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 功能入口 -->
+  <view class="card drone-card">
+    <view class="card-title">功能中心</view>
+    <view class="func-grid">
+      <view class="func-item" bindtap="onFuncTap" data-name="航线规划">
+        <view class="func-icon icon-route">🗺️</view>
+        <text class="func-name">航线规划</text>
+      </view>
+      <view class="func-item" bindtap="onFuncTap" data-name="实时图传">
+        <view class="func-icon icon-video">📹</view>
+        <text class="func-name">实时图传</text>
+      </view>
+      <view class="func-item" bindtap="onFuncTap" data-name="自动巡检">
+        <view class="func-icon icon-auto">🤖</view>
+        <text class="func-name">自动巡检</text>
+      </view>
+      <view class="func-item" bindtap="onFuncTap" data-name="图像识别">
+        <view class="func-icon icon-ai">🔍</view>
+        <text class="func-name">图像识别</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 无人机状态面板 -->
+  <view class="card drone-card">
+    <view class="card-title">无人机状态</view>
+    <view class="drone-status">
+      <view class="status-item">
+        <view class="status-circle {{drone.flying ? 'status-active' : ''}}">
+          <text class="status-num">{{drone.battery}}%</text>
+        </view>
+        <text class="status-label">电量</text>
+      </view>
+      <view class="status-item">
+        <view class="status-info-box">
+          <text class="status-big {{drone.signalLevel === '强' ? 'text-success' : 'text-warning'}}">{{drone.signalLevel}}</text>
+          <text class="status-label">信号</text>
+        </view>
+      </view>
+      <view class="status-item">
+        <view class="status-info-box">
+          <text class="status-big text-primary">{{drone.altitude}}m</text>
+          <text class="status-label">高度</text>
+        </view>
+      </view>
+      <view class="status-item">
+        <view class="status-info-box">
+          <text class="status-big text-primary">{{drone.speed}}m/s</text>
+          <text class="status-label">速度</text>
+        </view>
+      </view>
+    </view>
+    <view class="gps-row">
+      <text class="gps-label">🛰️ GPS状态</text>
+      <text class="gps-value {{drone.gpsFixed ? 'text-success' : 'text-gray'}}">{{drone.gpsFixed ? '已定位 · ' + drone.satellites + '颗卫星' : '未定位'}}</text>
+    </view>
+  </view>
+
+  <!-- 起飞倒计时遮罩 -->
+  <view class="countdown-mask" wx:if="{{countdown > 0}}">
+    <view class="countdown-num">{{countdown}}</view>
+    <text class="countdown-text">无人机即将起飞</text>
+  </view>
+
+  <!-- 巡检中实时画面 -->
+  <view class="card drone-card" wx:if="{{drone.flying}}">
+    <view class="flex-between mb-20">
+      <view class="card-title" style="margin-bottom:0;">实时画面</view>
+      <view class="live-tag"><view class="live-dot"></view>LIVE</view>
+    </view>
+    <view class="live-view">
+      <view class="live-bg"></view>
+      <view class="live-grid"></view>
+      <view class="live-crosshair">
+        <view class="crosshair-h"></view>
+        <view class="crosshair-v"></view>
+      </view>
+      <view class="live-overlay-tl">
+        <text>📷 CAM-01</text>
+        <text>FPS: {{liveFps}}</text>
+      </view>
+      <view class="live-overlay-tr">
+        <text>{{drone.altitude}}m</text>
+        <text>{{drone.speed}}m/s</text>
+      </view>
+      <view class="live-overlay-bl">
+        <text>LAT: {{liveCoord.lat}}</text>
+        <text>LNG: {{liveCoord.lng}}</text>
+      </view>
+      <view class="live-overlay-br">
+        <text>🔋 {{drone.battery}}%</text>
+      </view>
+      <view class="live-target" wx:if="{{aiDetecting}}">
+        <view class="target-box"></view>
+        <text class="target-label">设备识别中</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 航线列表 -->
+  <view class="card drone-card">
+    <view class="flex-between mb-20">
+      <view class="card-title" style="margin-bottom:0;">航线列表</view>
+      <text class="text-sm text-gray">共{{routes.length}}条</text>
+    </view>
+    <empty-state wx:if="{{routes.length === 0}}" text="暂无航线" icon="🗺️"></empty-state>
+    <view wx:for="{{routes}}" wx:key="id" class="route-item">
+      <view class="route-top">
+        <view class="route-name-box">
+          <text class="route-icon">🛩️</text>
+          <text class="route-name">{{item.routeName}}</text>
+        </view>
+        <text class="tag {{item.statusTag}}">{{item.statusText}}</text>
+      </view>
+      <view class="route-mid">
+        <text class="text-sm text-sub">📍 {{item.area}}</text>
+        <text class="text-sm text-sub">🎯 {{item.pointCount}}个巡检点</text>
+        <text class="text-sm text-sub">⏱️ {{item.duration}}分钟</text>
+      </view>
+      <view class="route-bottom">
+        <text class="text-sm text-gray">{{item.distance}}km</text>
+        <view class="btn btn-primary btn-sm route-btn {{drone.flying ? 'disabled' : ''}}" data-id="{{item.id}}" bindtap="onStartRoute">
+          {{drone.flying ? '巡检中' : '执行航线'}}
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部起飞按钮 -->
+  <view class="drone-bottom">
+    <button class="btn btn-block {{drone.flying ? 'btn-danger' : 'btn-primary'}} takeoff-btn" bindtap="onTakeoff">
+      <text class="btn-icon">{{drone.flying ? '🛬' : '🚀'}}</text>
+      <text>{{drone.flying ? '结束巡检并返航' : '一键起飞'}}</text>
+    </button>
+  </view>
+</view>

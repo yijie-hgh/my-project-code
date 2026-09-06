@@ -1,0 +1,316 @@
+/* pages/monitor/monitor.wxss */
+
+/* Tab切换 */
+.tab-header {
+  display: flex;
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 8rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0,0,0,0.04);
+}
+.tab-item {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 76rpx;
+  border-radius: 12rpx;
+  font-size: 28rpx;
+  color: #6b7280;
+  transition: all 0.3s;
+}
+.tab-item.active {
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 4rpx 12rpx rgba(37, 99, 235, 0.3);
+}
+.tab-icon {
+  margin-right: 10rpx;
+  font-size: 30rpx;
+}
+
+/* 刷新栏 */
+.refresh-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20rpx;
+}
+.refresh-btn {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  padding: 16rpx 28rpx;
+  border-radius: 40rpx;
+  font-size: 26rpx;
+  color: #6b7280;
+  box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.04);
+}
+.refresh-btn.active {
+  background: #dbeafe;
+  color: #2563eb;
+}
+.refresh-icon {
+  margin-right: 10rpx;
+  font-size: 30rpx;
+}
+.refresh-icon.spinning {
+  animation: spin 2s linear infinite;
+}
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.manual-refresh {
+  background: #fff;
+  padding: 16rpx 28rpx;
+  border-radius: 40rpx;
+  font-size: 26rpx;
+  color: #2563eb;
+  box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.04);
+}
+
+/* 加载提示 */
+.loading-tip {
+  text-align: center;
+  padding: 40rpx;
+  color: #9ca3af;
+  font-size: 28rpx;
+}
+
+/* CPU环形进度 */
+.cpu-ring-row {
+  display: flex;
+  align-items: center;
+  gap: 40rpx;
+}
+.cpu-ring {
+  position: relative;
+  width: 180rpx;
+  height: 180rpx;
+  flex-shrink: 0;
+}
+.ring-bg {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  border-radius: 50%;
+  background: #f3f4f6;
+}
+.ring-progress {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  border-radius: 50%;
+  mask: radial-gradient(transparent 60rpx, #000 61rpx);
+  -webkit-mask: radial-gradient(transparent 60rpx, #000 61rpx);
+}
+.ring-inner {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 50%;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ring-num {
+  font-size: 36rpx;
+  font-weight: 700;
+}
+.cpu-detail {
+  flex: 1;
+}
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16rpx 0;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+.detail-row:last-child {
+  border-bottom: none;
+}
+.detail-label {
+  font-size: 26rpx;
+  color: #6b7280;
+}
+.detail-value {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #1f2937;
+  text-align: right;
+}
+
+/* 使用率头部 */
+.usage-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+.usage-label {
+  font-size: 26rpx;
+  color: #6b7280;
+}
+.usage-value {
+  font-size: 36rpx;
+  font-weight: 700;
+}
+
+/* 进度条 */
+.monitor-bar {
+  height: 20rpx;
+  border-radius: 10rpx;
+}
+.fill-green { background: linear-gradient(90deg, #10b981, #34d399) !important; }
+.fill-blue { background: linear-gradient(90deg, #2563eb, #3b82f6) !important; }
+.fill-red { background: linear-gradient(90deg, #ef4444, #f87171) !important; }
+
+/* 内存详情 */
+.mem-detail {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16rpx;
+  margin-top: 20rpx;
+}
+.mem-item {
+  display: flex;
+  justify-content: space-between;
+  background: #f9fafb;
+  border-radius: 12rpx;
+  padding: 16rpx 20rpx;
+}
+.mem-label {
+  font-size: 24rpx;
+  color: #9ca3af;
+}
+.mem-value {
+  font-size: 26rpx;
+  font-weight: 600;
+  color: #374151;
+}
+
+/* 磁盘项 */
+.disk-item {
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+.disk-item:last-child {
+  border-bottom: none;
+}
+.disk-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12rpx;
+}
+.disk-name-box {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+.disk-icon {
+  font-size: 32rpx;
+}
+.disk-path {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #1f2937;
+}
+.disk-usage {
+  font-size: 32rpx;
+  font-weight: 700;
+}
+.disk-detail {
+  display: flex;
+  gap: 30rpx;
+  margin-top: 12rpx;
+}
+
+/* 系统信息 */
+.sys-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+.sys-row:last-child {
+  border-bottom: none;
+}
+.sys-label {
+  font-size: 28rpx;
+  color: #6b7280;
+}
+.sys-value {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+/* Redis信息网格 */
+.redis-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16rpx;
+}
+.redis-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #f9fafb;
+  border-radius: 16rpx;
+  padding: 24rpx;
+}
+.redis-icon {
+  font-size: 40rpx;
+  margin-bottom: 8rpx;
+}
+.redis-label {
+  font-size: 22rpx;
+  color: #9ca3af;
+  margin-bottom: 8rpx;
+}
+.redis-value {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+/* 命令统计 */
+.cmd-item {
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+.cmd-item:last-child {
+  border-bottom: none;
+}
+.cmd-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12rpx;
+}
+.cmd-name {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #1f2937;
+  font-family: monospace;
+}
+.cmd-stats {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+.cmd-count {
+  font-size: 24rpx;
+  color: #6b7280;
+}
+.cmd-percent {
+  font-size: 28rpx;
+  font-weight: 700;
+}

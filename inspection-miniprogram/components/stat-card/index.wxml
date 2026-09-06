@@ -1,0 +1,9 @@
+<!--components/stat-card/index.wxml-->
+<view class="stat-card" style="border-top: 6rpx solid {{color}};">
+  <view class="stat-icon" style="background: {{color}}1a;">{{icon}}</view>
+  <view class="stat-body">
+    <view class="stat-value" style="color: {{color}};">{{value}}<text class="stat-unit">{{unit}}</text></view>
+    <view class="stat-label">{{label}}</view>
+  </view>
+  <view wx:if="{{sub}}" class="stat-sub">{{sub}}</view>
+</view>

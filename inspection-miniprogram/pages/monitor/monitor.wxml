@@ -1,0 +1,211 @@
+<!--pages/monitor/monitor.wxml-->
+<view class="page-bg container">
+  <!-- 顶部Tab切换 -->
+  <view class="tab-header">
+    <view class="tab-item {{activeTab === 'server' ? 'active' : ''}}" data-tab="server" bindtap="onTabChange">
+      <text class="tab-icon">🖥️</text>
+      <text>服务器监控</text>
+    </view>
+    <view class="tab-item {{activeTab === 'cache' ? 'active' : ''}}" data-tab="cache" bindtap="onTabChange">
+      <text class="tab-icon">⚡</text>
+      <text>缓存监控</text>
+    </view>
+  </view>
+
+  <!-- 自动刷新按钮 -->
+  <view class="refresh-bar">
+    <view class="refresh-btn {{autoRefresh ? 'active' : ''}}" bindtap="onToggleRefresh">
+      <view class="refresh-icon {{autoRefresh ? 'spinning' : ''}}">🔄</view>
+      <text>{{autoRefresh ? '自动刷新中(5s)' : '开启自动刷新'}}</text>
+    </view>
+    <view class="manual-refresh" bindtap="onRefresh">
+      <text>立即刷新</text>
+    </view>
+  </view>
+
+  <!-- 服务器监控 -->
+  <block wx:if="{{activeTab === 'server'}}">
+    <view wx:if="{{!serverInfo}}" class="card">
+      <view class="loading-tip">正在加载服务器信息...</view>
+    </view>
+    <block wx:if="{{serverInfo}}">
+      <!-- CPU使用率 -->
+      <view class="card">
+        <view class="card-title">CPU使用率</view>
+        <view class="cpu-ring-row">
+          <view class="cpu-ring">
+            <view class="ring-bg"></view>
+            <view class="ring-progress" style="background: conic-gradient({{serverInfo.cpu.usage < 60 ? '#10b981' : serverInfo.cpu.usage < 80 ? '#2563eb' : '#ef4444'}} {{serverInfo.cpu.usage}}%, transparent 0);">
+              <view class="ring-inner">
+                <text class="ring-num {{serverInfo.cpu.usage < 60 ? 'text-success' : serverInfo.cpu.usage < 80 ? 'text-primary' : 'text-danger'}}">{{serverInfo.cpu.usage}}%</text>
+              </view>
+            </view>
+          </view>
+          <view class="cpu-detail">
+            <view class="detail-row">
+              <text class="detail-label">核心数</text>
+              <text class="detail-value">{{serverInfo.cpu.cores}} 核</text>
+            </view>
+            <view class="detail-row">
+              <text class="detail-label">处理器</text>
+              <text class="detail-value text-sm">{{serverInfo.cpu.name}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- JVM内存 -->
+      <view class="card">
+        <view class="card-title">JVM内存</view>
+        <view class="usage-header">
+          <text class="usage-label">使用率</text>
+          <text class="usage-value {{serverInfo.jvm.usage < 60 ? 'text-success' : serverInfo.jvm.usage < 80 ? 'text-primary' : 'text-danger'}}">{{serverInfo.jvm.usage}}%</text>
+        </view>
+        <view class="progress-bar monitor-bar">
+          <view class="progress-bar-fill {{serverInfo.jvm.usage < 60 ? 'fill-green' : serverInfo.jvm.usage < 80 ? 'fill-blue' : 'fill-red'}}" style="width: {{serverInfo.jvm.usage}}%;"></view>
+        </view>
+        <view class="mem-detail">
+          <view class="mem-item">
+            <text class="mem-label">已用</text>
+            <text class="mem-value">{{serverInfo.jvm.used}}MB</text>
+          </view>
+          <view class="mem-item">
+            <text class="mem-label">空闲</text>
+            <text class="mem-value">{{serverInfo.jvm.free}}MB</text>
+          </view>
+          <view class="mem-item">
+            <text class="mem-label">总量</text>
+            <text class="mem-value">{{serverInfo.jvm.total}}MB</text>
+          </view>
+          <view class="mem-item">
+            <text class="mem-label">版本</text>
+            <text class="mem-value text-sm">{{serverInfo.jvm.version}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 系统内存 -->
+      <view class="card">
+        <view class="card-title">系统内存</view>
+        <view class="usage-header">
+          <text class="usage-label">使用率</text>
+          <text class="usage-value {{serverInfo.mem.usage < 60 ? 'text-success' : serverInfo.mem.usage < 80 ? 'text-primary' : 'text-danger'}}">{{serverInfo.mem.usage}}%</text>
+        </view>
+        <view class="progress-bar monitor-bar">
+          <view class="progress-bar-fill {{serverInfo.mem.usage < 60 ? 'fill-green' : serverInfo.mem.usage < 80 ? 'fill-blue' : 'fill-red'}}" style="width: {{serverInfo.mem.usage}}%;"></view>
+        </view>
+        <view class="mem-detail">
+          <view class="mem-item">
+            <text class="mem-label">已用</text>
+            <text class="mem-value">{{serverInfo.mem.used}}MB</text>
+          </view>
+          <view class="mem-item">
+            <text class="mem-label">空闲</text>
+            <text class="mem-value">{{serverInfo.mem.free}}MB</text>
+          </view>
+          <view class="mem-item">
+            <text class="mem-label">总量</text>
+            <text class="mem-value">{{serverInfo.mem.total}}MB</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 磁盘信息 -->
+      <view class="card">
+        <view class="card-title">磁盘信息</view>
+        <view wx:for="{{serverInfo.disk}}" wx:key="path" class="disk-item">
+          <view class="disk-header">
+            <view class="disk-name-box">
+              <text class="disk-icon">{{item.type === 'system' ? '💽' : '📁'}}</text>
+              <text class="disk-path">{{item.path}}</text>
+              <text class="tag {{item.type === 'system' ? 'tag-primary' : 'tag-info'}}">{{item.type === 'system' ? '系统盘' : '数据盘'}}</text>
+            </view>
+            <text class="disk-usage {{item.usage < 60 ? 'text-success' : item.usage < 80 ? 'text-primary' : 'text-danger'}}">{{item.usage}}%</text>
+          </view>
+          <view class="progress-bar monitor-bar">
+            <view class="progress-bar-fill {{item.usage < 60 ? 'fill-green' : item.usage < 80 ? 'fill-blue' : 'fill-red'}}" style="width: {{item.usage}}%;"></view>
+          </view>
+          <view class="disk-detail">
+            <text class="text-sm text-sub">总量 {{item.total}}GB</text>
+            <text class="text-sm text-sub">已用 {{item.used}}GB</text>
+            <text class="text-sm text-sub">可用 {{item.free}}GB</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 系统信息 -->
+      <view class="card">
+        <view class="card-title">系统信息</view>
+        <view class="sys-row">
+          <text class="sys-label">操作系统</text>
+          <text class="sys-value">{{serverInfo.sys.os}}</text>
+        </view>
+        <view class="sys-row">
+          <text class="sys-label">服务器IP</text>
+          <text class="sys-value">{{serverInfo.sys.serverIp}}</text>
+        </view>
+        <view class="sys-row">
+          <text class="sys-label">系统架构</text>
+          <text class="sys-value">{{serverInfo.sys.osArch}}</text>
+        </view>
+      </view>
+    </block>
+  </block>
+
+  <!-- 缓存监控 -->
+  <block wx:if="{{activeTab === 'cache'}}">
+    <view wx:if="{{!cacheInfo}}" class="card">
+      <view class="loading-tip">正在加载缓存信息...</view>
+    </view>
+    <block wx:if="{{cacheInfo}}">
+      <!-- Redis信息 -->
+      <view class="card">
+        <view class="card-title">Redis信息</view>
+        <view class="redis-grid">
+          <view class="redis-item">
+            <text class="redis-icon">📌</text>
+            <text class="redis-label">版本</text>
+            <text class="redis-value">{{cacheInfo.info.redis_version}}</text>
+          </view>
+          <view class="redis-item">
+            <text class="redis-icon">🔗</text>
+            <text class="redis-label">连接数</text>
+            <text class="redis-value">{{cacheInfo.info.connected_clients}}</text>
+          </view>
+          <view class="redis-item">
+            <text class="redis-icon">💾</text>
+            <text class="redis-label">内存占用</text>
+            <text class="redis-value">{{cacheInfo.info.used_memory_human}}</text>
+          </view>
+          <view class="redis-item">
+            <text class="redis-icon">🔑</text>
+            <text class="redis-label">Key数量</text>
+            <text class="redis-value">{{cacheInfo.info.dbSize}}</text>
+          </view>
+          <view class="redis-item">
+            <text class="redis-icon">⏱️</text>
+            <text class="redis-label">运行天数</text>
+            <text class="redis-value">{{cacheInfo.info.uptime_in_days}}天</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 命令统计 -->
+      <view class="card">
+        <view class="card-title">命令统计</view>
+        <view wx:for="{{cacheInfo.commandStats}}" wx:key="name" class="cmd-item">
+          <view class="cmd-header">
+            <text class="cmd-name">{{item.name}}</text>
+            <view class="cmd-stats">
+              <text class="cmd-count">{{item.count}}次</text>
+              <text class="cmd-percent {{item.percentage < 60 ? 'text-success' : item.percentage < 80 ? 'text-primary' : 'text-danger'}}">{{item.percentage}}%</text>
+            </view>
+          </view>
+          <view class="progress-bar monitor-bar">
+            <view class="progress-bar-fill {{item.percentage < 60 ? 'fill-green' : item.percentage < 80 ? 'fill-blue' : 'fill-red'}}" style="width: {{item.percentage}}%;"></view>
+          </view>
+        </view>
+      </view>
+    </block>
+  </block>
+</view>

@@ -1,0 +1,355 @@
+/* pages/andon/andon.wxss - 安灯呼叫页样式 */
+.andon-page {
+  padding-bottom: 40rpx;
+}
+
+/* 顶部呼叫区 */
+.call-hero {
+  background: linear-gradient(180deg, #eff6ff 0%, #ffffff 100%);
+}
+.hero-title {
+  display: flex;
+  align-items: center;
+  margin-bottom: 28rpx;
+}
+.hero-icon {
+  font-size: 56rpx;
+  margin-right: 20rpx;
+}
+.hero-text {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #1f2937;
+}
+.hero-sub {
+  font-size: 24rpx;
+  color: #6b7280;
+  margin-top: 4rpx;
+}
+
+/* 呼叫类型网格 */
+.type-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16rpx;
+}
+.type-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #f9fafb;
+  border: 2rpx solid transparent;
+  border-radius: 16rpx;
+  padding: 24rpx 8rpx;
+  transition: all 0.2s;
+}
+.type-cell.active {
+  transform: scale(1.02);
+}
+.type-cell:active {
+  opacity: 0.85;
+}
+.type-cell-icon {
+  font-size: 48rpx;
+  margin-bottom: 10rpx;
+}
+.type-cell-text {
+  font-size: 26rpx;
+  font-weight: 500;
+  color: #374151;
+}
+.type-cell.active .type-cell-text {
+  font-weight: 700;
+}
+
+/* 呼叫表单 */
+.call-form {
+  margin-top: 28rpx;
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  border: 2rpx dashed #dbeafe;
+}
+.form-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20rpx;
+  padding-bottom: 16rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+.form-header-text {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #1f2937;
+}
+.form-close {
+  font-size: 32rpx;
+  color: #9ca3af;
+  padding: 8rpx 16rpx;
+}
+
+/* 表单项 */
+.form-item {
+  padding: 12rpx 0;
+}
+.form-label {
+  display: flex;
+  align-items: center;
+  font-size: 26rpx;
+  color: #374151;
+  font-weight: 500;
+  margin-bottom: 12rpx;
+}
+.required {
+  color: #ef4444;
+  margin-right: 6rpx;
+}
+.form-input {
+  height: 76rpx;
+  background: #f3f4f6;
+  border-radius: 12rpx;
+  padding: 0 24rpx;
+  font-size: 28rpx;
+  color: #333;
+  margin-top: 12rpx;
+}
+.form-picker {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 76rpx;
+  background: #f3f4f6;
+  border-radius: 12rpx;
+  padding: 0 24rpx;
+  font-size: 28rpx;
+  color: #333;
+}
+.form-picker.placeholder {
+  color: #9ca3af;
+}
+.picker-arrow {
+  font-size: 32rpx;
+  color: #9ca3af;
+}
+.form-textarea {
+  width: 100%;
+  min-height: 140rpx;
+  background: #f3f4f6;
+  border-radius: 12rpx;
+  padding: 20rpx 24rpx;
+  font-size: 28rpx;
+  color: #333;
+  box-sizing: border-box;
+}
+.textarea-count {
+  text-align: right;
+  font-size: 24rpx;
+  color: #9ca3af;
+  margin-top: 8rpx;
+}
+
+/* 表单操作 */
+.form-actions {
+  display: flex;
+  margin-top: 24rpx;
+}
+.btn-icon {
+  margin-right: 8rpx;
+}
+
+/* 历史记录区 */
+.history-section {
+  margin-top: 10rpx;
+}
+.section-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20rpx;
+  padding: 0 8rpx;
+}
+.section-count {
+  font-size: 24rpx;
+  color: #9ca3af;
+}
+
+/* 过滤Tab */
+.filter-tabs {
+  display: flex;
+  background: #fff;
+  border-radius: 12rpx;
+  padding: 6rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0,0,0,0.04);
+}
+.filter-tab {
+  flex: 1;
+  text-align: center;
+  padding: 16rpx 0;
+  font-size: 26rpx;
+  color: #6b7280;
+  border-radius: 10rpx;
+  transition: all 0.2s;
+}
+.filter-tab.active {
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 4rpx 10rpx rgba(37, 99, 235, 0.3);
+}
+
+/* 加载/空状态 */
+.loading-tip {
+  text-align: center;
+  padding: 40rpx;
+  color: #9ca3af;
+  font-size: 28rpx;
+}
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 60rpx 0;
+}
+.empty-icon {
+  font-size: 80rpx;
+  margin-bottom: 16rpx;
+}
+.empty-text {
+  font-size: 28rpx;
+  color: #9ca3af;
+}
+
+/* 记录卡片 */
+.record-card {
+  position: relative;
+  transition: all 0.2s;
+}
+.record-card:active {
+  transform: scale(0.99);
+}
+.record-urgent {
+  border-left: 8rpx solid #ef4444;
+}
+.record-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16rpx;
+}
+.record-equip {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+}
+.record-icon {
+  font-size: 40rpx;
+  margin-right: 16rpx;
+}
+.record-equip-name {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #1f2937;
+  max-width: 320rpx;
+}
+.record-equip-code {
+  margin-top: 4rpx;
+}
+.record-tags {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+  align-items: flex-end;
+}
+.record-body {
+  padding-top: 8rpx;
+  border-top: 1rpx solid #f5f5f5;
+}
+.record-row {
+  display: flex;
+  padding: 10rpx 0;
+}
+.record-label {
+  width: 140rpx;
+  font-size: 26rpx;
+  color: #9ca3af;
+  flex-shrink: 0;
+}
+.record-value {
+  flex: 1;
+  font-size: 26rpx;
+  color: #374151;
+}
+.record-value.desc {
+  color: #4b5563;
+}
+
+/* 展开详情 */
+.record-detail {
+  margin-top: 12rpx;
+  padding-top: 12rpx;
+  border-top: 2rpx dashed #e5e7eb;
+}
+.expand-tip {
+  text-align: center;
+  font-size: 24rpx;
+  color: #9ca3af;
+  margin-top: 16rpx;
+  padding-top: 12rpx;
+  border-top: 1rpx solid #f5f5f5;
+}
+
+/* 成功动画遮罩 */
+.success-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+.success-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #fff;
+  border-radius: 24rpx;
+  padding: 48rpx 64rpx;
+  animation: popIn 0.3s ease;
+}
+.success-icon {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #10b981, #34d399);
+  color: #fff;
+  font-size: 72rpx;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24rpx;
+  box-shadow: 0 8rpx 24rpx rgba(16, 185, 129, 0.4);
+  animation: checkScale 0.4s ease;
+}
+.success-text {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #1f2937;
+}
+@keyframes popIn {
+  from { transform: scale(0.7); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+@keyframes checkScale {
+  0% { transform: scale(0); }
+  60% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}

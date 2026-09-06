@@ -1,0 +1,129 @@
+/* pages/report/list/list.wxss - 报表列表样式 */
+
+/* 筛选栏 */
+.filter-bar {
+  background: #fff;
+  padding: 20rpx 24rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+.filter-picker {
+  display: flex;
+  align-items: center;
+  background: #f3f4f6;
+  border-radius: 12rpx;
+  padding: 16rpx 24rpx;
+}
+.filter-label {
+  font-size: 26rpx;
+  color: #6b7280;
+  margin-right: 16rpx;
+}
+.filter-value {
+  flex: 1;
+  font-size: 28rpx;
+  color: #1f2937;
+  font-weight: 500;
+}
+.filter-arrow {
+  font-size: 32rpx;
+  color: #9ca3af;
+}
+
+/* 报表列表 */
+.report-list {
+  padding: 0 24rpx;
+}
+.report-card {
+  margin: 20rpx 0;
+}
+.report-card:active {
+  transform: scale(0.99);
+}
+.report-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20rpx;
+}
+.report-name-wrap {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  margin-right: 16rpx;
+}
+.report-icon {
+  font-size: 32rpx;
+  margin-right: 12rpx;
+}
+.report-name {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #1f2937;
+  flex: 1;
+}
+
+/* 项目和周期 */
+.report-meta {
+  display: flex;
+  gap: 40rpx;
+  margin-bottom: 20rpx;
+  padding-bottom: 20rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+.meta-item {
+  display: flex;
+  flex-direction: column;
+}
+.meta-label {
+  font-size: 24rpx;
+  color: #9ca3af;
+  margin-bottom: 6rpx;
+}
+.meta-value {
+  font-size: 28rpx;
+  color: #374151;
+}
+
+/* 完成率 */
+.rate-section {
+  margin-bottom: 20rpx;
+}
+.rate-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10rpx;
+}
+.rate-label {
+  font-size: 26rpx;
+  color: #6b7280;
+}
+.rate-value {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #2563eb;
+}
+
+/* 统计数据 */
+.report-stats {
+  display: flex;
+  justify-content: space-around;
+  background: #f9fafb;
+  border-radius: 12rpx;
+  padding: 24rpx 0;
+}
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.stat-num {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #1f2937;
+}
+.stat-label {
+  font-size: 22rpx;
+  color: #9ca3af;
+  margin-top: 6rpx;
+}

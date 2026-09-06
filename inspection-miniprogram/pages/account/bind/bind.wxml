@@ -1,0 +1,85 @@
+<!--pages/account/bind/bind.wxml-->
+<view class="page-bg" style="padding-bottom: 60rpx;">
+  <!-- 当前账号信息 -->
+  <view class="card current-user-card">
+    <view class="card-title">当前账号</view>
+    <view class="user-info-row">
+      <view class="user-avatar">{{userInfo.nickName ? userInfo.nickName.charAt(0) : 'U'}}</view>
+      <view class="user-text">
+        <view class="user-nick">{{userInfo.nickName || userInfo.userName || '未登录'}}</view>
+        <view class="user-phone">{{userInfo.phonenumber || '未绑定手机'}}</view>
+        <view class="user-dept">{{userInfo.deptName || '未设置部门'}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 微信账号绑定 -->
+  <view class="card bind-card-section">
+    <view class="card-title">微信账号</view>
+    <view class="bind-item {{wxBound ? 'bound' : 'unbound'}}">
+      <view class="bind-left">
+        <view class="bind-icon wx-bg">💬</view>
+        <view class="bind-detail">
+          <view class="bind-label">微信</view>
+          <view wx:if="{{wxBound}}" class="bind-info-text">
+            <text>已绑定：{{wxUserInfo.nickName}}</text>
+          </view>
+          <view wx:else class="bind-info-text unbound-text">
+            未绑定 - 绑定后可用微信快速登录
+          </view>
+        </view>
+      </view>
+      <view class="bind-right">
+        <view wx:if="{{!wxBound}}" class="bind-action-btn bind-btn" bindtap="onBindWx">绑定</view>
+        <view wx:if="{{wxBound}}" class="bind-action-btn switch-btn" bindtap="onSwitchWx">切换</view>
+        <view wx:if="{{wxBound}}" class="bind-action-btn unbind-btn" bindtap="onUnbindWx">解绑</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 飞书账号绑定 -->
+  <view class="card bind-card-section">
+    <view class="card-title">飞书账号</view>
+    <view class="bind-item {{feishuBound ? 'bound' : 'unbound'}}">
+      <view class="bind-left">
+        <view class="bind-icon feishu-bg">🔗</view>
+        <view class="bind-detail">
+          <view class="bind-label">飞书</view>
+          <view wx:if="{{feishuBound}}" class="bind-info-text">
+            <text>已绑定：{{feishuUserInfo.name}}</text>
+            <text wx:if="{{feishuUserInfo.email}}" class="bind-email">{{feishuUserInfo.email}}</text>
+          </view>
+          <view wx:else class="bind-info-text unbound-text">
+            未绑定 - 绑定后可用飞书登录和同步数据
+          </view>
+        </view>
+      </view>
+      <view class="bind-right">
+        <view wx:if="{{!feishuBound}}" class="bind-action-btn bind-btn" bindtap="onBindFeishu">绑定</view>
+        <view wx:if="{{feishuBound}}" class="bind-action-btn switch-btn" bindtap="onSwitchFeishu">切换</view>
+        <view wx:if="{{feishuBound}}" class="bind-action-btn unbind-btn" bindtap="onUnbindFeishu">解绑</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 绑定说明 -->
+  <view class="card tips-card">
+    <view class="card-title">绑定说明</view>
+    <view class="tip-item">
+      <text class="tip-dot">●</text>
+      <text class="tip-text">绑定第三方账号后，可使用对应方式快速登录系统</text>
+    </view>
+    <view class="tip-item">
+      <text class="tip-dot">●</text>
+      <text class="tip-text">绑定飞书账号后，可使用飞书多维表格数据同步功能</text>
+    </view>
+    <view class="tip-item">
+      <text class="tip-dot">●</text>
+      <text class="tip-text">解绑账号不影响当前登录状态，但将无法使用对应方式登录</text>
+    </view>
+    <view class="tip-item">
+      <text class="tip-dot">●</text>
+      <text class="tip-text">切换账号时需先解绑当前账号，再重新授权绑定新账号</text>
+    </view>
+  </view>
+</view>

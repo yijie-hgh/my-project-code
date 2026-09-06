@@ -1,0 +1,199 @@
+<!--pages/index/index.wxml-->
+<view class="page-bg" style="padding-bottom: 140rpx;">
+  <!-- 顶部头部 -->
+  <view class="home-header">
+    <view class="header-content">
+      <view class="user-info">
+        <view class="avatar">{{userInfo.nickName ? userInfo.nickName.charAt(0) : '巡'}}</view>
+        <view class="user-text">
+          <view class="greeting">{{userInfo.nickName || '巡检员'}}，您好 👋</view>
+          <view class="dept">{{userInfo.deptName || '巡检部'}} · {{userInfo.postName || '巡检员'}}</view>
+        </view>
+      </view>
+      <view class="header-date">{{stats ? '今日巡检' : ''}}</view>
+    </view>
+
+    <!-- 统计卡片 -->
+    <view class="stats-grid" wx:if="{{stats}}">
+      <stat-card label="今日任务" value="{{stats.todayTaskTotal}}" icon="📋" color="#2563eb"></stat-card>
+      <stat-card label="已完成" value="{{stats.todayTaskDone}}" icon="✅" color="#10b981"></stat-card>
+      <stat-card label="待处理" value="{{stats.todayTaskPending}}" icon="⏰" color="#f59e0b"></stat-card>
+      <stat-card label="已逾期" value="{{stats.overdueTask}}" icon="⚠️" color="#ef4444"></stat-card>
+    </view>
+  </view>
+
+  <!-- 快捷功能 -->
+  <view class="quick-section">
+    <view class="quick-grid">
+      <view class="quick-item" data-url="/pages/scan/scan" bindtap="goPage">
+        <view class="quick-icon" style="background:#dbeafe;">📋</view>
+        <text>扫码巡检</text>
+      </view>
+      <view class="quick-item" data-url="/pages/equipment/scan/scan" bindtap="goPage">
+        <view class="quick-icon" style="background:#d1fae5;">🔧</view>
+        <text>设备扫码</text>
+      </view>
+      <view class="quick-item" data-url="/pages/spotcheck/list/list" bindtap="goPage">
+        <view class="quick-icon" style="background:#fef3c7;">✅</view>
+        <text>设备点检</text>
+      </view>
+      <view class="quick-item" data-url="/pages/repair/list/list" bindtap="goPage">
+        <view class="quick-icon" style="background:#fee2e2;">🛠️</view>
+        <text>报修维修</text>
+      </view>
+      <view class="quick-item" data-url="/pages/equipment/list/list" bindtap="goPage">
+        <view class="quick-icon" style="background:#e0e7ff;">📦</view>
+        <text>设备档案</text>
+      </view>
+      <view class="quick-item" data-url="/pages/maintain/list/list" bindtap="goPage">
+        <view class="quick-icon" style="background:#f3e8ff;">🔧</view>
+        <text>维护保养</text>
+      </view>
+      <view class="quick-item" data-url="/pages/andon/andon" bindtap="goPage">
+        <view class="quick-icon" style="background:#fef3c7;">🚨</view>
+        <text>安灯呼叫</text>
+      </view>
+      <view class="quick-item" data-url="/pages/iot/iot" bindtap="goPage">
+        <view class="quick-icon" style="background:#ccfbf1;">📡</view>
+        <text>物联网数采</text>
+      </view>
+      <view class="quick-item" data-url="/pages/dashboard/dashboard" bindtap="goPage">
+        <view class="quick-icon" style="background:#dbeafe;">📊</view>
+        <text>设备看板</text>
+      </view>
+      <view class="quick-item" data-url="/pages/spotcheck/stats/stats" bindtap="goPage">
+        <view class="quick-icon" style="background:#d1fae5;">📈</view>
+        <text>点检统计</text>
+      </view>
+      <view class="quick-item" data-url="/pages/repair/stats/stats" bindtap="goPage">
+        <view class="quick-icon" style="background:#fee2e2;">📉</view>
+        <text>维修统计</text>
+      </view>
+      <view class="quick-item" data-url="/pages/reminder/reminder" bindtap="goPage">
+        <view class="quick-icon" style="background:#fee2e2;">🔔</view>
+        <text>到期提醒</text>
+      </view>
+      <view class="quick-item" data-url="/pages/sparepart/list/list" bindtap="goPage">
+        <view class="quick-icon" style="background:#d1fae5;">🔩</view>
+        <text>备件管理</text>
+      </view>
+      <view class="quick-item" data-url="/pages/report/list/list" bindtap="goPage">
+        <view class="quick-icon" style="background:#e0f2fe;">📈</view>
+        <text>巡检报表</text>
+      </view>
+      <view class="quick-item" data-url="/pages/ar/ar" bindtap="goPage">
+        <view class="quick-icon" style="background:#f3e8ff;">🥽</view>
+        <text>AR巡检</text>
+      </view>
+      <view class="quick-item" data-url="/pages/drone/drone" bindtap="goPage">
+        <view class="quick-icon" style="background:#fef3c7;">🚁</view>
+        <text>无人机巡检</text>
+      </view>
+      <view class="quick-item" data-url="/pages/qrcode/qrcode" bindtap="goPage">
+        <view class="quick-icon" style="background:#ccfbf1;">🔳</view>
+        <text>二维码生成</text>
+      </view>
+      <view class="quick-item" data-url="/pages/monitor/monitor" bindtap="goPage">
+        <view class="quick-icon" style="background:#e0f2fe;">🖥️</view>
+        <text>系统监控</text>
+      </view>
+      <view class="quick-item" data-url="/pages/equipment/inventory/inventory" bindtap="goPage">
+        <view class="quick-icon" style="background:#dbeafe;">📋</view>
+        <text>设备清单</text>
+      </view>
+      <view class="quick-item" data-url="/pages/equipment/ledger/ledger" bindtap="goPage">
+        <view class="quick-icon" style="background:#e0e7ff;">📝</view>
+        <text>设备台账</text>
+      </view>
+      <view class="quick-item" data-url="/pages/sparepart/inventory/inventory" bindtap="goPage">
+        <view class="quick-icon" style="background:#f3e8ff;">📦</view>
+        <text>备件清单</text>
+      </view>
+      <view class="quick-item" data-url="/pages/config/config" bindtap="goPage">
+        <view class="quick-icon" style="background:#f3f4f6;">⚙️</view>
+        <text>系统配置</text>
+      </view>
+    </view>
+  </view>
+
+  <block wx:if="{{stats}}">
+    <!-- 巡检趋势 -->
+    <view class="card trend-card">
+      <view class="card-title">近7天巡检趋势</view>
+      <view class="trend-chart">
+        <view wx:for="{{stats.weekTrend}}" wx:key="date" class="trend-bar-group">
+          <view class="trend-bars">
+            <view class="trend-bar bar-done" style="height: {{item.done / maxTrendDone * 200}}rpx;"></view>
+            <view class="trend-bar bar-abnormal" style="height: {{item.abnormal / maxTrendDone * 200}}rpx;"></view>
+          </view>
+          <text class="trend-date">{{item.date}}</text>
+          <text class="trend-num">{{item.done}}</text>
+        </view>
+      </view>
+      <view class="trend-legend">
+        <view class="legend-item"><view class="legend-dot done"></view><text>完成数</text></view>
+        <view class="legend-item"><view class="legend-dot abnormal"></view><text>异常数</text></view>
+      </view>
+    </view>
+
+    <!-- 项目完成率 -->
+    <view class="card">
+      <view class="card-title">项目完成率</view>
+      <view class="rate-list">
+        <view wx:for="{{stats.projectRates}}" wx:key="name" class="rate-item">
+          <view class="rate-info">
+            <text class="rate-name">{{item.name}}</text>
+            <text class="rate-value">{{item.rate}}%</text>
+          </view>
+          <view class="progress-bar">
+            <view class="progress-bar-fill" style="width: {{item.rate}}%; background: {{item.rate >= 90 ? 'linear-gradient(90deg,#10b981,#34d399)' : item.rate >= 75 ? 'linear-gradient(90deg,#2563eb,#3b82f6)' : 'linear-gradient(90deg,#f59e0b,#fbbf24)'}};"></view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 事件概览 -->
+    <view class="card event-overview">
+      <view class="card-title">事件概览</view>
+      <view class="event-stats">
+        <view class="event-stat-item" bindtap="goEventList">
+          <text class="event-num text-warning">{{stats.pendingEvents}}</text>
+          <text class="event-label">待处理</text>
+        </view>
+        <view class="event-stat-item" bindtap="goEventList">
+          <text class="event-num text-primary">{{stats.totalEvents}}</text>
+          <text class="event-label">总事件</text>
+        </view>
+        <view class="event-stat-item" bindtap="goEventList">
+          <text class="event-num text-success">{{stats.totalEvents - stats.pendingEvents}}</text>
+          <text class="event-label">已处理</text>
+        </view>
+      </view>
+    </view>
+  </block>
+
+  <!-- 今日待办任务 -->
+  <view class="card">
+    <view class="flex-between mb-20">
+      <view class="card-title" style="margin-bottom:0;">今日待办</view>
+      <text class="text-primary text-sm" bindtap="goTaskList">查看全部 ›</text>
+    </view>
+    <empty-state wx:if="{{todayTasks.length === 0}}" text="暂无待办任务" icon="🎉"></empty-state>
+    <view wx:for="{{todayTasks}}" wx:key="id" class="task-card" data-id="{{item.id}}" bindtap="goTask">
+      <view class="task-card-top">
+        <text class="task-name text-ellipsis">{{item.taskName}}</text>
+        <text class="tag {{item.statusInfo.tag}}">{{item.statusInfo.text}}</text>
+      </view>
+      <view class="task-card-mid">
+        <text class="text-sub text-sm">📍 {{item.projectName}}</text>
+        <text class="text-sub text-sm">👤 {{item.inspectorName}}</text>
+      </view>
+      <view class="task-card-bottom">
+        <view class="progress-bar" style="flex:1;margin-right:20rpx;">
+          <view class="progress-bar-fill" style="width: {{item.rate}}%;"></view>
+        </view>
+        <text class="text-sm text-gray">{{item.doneCount}}/{{item.pointCount}}</text>
+      </view>
+    </view>
+  </view>
+</view>

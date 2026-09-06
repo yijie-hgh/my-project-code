@@ -1,0 +1,96 @@
+<!--pages/mine/about/about.wxml-->
+<view class="page-bg container">
+  <!-- 系统Logo和名称 -->
+  <view class="about-header">
+    <view class="logo-box">
+      <text class="logo-icon">🔧</text>
+    </view>
+    <text class="app-name">智能设备巡检系统</text>
+    <text class="app-version">v3.6.0</text>
+  </view>
+
+  <!-- 系统介绍 -->
+  <view class="card">
+    <view class="card-title">系统介绍</view>
+    <text class="intro-text">本系统基于若依框架二次开发，采用前后端分离架构。支持二维码、NFC、GPS定位、AR增强现实、无人机等多种巡检方式，实现设备巡检全流程数字化管理，提升巡检效率与质量。</text>
+  </view>
+
+  <!-- 技术架构 -->
+  <view class="card">
+    <view class="card-title">技术架构</view>
+    <view class="tech-list">
+      <view class="tech-item">
+        <text class="tech-icon">🍃</text>
+        <view class="tech-info">
+          <text class="tech-name">Spring Boot</text>
+          <text class="tech-desc">后端核心框架</text>
+        </view>
+      </view>
+      <view class="tech-item">
+        <text class="tech-icon">🔒</text>
+        <view class="tech-info">
+          <text class="tech-name">Spring Security</text>
+          <text class="tech-desc">安全认证框架</text>
+        </view>
+      </view>
+      <view class="tech-item">
+        <text class="tech-icon">⚡</text>
+        <view class="tech-info">
+          <text class="tech-name">Redis & JWT</text>
+          <text class="tech-desc">缓存与令牌认证</text>
+        </view>
+      </view>
+      <view class="tech-item">
+        <text class="tech-icon">🗄️</text>
+        <view class="tech-info">
+          <text class="tech-name">MyBatis Plus</text>
+          <text class="tech-desc">ORM持久层框架</text>
+        </view>
+      </view>
+      <view class="tech-item">
+        <text class="tech-icon">💚</text>
+        <view class="tech-info">
+          <text class="tech-name">Vue</text>
+          <text class="tech-desc">前端管理后台框架</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 功能模块 -->
+  <view class="card">
+    <view class="card-title">功能模块</view>
+    <view class="module-grid">
+      <view class="module-item" wx:for="{{modules}}" wx:key="*this">
+        <text class="module-dot">●</text>
+        <text>{{item}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 开源须知 -->
+  <view class="card">
+    <view class="card-title">开源须知</view>
+    <view class="notice-box">
+      <text class="notice-icon">⚠️</text>
+      <text class="notice-text">本系统仅限个人学习研究使用，禁止出售或用于商业用途。如需商业使用，请联系作者获取授权。</text>
+    </view>
+  </view>
+
+  <!-- 著作权信息 -->
+  <view class="card">
+    <view class="card-title">著作权信息</view>
+    <view class="info-row">
+      <text class="info-label">著作权登记号</text>
+      <text class="info-value">2021SR0805085</text>
+    </view>
+    <view class="info-row">
+      <text class="info-label">联系方式</text>
+      <text class="info-value text-primary" bindtap="onCopyQQ">QQ 110189312</text>
+    </view>
+  </view>
+
+  <!-- 检查更新 -->
+  <view class="btn btn-primary btn-block mt-20" bindtap="onCheckUpdate">检查更新</view>
+  <text class="copyright">© 2026 智能设备巡检系统 All Rights Reserved</text>
+</view>

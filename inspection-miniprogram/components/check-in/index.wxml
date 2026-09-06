@@ -1,0 +1,34 @@
+<!--components/check-in/index.wxml-->
+<view class="check-in {{checked ? 'checked' : ''}}">
+  <block wx:if="{{!checked}}">
+    <view class="checkin-title">巡检点签到</view>
+    <view class="checkin-desc">请选择以下方式完成签到验证</view>
+    <view class="checkin-methods">
+      <view class="method-item" bindtap="onScan">
+        <view class="method-icon method-qr">📋</view>
+        <text class="method-name">二维码</text>
+        <text class="method-desc">扫码签到</text>
+      </view>
+      <view class="method-item" bindtap="onNfc">
+        <view class="method-icon method-nfc">📡</view>
+        <text class="method-name">NFC</text>
+        <text class="method-desc">碰触签到</text>
+      </view>
+      <view class="method-item" bindtap="onGps">
+        <view class="method-icon method-gps {{locating ? 'locating' : ''}}">📍</view>
+        <text class="method-name">{{locating ? '定位中...' : 'GPS'}}</text>
+        <text class="method-desc">定位签到</text>
+      </view>
+    </view>
+  </block>
+  <block wx:else>
+    <view class="checked-result">
+      <view class="checked-icon">✓</view>
+      <view class="checked-info">
+        <text class="checked-title">签到成功</text>
+        <text class="checked-type">{{checkInType === 'qrcode' ? '二维码签到' : checkInType === 'nfc' ? 'NFC签到' : 'GPS定位签到'}}</text>
+        <text class="checked-time">{{checkInTime}}</text>
+      </view>
+    </view>
+  </block>
+</view>

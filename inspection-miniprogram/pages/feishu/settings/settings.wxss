@@ -1,0 +1,498 @@
+/* pages/feishu/settings/settings.wxss */
+
+/* 飞书账号卡片 */
+.account-card {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  margin: 20rpx 24rpx;
+  border-radius: 20rpx;
+  padding: 32rpx 28rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.04);
+}
+.account-card.logged-in {
+  background: linear-gradient(135deg, #eff6ff, #dbeafe);
+}
+.account-avatar {
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: 50%;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 24rpx;
+  flex-shrink: 0;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.06);
+}
+.avatar-icon {
+  font-size: 44rpx;
+}
+.account-info {
+  flex: 1;
+}
+.account-name {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #1f2937;
+}
+.account-detail {
+  font-size: 24rpx;
+  color: #6b7280;
+  margin-top: 6rpx;
+}
+.account-action {
+  flex-shrink: 0;
+}
+.btn-login {
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  color: #fff;
+  font-size: 26rpx;
+  padding: 16rpx 40rpx;
+  border-radius: 40rpx;
+}
+.btn-logout {
+  background: #fee2e2;
+  color: #ef4444;
+  font-size: 26rpx;
+  padding: 16rpx 40rpx;
+  border-radius: 40rpx;
+}
+
+/* Tab导航 */
+.tab-bar {
+  display: flex;
+  background: #fff;
+  margin: 0 24rpx;
+  border-radius: 16rpx;
+  padding: 8rpx;
+  gap: 8rpx;
+}
+.tab-item {
+  flex: 1;
+  text-align: center;
+  padding: 18rpx 0;
+  font-size: 26rpx;
+  color: #6b7280;
+  border-radius: 12rpx;
+  transition: all 0.2s;
+}
+.tab-item.active {
+  background: #2563eb;
+  color: #fff;
+  font-weight: 600;
+}
+
+/* Tab内容 */
+.tab-content {
+  padding: 24rpx;
+}
+
+/* 统计网格 */
+.stat-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20rpx;
+  margin-bottom: 32rpx;
+}
+.stat-box {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 32rpx 24rpx;
+  text-align: center;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
+}
+.stat-val {
+  font-size: 48rpx;
+  font-weight: 700;
+  line-height: 1;
+}
+.stat-desc {
+  font-size: 24rpx;
+  color: #9ca3af;
+  margin-top: 12rpx;
+}
+
+/* 分区标题 */
+.section-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #374151;
+  margin: 24rpx 0 16rpx;
+  padding-left: 16rpx;
+  border-left: 6rpx solid #2563eb;
+}
+
+/* 空提示 */
+.empty-hint {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40rpx 0;
+  color: #9ca3af;
+  font-size: 26rpx;
+}
+.empty-action {
+  margin-top: 12rpx;
+  color: #2563eb;
+  font-size: 26rpx;
+}
+
+/* 表格列表 */
+.table-list {
+  background: #fff;
+  border-radius: 16rpx;
+  overflow: hidden;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
+}
+.table-item {
+  display: flex;
+  align-items: center;
+  padding: 24rpx;
+  border-bottom: 1rpx solid #f3f4f6;
+}
+.table-item:last-child {
+  border-bottom: none;
+}
+.table-icon {
+  font-size: 36rpx;
+  margin-right: 20rpx;
+}
+.table-info {
+  flex: 1;
+}
+.table-name {
+  font-size: 28rpx;
+  font-weight: 500;
+  color: #374151;
+}
+.table-meta {
+  font-size: 22rpx;
+  color: #9ca3af;
+  margin-top: 4rpx;
+}
+.table-status {
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28rpx;
+  flex-shrink: 0;
+}
+.status-synced {
+  background: #d1fae5;
+  color: #10b981;
+}
+.status-error {
+  background: #fee2e2;
+  color: #ef4444;
+}
+.status-idle {
+  background: #f3f4f6;
+  color: #9ca3af;
+}
+
+/* 云盘概览 */
+.cloud-overview {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
+}
+.cloud-stat {
+  display: flex;
+  align-items: center;
+}
+.cloud-icon {
+  font-size: 48rpx;
+  margin-right: 20rpx;
+}
+.cloud-info {
+  flex: 1;
+}
+.cloud-num {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #374151;
+}
+.cloud-size {
+  font-size: 24rpx;
+  color: #9ca3af;
+  margin-top: 4rpx;
+}
+
+/* 批量操作 */
+.batch-actions {
+  display: flex;
+  gap: 20rpx;
+  margin-bottom: 24rpx;
+}
+.batch-btn {
+  flex: 1;
+  height: 80rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16rpx;
+  font-size: 28rpx;
+  font-weight: 500;
+}
+.batch-btn:active {
+  opacity: 0.85;
+}
+.btn-primary {
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  color: #fff;
+}
+.btn-success {
+  background: linear-gradient(135deg, #10b981, #34d399);
+  color: #fff;
+}
+
+/* 模块卡片列表 */
+.module-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+.module-card {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
+}
+.module-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+.module-icon {
+  font-size: 40rpx;
+  margin-right: 16rpx;
+}
+.module-info {
+  flex: 1;
+}
+.module-name {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #1f2937;
+}
+.module-desc {
+  font-size: 22rpx;
+  color: #9ca3af;
+  margin-top: 4rpx;
+}
+.module-badge {
+  font-size: 22rpx;
+  padding: 8rpx 20rpx;
+  border-radius: 20rpx;
+  flex-shrink: 0;
+}
+.badge-linked {
+  background: #d1fae5;
+  color: #10b981;
+}
+.badge-unlinked {
+  background: #f3f4f6;
+  color: #9ca3af;
+}
+.module-fields {
+  display: flex;
+  gap: 24rpx;
+  font-size: 22rpx;
+  color: #6b7280;
+  margin-bottom: 16rpx;
+  padding-bottom: 16rpx;
+  border-bottom: 1rpx solid #f3f4f6;
+}
+.sync-time {
+  color: #9ca3af;
+}
+.module-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+}
+.action-btn {
+  padding: 12rpx 24rpx;
+  border-radius: 8rpx;
+  font-size: 24rpx;
+  transition: all 0.2s;
+}
+.action-btn:active {
+  opacity: 0.7;
+}
+.btn-create {
+  background: #eff6ff;
+  color: #2563eb;
+}
+.btn-sync {
+  background: #ecfdf5;
+  color: #10b981;
+}
+.btn-sync.syncing {
+  opacity: 0.5;
+}
+.btn-import {
+  background: #fef3c7;
+  color: #d97706;
+}
+.btn-pull {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+.btn-del {
+  background: #fee2e2;
+  color: #ef4444;
+}
+
+/* 同步操作 */
+.sync-actions {
+  margin-bottom: 24rpx;
+}
+.sync-btn {
+  height: 88rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #10b981, #34d399);
+  color: #fff;
+  border-radius: 16rpx;
+  font-size: 30rpx;
+  font-weight: 500;
+}
+.sync-btn.disabled {
+  opacity: 0.6;
+}
+
+/* 清除日志 */
+.clear-logs {
+  font-size: 24rpx;
+  color: #ef4444;
+  font-weight: 400;
+}
+
+/* 日志列表 */
+.log-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+.log-item {
+  background: #fff;
+  border-radius: 12rpx;
+  padding: 24rpx;
+  box-shadow: 0 2rpx 6rpx rgba(0, 0, 0, 0.03);
+}
+.log-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8rpx;
+}
+.log-module {
+  font-size: 28rpx;
+  font-weight: 500;
+  color: #374151;
+}
+.log-type {
+  font-size: 22rpx;
+}
+.log-detail {
+  font-size: 24rpx;
+  color: #6b7280;
+  margin-bottom: 8rpx;
+}
+.log-time {
+  font-size: 22rpx;
+  color: #9ca3af;
+}
+
+/* 云盘统计 */
+.cloud-summary {
+  display: flex;
+  gap: 20rpx;
+  margin-bottom: 24rpx;
+}
+.cloud-stat-card {
+  flex: 1;
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 32rpx 24rpx;
+  text-align: center;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
+}
+.cloud-stat-num {
+  font-size: 40rpx;
+  font-weight: 700;
+  color: #2563eb;
+}
+.cloud-stat-label {
+  font-size: 24rpx;
+  color: #9ca3af;
+  margin-top: 8rpx;
+}
+
+/* 上传按钮 */
+.upload-btn-wrap {
+  margin-bottom: 24rpx;
+}
+.upload-btn {
+  height: 80rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f0f5ff;
+  color: #2563eb;
+  border: 2rpx dashed #2563eb;
+  border-radius: 16rpx;
+  font-size: 28rpx;
+}
+
+/* 文件列表 */
+.file-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+}
+.file-item {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border-radius: 12rpx;
+  padding: 20rpx 24rpx;
+  box-shadow: 0 2rpx 6rpx rgba(0, 0, 0, 0.03);
+}
+.file-icon {
+  font-size: 40rpx;
+  margin-right: 16rpx;
+}
+.file-info {
+  flex: 1;
+}
+.file-name {
+  font-size: 28rpx;
+  color: #374151;
+  font-weight: 500;
+}
+.file-meta {
+  font-size: 22rpx;
+  color: #9ca3af;
+  margin-top: 4rpx;
+}
+.file-action {
+  font-size: 24rpx;
+  color: #ef4444;
+  padding: 8rpx 20rpx;
+}
+
+/* 通用 */
+.ml-20 {
+  margin-left: 20rpx;
+}

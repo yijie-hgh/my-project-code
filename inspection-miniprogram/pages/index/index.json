@@ -1,0 +1,8 @@
+{
+  "usingComponents": {
+    "stat-card": "/components/stat-card/index",
+    "empty-state": "/components/empty-state/index"
+  },
+  "enablePullDownRefresh": true,
+  "navigationBarTitleText": "设备巡检"
+}

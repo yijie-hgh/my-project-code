@@ -1,0 +1,92 @@
+<!--pages/config/config.wxml-->
+<view class="page-bg">
+  <!-- 顶部Tab栏 -->
+  <scroll-view class="tab-bar" scroll-x="true" enhanced show-scrollbar="{{false}}" scroll-into-view="tab-{{activeTab}}">
+    <view class="tab-list">
+      <view wx:for="{{tabs}}" wx:key="key" id="tab-{{item.key}}" class="tab-item {{activeTab === item.key ? 'active' : ''}}" data-key="{{item.key}}" bindtap="onTabChange">
+        <text class="tab-icon">{{item.icon}}</text>
+        <text class="tab-text">{{item.label}}</text>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 列表区域 -->
+  <view class="list-wrap">
+    <empty-state wx:if="{{!loading && list.length === 0}}" text="暂无配置数据" icon="⚙️" subText="点击右下角按钮新增配置"></empty-state>
+
+    <view wx:for="{{list}}" wx:key="id" class="config-card {{!hasEnabled && item.enabled === false ? 'card-disabled' : ''}}" style="margin-left:{{item._marginLeft || 0}}rpx;">
+      <!-- 卡片头部 -->
+      <view class="card-header">
+        <view class="card-title-area">
+          <view class="card-title-row">
+            <text wx:if="{{item._depth > 0}}" class="tree-indent">└─</text>
+            <text class="card-title-text text-ellipsis">{{item._title}}</text>
+          </view>
+          <text class="card-subtitle" wx:if="{{item._subtitle}}">{{item._subtitle}}</text>
+        </view>
+        <view wx:if="{{hasEnabled}}" class="card-switch">
+          <switch checked="{{item.enabled}}" color="#2563eb" data-id="{{item.id}}" bindchange="onToggleEnabled" />
+        </view>
+      </view>
+
+      <!-- 卡片信息行 -->
+      <view class="card-rows" wx:if="{{item._rows.length > 0}}">
+        <view class="card-row" wx:for="{{item._rows}}" wx:for-item="row" wx:for-index="ri" wx:key="ri">
+          <text class="row-label">{{row.label}}</text>
+          <view class="row-value-wrap">
+            <text wx:if="{{row.tag}}" class="tag {{row.tag}}">{{row.value}}</text>
+            <text wx:else class="row-value">{{row.value}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 卡片操作 -->
+      <view class="card-actions">
+        <view class="action-btn edit-btn" data-id="{{item.id}}" bindtap="onEdit">
+          <text class="action-icon">✏️</text>
+          <text>编辑</text>
+        </view>
+        <view class="action-btn delete-btn" data-id="{{item.id}}" bindtap="onRemove">
+          <text class="action-icon">🗑️</text>
+          <text>删除</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 浮动新增按钮 -->
+  <view class="fab-btn" bindtap="onAdd">
+    <text class="fab-icon">+</text>
+  </view>
+
+  <!-- 通用编辑弹窗 -->
+  <view wx:if="{{showForm}}" class="modal-mask" bindtap="onCloseForm">
+    <view class="modal-content" catchtap="stopPropagation">
+      <view class="modal-header">
+        <text class="modal-title">{{formMode === 'edit' ? '编辑' : '新增'}}{{tabLabel}}</text>
+        <text class="modal-close" bindtap="onCloseForm">✕</text>
+      </view>
+      <view class="modal-body">
+        <view wx:for="{{formFields}}" wx:key="key" class="form-item">
+          <text class="form-label">{{item.label}}<text wx:if="{{item.required}}" class="required">*</text></text>
+          <textarea wx:if="{{item.type === 'textarea'}}" class="form-textarea" placeholder="{{item.placeholder}}" value="{{form[item.key]}}" data-field="{{item.key}}" bindinput="onFormInput" />
+          <view wx:elif="{{item.type === 'switch'}}" class="form-switch-wrap">
+            <switch checked="{{form[item.key]}}" color="#2563eb" data-field="{{item.key}}" bindchange="onFormSwitch" />
+            <text class="form-switch-tip">{{form[item.key] ? '已开启' : '已关闭'}}</text>
+          </view>
+          <picker wx:elif="{{item.type === 'picker'}}" range="{{item.options}}" range-key="label" value="{{formPickerIndex[item.key] >= 0 ? formPickerIndex[item.key] : 0}}" data-field="{{item.key}}" bindchange="onFormPickerChange">
+            <view class="form-picker">
+              <text class="{{formPickerLabel[item.key] ? '' : 'placeholder'}}">{{formPickerLabel[item.key] || item.placeholder || '请选择'}}</text>
+              <text class="picker-arrow">▾</text>
+            </view>
+          </picker>
+          <input wx:else class="form-input" type="{{item.type === 'number' ? 'number' : 'text'}}" placeholder="{{item.placeholder}}" value="{{form[item.key]}}" data-field="{{item.key}}" bindinput="onFormInput" />
+        </view>
+      </view>
+      <view class="modal-footer">
+        <view class="btn btn-plain btn-sm" style="flex:1;margin-right:20rpx;" bindtap="onCloseForm">取消</view>
+        <view class="btn btn-primary btn-sm" style="flex:1;" bindtap="onSubmitForm">确定</view>
+      </view>
+    </view>
+  </view>
+</view>

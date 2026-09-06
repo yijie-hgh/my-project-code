@@ -1,0 +1,123 @@
+<!--pages/plan/list/list.wxml-->
+<view class="page-bg">
+  <!-- 搜索栏 -->
+  <view class="search-bar">
+    <view class="search-input-wrap">
+      <text class="search-icon">🔍</text>
+      <input class="search-input" type="text" placeholder="搜索计划名称" value="{{queryParams.planName}}" bindinput="onSearchInput" confirm-type="search" />
+      <text wx:if="{{queryParams.planName}}" class="search-clear" bindtap="onClearSearch">✕</text>
+    </view>
+  </view>
+
+  <!-- 计划列表 -->
+  <view class="list-wrap">
+    <empty-state wx:if="{{!loading && list.length === 0}}" text="暂无计划数据" icon="📅"></empty-state>
+
+    <view wx:for="{{list}}" wx:key="id" class="plan-card" data-id="{{item.id}}" bindtap="goDetail">
+      <view class="card-top">
+        <view class="plan-name text-ellipsis">{{item.planName}}</view>
+        <text class="tag {{item.statusInfo.tag}}">{{item.statusInfo.text}}</text>
+      </view>
+
+      <view class="info-row">
+        <text class="info-label">所属项目</text>
+        <text class="info-value text-ellipsis">{{item.projectName}}</text>
+      </view>
+
+      <view class="tag-row">
+        <text class="tag {{item.freqInfo.tag}}">{{item.freqInfo.text}}</text>
+        <view class="mini-tag">
+          <text class="mini-tag-icon">📍</text>
+          <text class="mini-tag-text">{{item.pointCount}}个巡检点</text>
+        </view>
+        <view class="mini-tag">
+          <text class="mini-tag-icon">👤</text>
+          <text class="mini-tag-text">{{item.inspectors.length}}位巡检人</text>
+        </view>
+      </view>
+
+      <view class="inspector-row" wx:if="{{item.inspectors.length}}">
+        <text class="inspector-label">巡检人：</text>
+        <view class="inspector-list">
+          <text wx:for="{{item.inspectors}}" wx:for-item="ins" wx:key="*this" class="inspector-chip">{{ins}}</text>
+        </view>
+      </view>
+
+      <view class="card-bottom">
+        <view class="next-run">
+          <text class="next-run-icon">⏰</text>
+          <text class="next-run-text">下次执行：{{item.nextRunTime}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 浮动新增按钮 -->
+  <view class="fab-btn" bindtap="onAdd">
+    <text class="fab-icon">+</text>
+  </view>
+
+  <!-- 新增弹窗 -->
+  <view wx:if="{{showForm}}" class="modal-mask" bindtap="onCloseForm">
+    <view class="modal-content" catchtap="stopPropagation">
+      <view class="modal-header">
+        <text class="modal-title">新增巡检计划</text>
+        <text class="modal-close" bindtap="onCloseForm">✕</text>
+      </view>
+      <view class="modal-body">
+        <view class="form-item">
+          <text class="form-label">计划名称<text class="required">*</text></text>
+          <input class="form-input" placeholder="请输入计划名称" value="{{form.planName}}" data-field="planName" bindinput="onFormInput" />
+        </view>
+        <view class="form-item">
+          <text class="form-label">所属项目<text class="required">*</text></text>
+          <picker range="{{projectNames}}" value="{{formProjectIndex}}" bindchange="onFormProjectChange">
+            <view class="form-picker">
+              <text class="{{form.projectId ? '' : 'placeholder'}}">{{form.projectId ? projectNames[formProjectIndex] : '请选择所属项目'}}</text>
+              <text class="picker-arrow">▾</text>
+            </view>
+          </picker>
+        </view>
+        <view class="form-item">
+          <text class="form-label">巡检频率<text class="required">*</text></text>
+          <picker range="{{frequencyOptions}}" value="{{formFreqIndex}}" bindchange="onFreqChange">
+            <view class="form-picker">
+              <text>{{frequencyOptions[formFreqIndex]}}</text>
+              <text class="picker-arrow">▾</text>
+            </view>
+          </picker>
+        </view>
+        <view class="form-item">
+          <text class="form-label">开始日期</text>
+          <picker mode="date" value="{{form.startTime}}" data-field="startTime" bindchange="onDateChange">
+            <view class="form-picker">
+              <text class="{{form.startTime ? '' : 'placeholder'}}">{{form.startTime || '请选择开始日期'}}</text>
+              <text class="picker-arrow">▾</text>
+            </view>
+          </picker>
+        </view>
+        <view class="form-item">
+          <text class="form-label">结束日期</text>
+          <picker mode="date" value="{{form.endTime}}" data-field="endTime" bindchange="onDateChange">
+            <view class="form-picker">
+              <text class="{{form.endTime ? '' : 'placeholder'}}">{{form.endTime || '请选择结束日期'}}</text>
+              <text class="picker-arrow">▾</text>
+            </view>
+          </picker>
+        </view>
+        <view class="form-item">
+          <text class="form-label">巡检点ID（逗号分隔）</text>
+          <input class="form-input" placeholder="如：1,2,3" value="{{form.inspectPoints}}" data-field="inspectPoints" bindinput="onFormInput" />
+        </view>
+        <view class="form-item">
+          <text class="form-label">巡检人员（逗号分隔）</text>
+          <input class="form-input" placeholder="如：张三,李四" value="{{form.inspectorNames}}" data-field="inspectorNames" bindinput="onFormInput" />
+        </view>
+      </view>
+      <view class="modal-footer">
+        <view class="btn btn-plain btn-sm" style="flex:1;margin-right:20rpx;" bindtap="onCloseForm">取消</view>
+        <view class="btn btn-primary btn-sm" style="flex:1;" bindtap="onSubmitForm">确定</view>
+      </view>
+    </view>
+  </view>
+</view>

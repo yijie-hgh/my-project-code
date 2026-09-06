@@ -1,0 +1,80 @@
+<!--pages/report/detail/detail.wxml-->
+<view class="page-bg" style="padding-bottom: 160rpx;">
+  <block wx:if="{{report}}">
+    <!-- 报表标题 -->
+    <view class="card report-title-card">
+      <view class="report-title-row">
+        <text class="report-title-icon">📊</text>
+        <view class="report-title-info">
+          <text class="report-title">{{report.reportName}}</text>
+          <view class="report-title-meta">
+            <text class="text-sm text-gray">{{report.projectName}}</text>
+            <text class="text-sm text-gray"> · {{report.period}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 完成率环形展示 -->
+    <view class="card ring-card">
+      <view class="card-title">完成率</view>
+      <view class="ring-wrap">
+        <view class="ring-outer">
+          <view 
+            class="ring-inner" 
+            style="background: conic-gradient({{report.completionRate >= 90 ? '#10b981' : report.completionRate >= 75 ? '#2563eb' : '#f59e0b'}} {{report.completionRate * 3.6}}deg, #e5e7eb 0deg);">
+            <view class="ring-center">
+              <text class="ring-num">{{report.completionRate}}</text>
+              <text class="ring-unit">%</text>
+            </view>
+          </view>
+        </view>
+      </view>
+      <view class="ring-desc">
+        <text class="text-sm text-sub">总任务 {{report.totalTasks}} · 已完成 {{report.doneTasks}}</text>
+      </view>
+    </view>
+
+    <!-- 统计卡片网格 -->
+    <view class="card stats-card">
+      <view class="card-title">统计数据</view>
+      <view class="stats-grid">
+        <view class="stat-grid-item" wx:for="{{stats}}" wx:key="label">
+          <view class="stat-grid-icon" style="background: {{item.color}}1a;">{{item.icon}}</view>
+          <text class="stat-grid-num" style="color: {{item.color}};">{{item.value}}</text>
+          <text class="stat-grid-label">{{item.label}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 近7天趋势图 -->
+    <view class="card trend-card" wx:if="{{trend.length > 0}}">
+      <view class="card-title">近7天巡检趋势</view>
+      <view class="trend-chart">
+        <view wx:for="{{trend}}" wx:key="date" class="trend-bar-group">
+          <view class="trend-bars">
+            <view class="trend-bar bar-done" style="height: {{item.done / maxTrendDone * 200}}rpx;"></view>
+            <view class="trend-bar bar-abnormal" style="height: {{item.abnormal / maxTrendAbnormal * 200}}rpx;"></view>
+          </view>
+          <text class="trend-date">{{item.date}}</text>
+          <text class="trend-num">{{item.done}}</text>
+        </view>
+      </view>
+      <view class="trend-legend">
+        <view class="legend-item">
+          <view class="legend-dot done"></view>
+          <text>完成数</text>
+        </view>
+        <view class="legend-item">
+          <view class="legend-dot abnormal"></view>
+          <text>异常数</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 底部导出按钮 -->
+    <view class="bottom-action">
+      <button class="btn btn-primary btn-block" bindtap="onExport">导出报表</button>
+    </view>
+  </block>
+</view>

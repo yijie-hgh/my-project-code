@@ -1,0 +1,98 @@
+<!--pages/maintain/execute/execute.wxml-->
+<view class="page-bg" style="padding-bottom: 160rpx;">
+  <!-- 设备信息头部 -->
+  <view class="equip-header" wx:if="{{detail}}">
+    <view class="header-icon">🔧</view>
+    <view class="header-info">
+      <text class="header-name">{{detail.planName}}</text>
+      <text class="header-sub">🏭 {{detail.equipName}} · {{detail.equipCode}}</text>
+    </view>
+  </view>
+
+  <!-- 保养内容说明 -->
+  <view class="section" wx:if="{{detail && detail.content}}">
+    <view class="card">
+      <view class="card-title">保养内容</view>
+      <view class="content-text">{{detail.content}}</view>
+    </view>
+  </view>
+
+  <!-- 保养项目清单 -->
+  <view class="section">
+    <view class="section-title">
+      <text class="section-title-text">保养项目</text>
+      <text class="section-title-count">{{items.length}}项</text>
+    </view>
+    <view class="card" style="margin:0;">
+      <view wx:for="{{items}}" wx:key="name" class="exec-item {{item.done ? 'done' : ''}}" data-index="{{index}}" bindtap="toggleItem">
+        <view class="exec-check {{item.done ? 'checked' : ''}}">
+          <text wx:if="{{item.done}}" class="check-icon">✓</text>
+        </view>
+        <text class="exec-name">{{item.name}}</text>
+        <text class="exec-status {{item.done ? 'text-success' : 'text-gray'}}">{{item.done ? '已完成' : '点击完成'}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 保养前照片 -->
+  <view class="section">
+    <view class="section-title">
+      <text class="section-title-text">📷 保养前照片</text>
+      <text class="section-title-count">{{beforePhotos.length}}/9</text>
+    </view>
+    <view class="photo-grid">
+      <view wx:for="{{beforePhotos}}" wx:key="*this" class="photo-item">
+        <image src="{{item}}" mode="aspectFill" class="photo-img" data-urls="{{beforePhotos}}" data-current="{{item}}" bindtap="previewImage"></image>
+        <view class="photo-del" data-type="beforePhotos" data-index="{{index}}" catchtap="deletePhoto">✕</view>
+      </view>
+      <view wx:if="{{beforePhotos.length < 9}}" class="photo-add" bindtap="chooseBeforePhoto">
+        <text class="add-icon">+</text>
+        <text class="add-text">拍照</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 保养后照片 -->
+  <view class="section">
+    <view class="section-title">
+      <text class="section-title-text">✅ 保养后照片</text>
+      <text class="section-title-count">{{afterPhotos.length}}/9</text>
+    </view>
+    <view class="photo-grid">
+      <view wx:for="{{afterPhotos}}" wx:key="*this" class="photo-item">
+        <image src="{{item}}" mode="aspectFill" class="photo-img" data-urls="{{afterPhotos}}" data-current="{{item}}" bindtap="previewImage"></image>
+        <view class="photo-del" data-type="afterPhotos" data-index="{{index}}" catchtap="deletePhoto">✕</view>
+      </view>
+      <view wx:if="{{afterPhotos.length < 9}}" class="photo-add" bindtap="chooseAfterPhoto">
+        <text class="add-icon">+</text>
+        <text class="add-text">拍照</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 费用输入 -->
+  <view class="section">
+    <view class="card">
+      <view class="card-title">保养费用</view>
+      <view class="cost-input-wrap">
+        <text class="cost-prefix">¥</text>
+        <input class="cost-input" type="digit" placeholder="请输入保养费用（元）" value="{{cost}}" bindinput="onCostInput"></input>
+      </view>
+    </view>
+  </view>
+
+  <!-- 备注 -->
+  <view class="section">
+    <view class="card">
+      <view class="card-title">保养备注</view>
+      <textarea class="remark-input" placeholder="请输入保养备注说明（选填）" value="{{remark}}" bindinput="onRemarkInput" maxlength="500" auto-height></textarea>
+    </view>
+  </view>
+
+  <!-- 底部提交 -->
+  <view class="bottom-bar">
+    <button class="btn btn-primary btn-block" bindtap="onSubmit" loading="{{submitting}}" disabled="{{submitting}}">
+      {{submitting ? '提交中...' : '提交保养记录'}}
+    </button>
+  </view>
+</view>

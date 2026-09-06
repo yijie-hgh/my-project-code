@@ -1,0 +1,65 @@
+/* pages/ai-analysis/ai-analysis.wxss */
+.page-bg { padding: 20rpx; }
+.tab-bar { display: flex; background: #fff; border-radius: 16rpx; padding: 8rpx; gap: 8rpx; margin-bottom: 24rpx; }
+.tab-item { flex: 1; text-align: center; padding: 18rpx 0; font-size: 26rpx; color: #6b7280; border-radius: 12rpx; }
+.tab-item.active { background: #7c3aed; color: #fff; font-weight: 600; }
+.tab-content { padding: 0; }
+.analysis-card, .input-card, .result-card, .knowledge-card {
+  background: #fff; border-radius: 16rpx; padding: 24rpx; margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.04);
+}
+.analysis-title, .card-title { font-size: 30rpx; font-weight: 600; color: #1f2937; margin-bottom: 20rpx; }
+.stat-grid { display: flex; gap: 16rpx; margin-bottom: 20rpx; }
+.stat-item { flex: 1; background: #f9fafb; border-radius: 12rpx; padding: 20rpx 0; text-align: center; }
+.stat-success { background: #ecfdf5; }
+.stat-danger { background: #fef2f2; }
+.stat-num { display: block; font-size: 36rpx; font-weight: 700; color: #1f2937; }
+.stat-success .stat-num { color: #10b981; }
+.stat-danger .stat-num { color: #ef4444; }
+.stat-label { font-size: 22rpx; color: #9ca3af; }
+.rate-row { display: flex; gap: 16rpx; margin-bottom: 12rpx; }
+.rate-item { flex: 1; display: flex; justify-content: space-between; padding: 16rpx 24rpx; background: #f9fafb; border-radius: 12rpx; }
+.rate-label { font-size: 26rpx; color: #6b7280; }
+.rate-value { font-size: 28rpx; font-weight: 700; }
+.text-success { color: #10b981; }
+.text-danger { color: #ef4444; }
+.text-primary { color: #2563eb; }
+.section-block { margin-top: 24rpx; }
+.block-title { font-size: 28rpx; font-weight: 600; color: #374151; margin-bottom: 16rpx; }
+.issue-item { padding: 16rpx 0; border-bottom: 1rpx solid #f3f4f6; }
+.issue-header { display: flex; justify-content: space-between; margin-bottom: 8rpx; }
+.issue-point { font-size: 28rpx; font-weight: 500; color: #374151; }
+.issue-time { font-size: 22rpx; color: #9ca3af; }
+.issue-remark { font-size: 24rpx; color: #6b7280; display: block; }
+.issue-severity { display: flex; gap: 12rpx; margin-top: 8rpx; }
+.severity-tag { font-size: 22rpx; background: #fef3c7; color: #d97706; padding: 4rpx 16rpx; border-radius: 8rpx; }
+.confidence { font-size: 22rpx; color: #6b7280; }
+.suggestion-item { display: flex; align-items: flex-start; padding: 12rpx 0; }
+.suggestion-num { width: 40rpx; height: 40rpx; border-radius: 50%; background: #7c3aed; color: #fff; font-size: 22rpx; display: flex; align-items: center; justify-content: center; margin-right: 16rpx; flex-shrink: 0; }
+.suggestion-text { font-size: 26rpx; color: #374151; flex: 1; }
+.fault-input { width: 100%; min-height: 200rpx; background: #f9fafb; border-radius: 12rpx; padding: 20rpx; font-size: 28rpx; margin-bottom: 20rpx; }
+.result-title { font-size: 30rpx; font-weight: 600; color: #1f2937; margin-bottom: 20rpx; }
+.result-row { display: flex; justify-content: space-between; padding: 16rpx 0; border-bottom: 1rpx solid #f3f4f6; }
+.result-label { font-size: 26rpx; color: #6b7280; }
+.result-value { font-size: 28rpx; font-weight: 500; color: #1f2937; }
+.keyword-list { display: flex; flex-wrap: wrap; gap: 8rpx; justify-content: flex-end; }
+.keyword-tag { font-size: 22rpx; background: #ede9fe; color: #7c3aed; padding: 4rpx 16rpx; border-radius: 8rpx; }
+.result-block, .result-block { margin-top: 20rpx; }
+.block-label { font-size: 26rpx; font-weight: 600; color: #374151; display: block; margin-bottom: 12rpx; }
+.list-item { font-size: 26rpx; color: #6b7280; padding: 8rpx 0; }
+.knowledge-item { padding: 16rpx 0; border-bottom: 1rpx solid #f3f4f6; }
+.knowledge-header { display: flex; justify-content: space-between; margin-bottom: 4rpx; }
+.knowledge-name { font-size: 28rpx; font-weight: 500; color: #374151; }
+.knowledge-severity { font-size: 22rpx; color: #f59e0b; }
+.knowledge-keywords { font-size: 22rpx; color: #9ca3af; }
+.picker-value { padding: 20rpx 24rpx; background: #f9fafb; border-radius: 12rpx; font-size: 28rpx; color: #374151; }
+.risk-level { border: 2rpx solid; border-radius: 16rpx; padding: 24rpx; text-align: center; margin-bottom: 20rpx; }
+.risk-name { font-size: 36rpx; font-weight: 700; display: block; margin-bottom: 8rpx; }
+.risk-score { font-size: 26rpx; color: #6b7280; display: block; margin-bottom: 8rpx; }
+.risk-action { font-size: 24rpx; color: #6b7280; }
+.factors-block { margin-top: 20rpx; }
+.factor-item { font-size: 26rpx; color: #6b7280; padding: 8rpx 0; }
+.predict-level { text-align: center; padding: 24rpx; background: #f9fafb; border-radius: 16rpx; margin-bottom: 20rpx; }
+.predict-text { font-size: 32rpx; font-weight: 700; color: #7c3aed; display: block; margin-bottom: 8rpx; }
+.predict-score { font-size: 24rpx; color: #9ca3af; }
+.predict-action { margin-bottom: 20rpx; }

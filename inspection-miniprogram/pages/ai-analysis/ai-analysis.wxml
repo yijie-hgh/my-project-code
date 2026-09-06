@@ -1,0 +1,162 @@
+<!--pages/ai-analysis/ai-analysis.wxml-->
+<view class="page-bg">
+  <view class="tab-bar">
+    <view wx:for="{{tabs}}" wx:key="value" class="tab-item {{activeTab === item.value ? 'active' : ''}}" data-value="{{item.value}}" bindtap="onTabChange">{{item.label}}</view>
+  </view>
+
+  <!-- 巡检汇总 -->
+  <view wx:if="{{activeTab === 'overview'}}" class="tab-content">
+    <view wx:if="{{analysisResult}}" class="analysis-card">
+      <view class="analysis-title">📊 巡检数据分析报告</view>
+      <view class="stat-grid">
+        <view class="stat-item">
+          <text class="stat-num">{{analysisResult.totalRecords}}</text>
+          <text class="stat-label">总记录</text>
+        </view>
+        <view class="stat-item stat-success">
+          <text class="stat-num">{{analysisResult.normalCount}}</text>
+          <text class="stat-label">正常</text>
+        </view>
+        <view class="stat-item stat-danger">
+          <text class="stat-num">{{analysisResult.abnormalCount}}</text>
+          <text class="stat-label">异常</text>
+        </view>
+      </view>
+      <view class="rate-row">
+        <view class="rate-item">
+          <text class="rate-label">合格率</text>
+          <text class="rate-value text-success">{{analysisResult.passRate}}%</text>
+        </view>
+        <view class="rate-item">
+          <text class="rate-label">异常率</text>
+          <text class="rate-value text-danger">{{analysisResult.abnormalRate}}%</text>
+        </view>
+      </view>
+      <view wx:if="{{analysisResult.taskCompletionRate}}" class="rate-row">
+        <view class="rate-item">
+          <text class="rate-label">任务完成率</text>
+          <text class="rate-value text-primary">{{analysisResult.taskCompletionRate}}%</text>
+        </view>
+      </view>
+      <view wx:if="{{analysisResult.issues.length > 0}}" class="section-block">
+        <view class="block-title">⚠️ 异常项分析</view>
+        <view wx:for="{{analysisResult.issues}}" wx:key="index" class="issue-item">
+          <view class="issue-header">
+            <text class="issue-point">{{item.pointName}}</text>
+            <text class="issue-time">{{item.time}}</text>
+          </view>
+          <text class="issue-remark">{{item.remark}}</text>
+          <view wx:if="{{item.severity}}" class="issue-severity">
+            <text class="severity-tag">识别: {{item.severity.faultName}}</text>
+            <text class="confidence">置信度: {{item.severity.confidence}}%</text>
+          </view>
+        </view>
+      </view>
+      <view class="section-block">
+        <view class="block-title">💡 智能建议</view>
+        <view wx:for="{{analysisResult.suggestions}}" wx:key="index" class="suggestion-item">
+          <text class="suggestion-num">{{index + 1}}</text>
+          <text class="suggestion-text">{{item}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 故障识别 -->
+  <view wx:if="{{activeTab === 'fault'}}" class="tab-content">
+    <view class="input-card">
+      <view class="card-title">🔍 AI故障识别</view>
+      <textarea class="fault-input" placeholder="请输入故障描述，例如：设备运行时出现异常振动和高温..." value="{{faultInput}}" bindinput="onFaultInput" maxlength="500" auto-height></textarea>
+      <button class="btn btn-primary btn-block" bindtap="onIdentifyFault">识别故障</button>
+    </view>
+    <view wx:if="{{faultResult}}" class="result-card">
+      <view class="result-title">识别结果</view>
+      <view class="result-row">
+        <text class="result-label">故障类型</text>
+        <text class="result-value">{{faultResult.faultName}}</text>
+      </view>
+      <view class="result-row">
+        <text class="result-label">置信度</text>
+        <text class="result-value" style="color: {{faultResult.confidence > 60 ? '#10b981' : '#f59e0b'}}">{{faultResult.confidence}}%</text>
+      </view>
+      <view class="result-row">
+        <text class="result-label">严重程度</text>
+        <text class="result-value">{{faultResult.severity}}</text>
+      </view>
+      <view wx:if="{{faultResult.matchedKeywords.length > 0}}" class="result-row">
+        <text class="result-label">匹配关键词</text>
+        <view class="keyword-list">
+          <text wx:for="{{faultResult.matchedKeywords}}" wx:key="*this" class="keyword-tag">{{item}}</text>
+        </view>
+      </view>
+      <view wx:if="{{faultResult.commonCauses.length > 0}}" class="result-block">
+        <text class="block-label">常见原因</text>
+        <view wx:for="{{faultResult.commonCauses}}" wx:key="*this" class="list-item">• {{item}}</view>
+      </view>
+      <view wx:if="{{faultResult.suggestions.length > 0}}" class="result-block">
+        <text class="block-label">维修建议</text>
+        <view wx:for="{{faultResult.suggestions}}" wx:key="*this" class="list-item">• {{item}}</view>
+      </view>
+    </view>
+    <view class="knowledge-card">
+      <view class="card-title">📚 故障知识库</view>
+      <view wx:for="{{faultKnowledge}}" wx:key="key" class="knowledge-item">
+        <view class="knowledge-header">
+          <text class="knowledge-name">{{item.name}}</text>
+          <text class="knowledge-severity">{{item.severity}}</text>
+        </view>
+        <text class="knowledge-keywords">关键词：{{item.keywords.join('、')}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 风险评估 -->
+  <view wx:if="{{activeTab === 'risk'}}" class="tab-content">
+    <view class="input-card">
+      <view class="card-title">⚠️ 设备风险评估</view>
+      <picker mode="selector" range="{{equipmentList}}" range-key="equipName" value="{{selectedEquip}}" bindchange="onEquipChange">
+        <view class="picker-value">设备：{{equipmentList[selectedEquip].equipName || '请选择'}}</view>
+      </picker>
+    </view>
+    <view wx:if="{{riskResult}}" class="result-card">
+      <view class="risk-level" style="background: {{riskResult.riskColor}}1a; border-color: {{riskResult.riskColor}};">
+        <text class="risk-name" style="color: {{riskResult.riskColor}}">{{riskResult.riskName}}</text>
+        <text class="risk-score">风险分值：{{riskResult.riskScore}}</text>
+        <text class="risk-action">{{riskResult.recommendedAction}}</text>
+      </view>
+      <view class="factors-block">
+        <text class="block-label">风险因素</text>
+        <view wx:for="{{riskResult.riskFactors}}" wx:key="*this" class="factor-item">
+          <text>• {{item}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 故障预测 -->
+  <view wx:if="{{activeTab === 'predict'}}" class="tab-content">
+    <view class="input-card">
+      <view class="card-title">🔮 设备故障预测</view>
+      <picker mode="selector" range="{{equipmentList}}" range-key="equipName" value="{{selectedEquip}}" bindchange="onEquipChange">
+        <view class="picker-value">设备：{{equipmentList[selectedEquip].equipName || '请选择'}}</view>
+      </picker>
+      <button class="btn btn-primary btn-block" bindtap="onPredict" style="margin-top: 20rpx;">开始预测</button>
+    </view>
+    <view wx:if="{{predictResult}}" class="result-card">
+      <view class="predict-level">
+        <text class="predict-text">{{predictResult.prediction}}</text>
+        <text class="predict-score">预测分值：{{predictResult.predictionScore}}</text>
+      </view>
+      <view class="predict-action">
+        <text class="block-label">建议措施</text>
+        <text>{{predictResult.action}}</text>
+      </view>
+      <view wx:if="{{predictResult.factors.length > 0}}" class="factors-block">
+        <text class="block-label">风险因素</text>
+        <view wx:for="{{predictResult.factors}}" wx:key="*this" class="factor-item">
+          <text>• {{item}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

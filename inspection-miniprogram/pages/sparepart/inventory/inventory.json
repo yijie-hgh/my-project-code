@@ -1,0 +1,7 @@
+{
+  "usingComponents": {
+    "empty-state": "/components/empty-state/index"
+  },
+  "navigationBarTitleText": "备件清单",
+  "enablePullDownRefresh": true
+}

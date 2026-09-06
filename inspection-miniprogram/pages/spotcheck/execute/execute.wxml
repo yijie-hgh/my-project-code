@@ -1,0 +1,84 @@
+<!--pages/spotcheck/execute/execute.wxml-->
+<view class="page-bg" style="padding-bottom: 160rpx;">
+  <!-- 设备信息头部 -->
+  <view class="equip-header">
+    <view class="equip-header-icon">🔧</view>
+    <view class="equip-header-info">
+      <text class="equip-header-name">{{equipName || '未选择设备'}}</text>
+      <text class="equip-header-sub">{{equipId ? '设备编号：' + equipId : '请选择设备后进行点检'}}</text>
+    </view>
+  </view>
+
+  <!-- 点检项列表 -->
+  <view class="section">
+    <view class="section-title">
+      <text class="section-title-text">点检内容</text>
+      <text class="section-title-count">{{items.length}}项</text>
+    </view>
+
+    <view wx:if="{{loading}}" class="loading-tip">加载中...</view>
+
+    <view wx:for="{{items}}" wx:key="id" class="check-card">
+      <view class="check-card-header">
+        <view class="check-name-area">
+          <text class="check-name">{{item.itemName}}</text>
+          <text wx:if="{{item.required}}" class="required-tag">必填</text>
+        </view>
+        <text class="check-type-tag">{{item.itemType === 'choice' ? '单选' : '拍照'}}</text>
+      </view>
+
+      <!-- 单选类型 -->
+      <view wx:if="{{item.itemType === 'choice'}}" class="choice-options">
+        <view 
+          wx:for="{{item.options}}" 
+          wx:for-item="option" 
+          wx:key="*this"
+          class="choice-option {{item.value === option ? 'active' : ''}} {{option === '正常' || option === '清洁' ? 'opt-normal' : 'opt-abnormal'}}"
+          data-index="{{index}}"
+          data-value="{{option}}"
+          bindtap="onChoiceChange">
+          <text>{{option}}</text>
+        </view>
+      </view>
+
+      <!-- 拍照类型 -->
+      <view wx:if="{{item.itemType === 'photo'}}" class="photo-area">
+        <view class="photo-list">
+          <view wx:for="{{item.value}}" wx:for-item="photo" wx:for-index="pindex" wx:key="*this" class="photo-item">
+            <image class="photo-img" src="{{photo}}" mode="aspectFill" data-urls="{{item.value}}" data-current="{{photo}}" bindtap="onPreviewPhoto"></image>
+            <view class="photo-delete" data-index="{{index}}" data-pindex="{{pindex}}" catchtap="onDeletePhoto">✕</view>
+          </view>
+          <view wx:if="{{item.value.length < 3}}" class="photo-add" data-index="{{index}}" bindtap="onChoosePhoto">
+            <text class="photo-add-icon">📷</text>
+            <text class="photo-add-text">拍照</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view wx:if="{{!loading && items.length === 0}}" class="empty-tip">
+      <text>暂无点检模板</text>
+    </view>
+  </view>
+
+  <!-- 备注 -->
+  <view class="section">
+    <view class="card">
+      <view class="card-title">点检备注</view>
+      <textarea class="remark-input" placeholder="请输入点检备注（选填）" value="{{remark}}" bindinput="onRemarkInput" maxlength="500" auto-height></textarea>
+    </view>
+  </view>
+
+  <!-- 异常提示 -->
+  <view wx:if="{{hasAbnormal}}" class="abnormal-tip">
+    <text class="abnormal-icon">⚠️</text>
+    <text>本次点检存在异常项，提交后可发起报修</text>
+  </view>
+
+  <!-- 底部提交 -->
+  <view class="bottom-bar">
+    <button class="btn btn-primary btn-block" bindtap="onSubmit" loading="{{submitting}}" disabled="{{submitting}}">
+      {{submitting ? '提交中...' : '提交点检记录'}}
+    </button>
+  </view>
+</view>

@@ -1,0 +1,46 @@
+<!--pages/permission/permission.wxml-->
+<view class="page-bg">
+  <view class="role-section">
+    <view class="section-title">选择角色</view>
+    <view class="role-grid">
+      <view wx:for="{{roles}}" wx:key="id" class="role-card {{selectedRole === item.id ? 'active' : ''}}" data-role="{{item.id}}" bindtap="onRoleChange">
+        <view class="role-icon" style="background: {{item.color}}1a; color: {{item.color}};">{{item.level}}</view>
+        <view class="role-name">{{item.name}}</view>
+        <view class="role-desc">{{item.desc}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="perm-section">
+    <view class="section-title">权限配置 - {{currentRoleInfo.name}}</view>
+    
+    <view class="module-tabs">
+      <view class="module-tab {{activeModule === 'all' ? 'active' : ''}}" data-module="all" bindtap="onModuleChange">全部</view>
+      <view wx:for="{{permissionsByModule}}" wx:key="{{index}}" wx:for-item="perms" wx:for-index="modKey" class="module-tab {{activeModule === modKey ? 'active' : ''}}" data-module="{{modKey}}" bindtap="onModuleChange">{{modKey}}</view>
+    </view>
+
+    <view class="perm-list">
+      <block wx:for="{{permissionsByModule}}" wx:key="{{index}}" wx:for-item="perms" wx:for-index="modKey">
+        <block wx:if="{{activeModule === 'all' || activeModule === modKey}}">
+          <view class="module-group">
+            <view class="module-title">{{modKey}}</view>
+            <view wx:for="{{perms}}" wx:key="key" wx:for-item="perm" class="perm-item" data-perm="{{perm.key}}" bindtap="togglePermission">
+              <view class="perm-check {{currentPermissions.indexOf(perm.key) > -1 ? 'checked' : ''}}">
+                {{currentPermissions.indexOf(perm.key) > -1 ? '✓' : ''}}
+              </view>
+              <view class="perm-info">
+                <text class="perm-name">{{perm.name}}</text>
+                <text class="perm-key">{{perm.key}}</text>
+              </view>
+            </view>
+          </view>
+        </block>
+      </block>
+    </view>
+  </view>
+
+  <view class="action-bar">
+    <view class="action-btn reset" bindtap="resetPermissions">重置</view>
+    <view class="action-btn save" bindtap="onSavePermissions">保存配置</view>
+  </view>
+</view>

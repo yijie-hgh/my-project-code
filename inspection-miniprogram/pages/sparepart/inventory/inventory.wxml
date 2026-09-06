@@ -1,0 +1,255 @@
+<!--pages/sparepart/inventory/inventory.wxml-->
+<view class="page-bg" style="padding-bottom: 120rpx;">
+
+  <!-- 顶部统计 -->
+  <view class="stats-card">
+    <view class="stat-block">
+      <text class="stat-num text-primary">{{stats.total}}</text>
+      <text class="stat-label">备件总数</text>
+    </view>
+    <view class="stat-block">
+      <text class="stat-num text-success">{{stats.sufficient}}</text>
+      <text class="stat-label">库存充足</text>
+    </view>
+    <view class="stat-block">
+      <text class="stat-num text-warning">{{stats.insufficient}}</text>
+      <text class="stat-label">库存不足</text>
+    </view>
+    <view class="stat-block">
+      <text class="stat-num text-danger">{{stats.warning}}</text>
+      <text class="stat-label">库存预警</text>
+    </view>
+  </view>
+
+  <!-- 搜索栏 -->
+  <view class="search-bar">
+    <view class="search-input-wrap">
+      <text class="search-icon">🔍</text>
+      <input class="search-input" type="text" placeholder="搜索备件名称/编码" value="{{keyword}}" bindinput="onSearchInput" confirm-type="search" />
+      <text wx:if="{{keyword}}" class="search-clear" bindtap="onClearSearch">✕</text>
+    </view>
+  </view>
+
+  <!-- 筛选栏 -->
+  <view class="filter-bar">
+    <!-- 分类筛选 -->
+    <picker class="filter-picker" mode="selector" range="{{categoryOptions}}" value="{{categoryIndex}}" bindchange="onCategoryChange">
+      <view class="picker-value {{categoryIndex > 0 ? 'active' : ''}}">
+        <text class="picker-text">{{categoryOptions[categoryIndex]}}</text>
+        <text class="picker-arrow">▼</text>
+      </view>
+    </picker>
+    <!-- 操作按钮 -->
+    <view class="filter-actions">
+      <view class="action-btn add-btn" bindtap="openAddModal">
+        <text>＋ 添加备件</text>
+      </view>
+      <view class="action-btn import-btn" bindtap="onImportExcel">
+        <text>📥 导入</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 库存状态筛选 -->
+  <scroll-view class="tab-bar-scroll" scroll-x="true" enhanced show-scrollbar="{{false}}">
+    <view class="tab-list">
+      <view wx:for="{{statusTabs}}" wx:key="key" class="tab-item {{activeStatus === item.key ? 'active' : ''}}" data-key="{{item.key}}" bindtap="onStatusTabChange">
+        <text>{{item.label}}</text>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 备件列表 -->
+  <view class="part-list">
+    <view wx:if="{{loading}}" class="loading-tip">加载中...</view>
+    <empty-state wx:if="{{!loading && list.length === 0}}" text="暂无备件记录" icon="📦" subText="下拉刷新或调整筛选条件"></empty-state>
+
+    <view wx:for="{{list}}" wx:key="id" class="part-card {{item.statusInfo.key === 'warning' ? 'card-warning' : ''}}">
+      <!-- 卡片头部 -->
+      <view class="card-top" data-id="{{item.id}}" bindtap="goDetail">
+        <view class="card-title-area">
+          <view class="name-row">
+            <text class="part-name text-ellipsis">📦 {{item.partName}}</text>
+            <text class="tag {{item.statusInfo.tag}}">{{item.statusInfo.text}}</text>
+          </view>
+          <view class="code-row">
+            <text class="part-code">{{item.partCode}}</text>
+            <text class="tag tag-info">{{item.category}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 规格信息 -->
+      <view class="card-info" data-id="{{item.id}}" bindtap="goDetail">
+        <view class="info-item">
+          <text class="info-label">品牌</text>
+          <text class="info-value">{{item.brand || '-'}}</text>
+        </view>
+        <view class="info-item">
+          <text class="info-label">规格型号</text>
+          <text class="info-value">{{item.spec || '-'}}</text>
+        </view>
+      </view>
+
+      <!-- 库存信息 -->
+      <view class="stock-section">
+        <view class="stock-row">
+          <text class="stock-label">当前库存</text>
+          <text class="stock-value {{item.statusInfo.color}}">{{item.stock}} {{item.unit}}</text>
+        </view>
+        <view class="progress-bar stock-progress">
+          <view class="progress-bar-fill {{item.statusInfo.key === 'warning' ? 'fill-danger' : item.statusInfo.key === 'insufficient' ? 'fill-warning' : ''}}" style="width: {{item.stockRate}}%;"></view>
+        </view>
+        <view class="stock-meta">
+          <text class="text-sm text-gray">最低：{{item.minStock}}{{item.unit}}</text>
+          <text class="text-sm text-gray">最高：{{item.maxStock}}{{item.unit}}</text>
+          <text class="text-sm text-warning">¥{{item.unitPrice}}/{{item.unit}}</text>
+        </view>
+      </view>
+
+      <!-- 价值与位置 -->
+      <view class="card-info">
+        <view class="info-item">
+          <text class="info-label">库存总值</text>
+          <text class="info-value text-primary text-bold">¥{{item.totalValue}}</text>
+        </view>
+        <view class="info-item">
+          <text class="info-label">供应商</text>
+          <text class="info-value text-ellipsis">{{item.supplier || '-'}}</text>
+        </view>
+      </view>
+      <view class="card-info">
+        <view class="info-item">
+          <text class="info-label">存放位置</text>
+          <text class="info-value">📍 {{item.location || '-'}}</text>
+        </view>
+        <view class="info-item">
+          <text class="info-label">关联设备</text>
+          <text class="info-value text-ellipsis">🏭 {{item.relatedEquip || '-'}}</text>
+        </view>
+      </view>
+
+      <!-- 出入库统计 -->
+      <view class="io-stats">
+        <view class="io-block">
+          <text class="io-arrow io-in">↓</text>
+          <text class="io-text">入库 {{item.totalIn || 0}}{{item.unit}}</text>
+        </view>
+        <view class="io-block">
+          <text class="io-arrow io-out">↑</text>
+          <text class="io-text">出库 {{item.totalOut || 0}}{{item.unit}}</text>
+        </view>
+      </view>
+
+      <!-- 操作按钮 -->
+      <view class="card-actions">
+        <view class="btn btn-success btn-sm" style="flex:1;margin-right:16rpx;" data-id="{{item.id}}" catchtap="openStockIn">📥 入库</view>
+        <view class="btn btn-warning btn-sm" style="flex:1;" data-id="{{item.id}}" catchtap="openStockOut">📤 出库</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 入库/出库弹窗 -->
+  <view wx:if="{{showStockModal}}" class="modal-mask" bindtap="closeStockModal">
+    <view class="modal-content" catchtap="stopPropagation">
+      <view class="modal-header">
+        <text class="modal-title">{{stockModalTitle}}</text>
+        <text class="modal-close" bindtap="closeStockModal">✕</text>
+      </view>
+      <view class="modal-body">
+        <view class="modal-part-info" wx:if="{{stockPart}}">
+          <text class="modal-part-name">{{stockPart.partName}}</text>
+          <text class="modal-part-stock">当前库存：{{stockPart.stock}} {{stockPart.unit}}</text>
+        </view>
+        <view class="form-item">
+          <text class="form-label">{{stockModalType === 'in' ? '入库' : '出库'}}数量<text class="required">*</text></text>
+          <view class="qty-input-wrap">
+            <input class="qty-input" type="number" placeholder="请输入数量" value="{{stockQty}}" bindinput="onStockQtyInput"></input>
+            <text class="qty-unit">{{stockPart.unit}}</text>
+          </view>
+        </view>
+        <view class="form-item">
+          <text class="form-label">备注说明</text>
+          <textarea class="modal-remark" placeholder="请输入备注（选填）" value="{{stockRemark}}" bindinput="onStockRemarkInput" maxlength="200"></textarea>
+        </view>
+      </view>
+      <view class="modal-footer">
+        <view class="btn btn-plain btn-sm" style="flex:1;margin-right:20rpx;" bindtap="closeStockModal">取消</view>
+        <view class="btn {{stockModalType === 'in' ? 'btn-success' : 'btn-warning'}} btn-sm" style="flex:1;" bindtap="onConfirmStock">确定</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 添加备件弹窗 -->
+  <view wx:if="{{showAddModal}}" class="modal-mask" bindtap="closeAddModal">
+    <view class="modal-content add-modal-content" catchtap="stopPropagation">
+      <view class="modal-header">
+        <text class="modal-title">添加备件</text>
+        <text class="modal-close" bindtap="closeAddModal">✕</text>
+      </view>
+      <scroll-view scroll-y class="modal-body add-modal-body">
+        <view class="form-item">
+          <text class="form-label">备件名称<text class="required">*</text></text>
+          <input class="form-input" placeholder="请输入备件名称" value="{{addForm.partName}}" data-field="partName" bindinput="onAddInput" maxlength="50" />
+        </view>
+        <view class="form-item">
+          <text class="form-label">备件编码</text>
+          <input class="form-input" placeholder="请输入备件编码（选填）" value="{{addForm.partCode}}" data-field="partCode" bindinput="onAddInput" maxlength="50" />
+        </view>
+        <view class="form-item">
+          <text class="form-label">备件分类</text>
+          <picker mode="selector" range="{{addCategoryOptions}}" value="{{addForm.categoryIndex}}" bindchange="onAddCategoryChange">
+            <view class="form-picker {{addForm.categoryIndex >= 0 ? '' : 'placeholder'}}">
+              <text>{{addForm.categoryIndex >= 0 ? addCategoryOptions[addForm.categoryIndex] : '请选择分类'}}</text>
+              <text class="picker-arrow">›</text>
+            </view>
+          </picker>
+        </view>
+        <view class="form-item">
+          <text class="form-label">品牌</text>
+          <input class="form-input" placeholder="请输入品牌（选填）" value="{{addForm.brand}}" data-field="brand" bindinput="onAddInput" maxlength="50" />
+        </view>
+        <view class="form-item">
+          <text class="form-label">规格型号</text>
+          <input class="form-input" placeholder="请输入规格型号（选填）" value="{{addForm.spec}}" data-field="spec" bindinput="onAddInput" maxlength="100" />
+        </view>
+        <view class="form-row">
+          <view class="form-item form-item-half">
+            <text class="form-label">计量单位</text>
+            <input class="form-input" placeholder="如：个" value="{{addForm.unit}}" data-field="unit" bindinput="onAddInput" maxlength="10" />
+          </view>
+          <view class="form-item form-item-half">
+            <text class="form-label">单价</text>
+            <input class="form-input" type="digit" placeholder="单价" value="{{addForm.unitPrice}}" data-field="unitPrice" bindinput="onAddInput" />
+          </view>
+        </view>
+        <view class="form-row">
+          <view class="form-item form-item-half">
+            <text class="form-label">当前库存</text>
+            <input class="form-input" type="number" placeholder="库存量" value="{{addForm.stock}}" data-field="stock" bindinput="onAddInput" />
+          </view>
+          <view class="form-item form-item-half">
+            <text class="form-label">最低库存</text>
+            <input class="form-input" type="number" placeholder="最低库存" value="{{addForm.minStock}}" data-field="minStock" bindinput="onAddInput" />
+          </view>
+        </view>
+        <view class="form-item">
+          <text class="form-label">最高库存</text>
+          <input class="form-input" type="number" placeholder="请输入最高库存（选填）" value="{{addForm.maxStock}}" data-field="maxStock" bindinput="onAddInput" />
+        </view>
+        <view class="form-item">
+          <text class="form-label">供应商</text>
+          <input class="form-input" placeholder="请输入供应商（选填）" value="{{addForm.supplier}}" data-field="supplier" bindinput="onAddInput" maxlength="100" />
+        </view>
+        <view class="form-item">
+          <text class="form-label">存放位置</text>
+          <input class="form-input" placeholder="请输入存放位置（选填）" value="{{addForm.location}}" data-field="location" bindinput="onAddInput" maxlength="100" />
+        </view>
+      </scroll-view>
+      <view class="modal-footer">
+        <view class="btn btn-plain btn-sm" style="flex:1;margin-right:20rpx;" bindtap="closeAddModal">取消</view>
+        <view class="btn btn-primary btn-sm" style="flex:1;" bindtap="onConfirmAdd">{{addSubmitting ? '保存中...' : '确定'}}</view>
+      </view>
+    </view>
+  </view>
+</view>

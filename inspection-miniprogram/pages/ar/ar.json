@@ -1,0 +1,8 @@
+{
+  "usingComponents": {
+    "empty-state": "/components/empty-state/index"
+  },
+  "navigationBarTitleText": "AR巡检",
+  "navigationBarBackgroundColor": "#0f172a",
+  "navigationBarTextStyle": "white"
+}

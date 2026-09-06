@@ -1,0 +1,238 @@
+/* pages/project/list/list.wxss */
+
+/* 搜索栏 */
+.search-bar {
+  background: #fff;
+  padding: 20rpx 24rpx;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.search-input-wrap {
+  display: flex;
+  align-items: center;
+  background: #f3f4f6;
+  border-radius: 40rpx;
+  padding: 0 24rpx;
+  height: 72rpx;
+}
+.search-icon {
+  font-size: 28rpx;
+  margin-right: 12rpx;
+}
+.search-input {
+  flex: 1;
+  font-size: 28rpx;
+  color: #333;
+}
+.search-clear {
+  font-size: 28rpx;
+  color: #9ca3af;
+  padding: 10rpx;
+}
+
+/* 状态筛选 */
+.status-tabs {
+  display: flex;
+  background: #fff;
+  padding: 0 24rpx 20rpx;
+  gap: 20rpx;
+}
+.status-tab {
+  padding: 12rpx 36rpx;
+  border-radius: 30rpx;
+  font-size: 26rpx;
+  color: #6b7280;
+  background: #f3f4f6;
+  transition: all 0.2s;
+}
+.status-tab.active {
+  background: #2563eb;
+  color: #fff;
+}
+
+/* 列表区域 */
+.list-wrap {
+  padding: 20rpx 24rpx 140rpx;
+}
+
+/* 项目卡片 */
+.project-card {
+  position: relative;
+  background: #fff;
+  border-radius: 20rpx;
+  padding: 28rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.04);
+}
+.project-card:active {
+  background: #fafbfc;
+}
+.card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12rpx;
+}
+.project-name {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #1f2937;
+  flex: 1;
+  margin-right: 16rpx;
+}
+.project-code {
+  font-size: 24rpx;
+  color: #9ca3af;
+  margin-bottom: 8rpx;
+}
+.project-desc {
+  font-size: 26rpx;
+  color: #6b7280;
+  margin-bottom: 20rpx;
+}
+
+/* 卡片统计 */
+.card-stats {
+  display: flex;
+  align-items: center;
+  background: #f9fafb;
+  border-radius: 16rpx;
+  padding: 20rpx 0;
+}
+.stat-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.stat-num {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #1f2937;
+}
+.stat-label {
+  font-size: 22rpx;
+  color: #9ca3af;
+  margin-top: 6rpx;
+}
+.stat-divider {
+  width: 1rpx;
+  height: 56rpx;
+  background: #e5e7eb;
+}
+
+/* 编辑入口 */
+.card-edit {
+  position: absolute;
+  top: 28rpx;
+  right: 28rpx;
+  display: none;
+}
+
+/* 浮动按钮 */
+.fab-btn {
+  position: fixed;
+  right: 40rpx;
+  bottom: 60rpx;
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8rpx 24rpx rgba(37, 99, 235, 0.4);
+  z-index: 100;
+}
+.fab-btn:active {
+  transform: scale(0.92);
+  opacity: 0.9;
+}
+.fab-icon {
+  font-size: 56rpx;
+  color: #fff;
+  font-weight: 300;
+  line-height: 1;
+}
+
+/* 弹窗 */
+.modal-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+.modal-content {
+  width: 100%;
+  background: #fff;
+  border-radius: 32rpx 32rpx 0 0;
+  padding: 32rpx;
+  animation: slideUp 0.25s ease;
+}
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 30rpx;
+}
+.modal-title {
+  font-size: 34rpx;
+  font-weight: 600;
+  color: #1f2937;
+}
+.modal-close {
+  font-size: 32rpx;
+  color: #9ca3af;
+  padding: 10rpx;
+}
+.modal-body {
+  padding-bottom: 20rpx;
+}
+.form-item {
+  margin-bottom: 28rpx;
+}
+.form-label {
+  display: block;
+  font-size: 28rpx;
+  color: #374151;
+  margin-bottom: 14rpx;
+  font-weight: 500;
+}
+.required {
+  color: #ef4444;
+  margin-left: 4rpx;
+}
+.form-input {
+  background: #f9fafb;
+  border: 2rpx solid #e5e7eb;
+  border-radius: 16rpx;
+  padding: 0 24rpx;
+  height: 80rpx;
+  font-size: 28rpx;
+  color: #333;
+}
+.form-textarea {
+  background: #f9fafb;
+  border: 2rpx solid #e5e7eb;
+  border-radius: 16rpx;
+  padding: 20rpx 24rpx;
+  height: 160rpx;
+  font-size: 28rpx;
+  color: #333;
+  width: 100%;
+}
+.modal-footer {
+  display: flex;
+  padding-top: 10rpx;
+}

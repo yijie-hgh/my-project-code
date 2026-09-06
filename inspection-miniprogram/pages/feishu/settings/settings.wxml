@@ -1,0 +1,203 @@
+<!--pages/feishu/settings/settings.wxml-->
+<view class="page-bg">
+  <!-- 飞书账号卡片 -->
+  <view class="account-card {{loggedIn ? 'logged-in' : ''}}">
+    <view class="account-avatar">
+      <text wx:if="{{loggedIn}}" class="avatar-icon">🟢</text>
+      <text wx:else class="avatar-icon">⚪</text>
+    </view>
+    <view class="account-info">
+      <view wx:if="{{loggedIn}}" class="account-name">{{accountInfo.name}}</view>
+      <view wx:else class="account-name">未登录飞书</view>
+      <view wx:if="{{loggedIn}}" class="account-detail">{{accountInfo.email}} · {{accountInfo.deptName}}</view>
+      <view wx:else class="account-detail">登录飞书后可使用多维表格同步功能</view>
+    </view>
+    <view class="account-action">
+      <view wx:if="{{loggedIn}}" class="btn-logout" bindtap="onLogout">退出</view>
+      <view wx:else class="btn-login" bindtap="onLogin">登录飞书</view>
+    </view>
+  </view>
+
+  <!-- Tab导航 -->
+  <view class="tab-bar">
+    <view wx:for="{{tabs}}" wx:key="value" class="tab-item {{activeTab === item.value ? 'active' : ''}}" data-value="{{item.value}}" bindtap="onTabChange">{{item.label}}</view>
+  </view>
+
+  <!-- 概览Tab -->
+  <view wx:if="{{activeTab === 'overview'}}" class="tab-content">
+    <!-- 统计卡片 -->
+    <view class="stat-grid">
+      <view class="stat-box">
+        <view class="stat-val text-primary">{{overview.linkedCount || 0}}</view>
+        <view class="stat-desc">已关联表格</view>
+      </view>
+      <view class="stat-box">
+        <view class="stat-val text-warning">{{overview.unlinkedCount || 0}}</view>
+        <view class="stat-desc">未关联表格</view>
+      </view>
+      <view class="stat-box">
+        <view class="stat-val text-success">{{overview.totalRecords || 0}}</view>
+        <view class="stat-desc">飞书记录总数</view>
+      </view>
+      <view class="stat-box">
+        <view class="stat-val text-primary">{{overview.syncedToday || 0}}</view>
+        <view class="stat-desc">今日同步次数</view>
+      </view>
+    </view>
+
+    <!-- 已关联表格列表 -->
+    <view class="section-title">
+      <text>已关联的多维表格</text>
+    </view>
+    <view class="table-list">
+      <view wx:if="{{tableList.length === 0}}" class="empty-hint">
+        <text>暂未关联任何飞书表格</text>
+        <view class="empty-action" bindtap="onTabChange" data-value="tables">去创建</view>
+      </view>
+      <view wx:for="{{tableList}}" wx:key="moduleKey" class="table-item">
+        <view class="table-icon">{{item.icon}}</view>
+        <view class="table-info">
+          <view class="table-name">{{item.name}}</view>
+          <view class="table-meta">{{item.recordCount || 0}}条记录 · {{item.syncStatus === 'synced' ? '已同步' : item.syncStatus === 'syncing' ? '同步中' : item.syncStatus === 'error' ? '同步异常' : '未同步'}}</view>
+        </view>
+        <view class="table-status {{item.syncStatus === 'synced' ? 'status-synced' : item.syncStatus === 'error' ? 'status-error' : 'status-idle'}}">
+          {{item.syncStatus === 'synced' ? '✓' : item.syncStatus === 'syncing' ? '⟳' : item.syncStatus === 'error' ? '!' : '○'}}
+        </view>
+      </view>
+    </view>
+
+    <!-- 云盘统计 -->
+    <view class="section-title">
+      <text>云盘存储</text>
+    </view>
+    <view class="cloud-overview">
+      <view class="cloud-stat">
+        <text class="cloud-icon">☁️</text>
+        <view class="cloud-info">
+          <view class="cloud-num">{{overview.cloudFileCount || 0}} 个文件</view>
+          <view class="cloud-size">{{overview.cloudTotalSize || '0B'}}</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 多维表格Tab -->
+  <view wx:if="{{activeTab === 'tables'}}" class="tab-content">
+    <!-- 批量操作 -->
+    <view class="batch-actions">
+      <view class="batch-btn btn-primary" bindtap="onCreateAllTables">
+        <text>⚡ 一键创建全部</text>
+      </view>
+      <view class="batch-btn btn-success" bindtap="onSyncAll">
+        <text>🔄 一键同步全部</text>
+      </view>
+    </view>
+
+    <!-- 模块列表 -->
+    <view class="module-list">
+      <view wx:for="{{allConfigs}}" wx:key="moduleKey" class="module-card">
+        <view class="module-header">
+          <view class="module-icon">{{item.icon}}</view>
+          <view class="module-info">
+            <view class="module-name">{{item.name}}</view>
+            <view class="module-desc">{{item.description}}</view>
+          </view>
+          <view class="module-badge {{item.linked ? 'badge-linked' : 'badge-unlinked'}}">
+            {{item.linked ? item.recordCount + '条' : '未创建'}}
+          </view>
+        </view>
+        <view class="module-fields">
+          <text class="field-count">字段数：{{item.fieldCount}}</text>
+          <text wx:if="{{item.lastSyncTime}}" class="sync-time">最近同步：{{item.lastSyncTime}}</text>
+        </view>
+        <view class="module-actions">
+          <view wx:if="{{!item.linked}}" class="action-btn btn-create" data-key="{{item.moduleKey}}" bindtap="onCreateTable">
+            <text>创建表格</text>
+          </view>
+          <view wx:if="{{item.linked}}" class="action-btn btn-sync {{syncing && syncingModule === item.moduleKey ? 'syncing' : ''}}" data-key="{{item.moduleKey}}" bindtap="onSyncModule">
+            <text>{{syncing && syncingModule === item.moduleKey ? '同步中...' : '同步数据'}}</text>
+          </view>
+          <view wx:if="{{item.linked}}" class="action-btn btn-import" data-key="{{item.moduleKey}}" bindtap="onExcelImportToFeishu">
+            <text>📥 Excel导入</text>
+          </view>
+          <view wx:if="{{item.linked}}" class="action-btn btn-pull" data-key="{{item.moduleKey}}" bindtap="onPullFromFeishu">
+            <text>拉取数据</text>
+          </view>
+          <view wx:if="{{item.linked}}" class="action-btn btn-del" data-key="{{item.moduleKey}}" bindtap="onDeleteTable">
+            <text>删除</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 数据同步Tab -->
+  <view wx:if="{{activeTab === 'sync'}}" class="tab-content">
+    <!-- 同步操作 -->
+    <view class="sync-actions">
+      <view class="sync-btn {{syncing ? 'disabled' : ''}}" bindtap="onSyncAll">
+        <text>{{syncing ? syncProgress : '🔄 一键同步所有模块'}}</text>
+      </view>
+    </view>
+
+    <!-- 同步日志 -->
+    <view class="section-title">
+      <text>同步日志</text>
+      <view wx:if="{{syncLogs.length > 0}}" class="clear-logs" bindtap="onClearLogs">清除</view>
+    </view>
+    <view class="log-list">
+      <empty-state wx:if="{{syncLogs.length === 0}}" text="暂无同步记录" icon="📋"></empty-state>
+      <view wx:for="{{syncLogs}}" wx:key="id" class="log-item">
+        <view class="log-header">
+          <text class="log-module">{{item.moduleName || item.moduleKey}}</text>
+          <text class="log-type {{item.type === 'excel_import' ? 'text-warning' : 'text-success'}}">{{item.type === 'excel_import' ? 'Excel导入' : '数据同步'}}</text>
+        </view>
+        <view class="log-detail">
+          <text wx:if="{{item.addCount !== undefined}}">新增 {{item.addCount}} 条</text>
+          <text wx:if="{{item.updateCount !== undefined}}" class="ml-20">更新 {{item.updateCount}} 条</text>
+          <text wx:if="{{item.importCount !== undefined}}">导入 {{item.importCount}} 条</text>
+          <text wx:if="{{item.totalRecords !== undefined}}" class="ml-20">共计 {{item.totalRecords}} 条</text>
+        </view>
+        <view class="log-time">{{item.syncTime || item.importTime}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 云盘Tab -->
+  <view wx:if="{{activeTab === 'cloud'}}" class="tab-content">
+    <!-- 云盘概览 -->
+    <view class="cloud-summary">
+      <view class="cloud-stat-card">
+        <view class="cloud-stat-num">{{cloudStats.totalFiles || 0}}</view>
+        <view class="cloud-stat-label">文件总数</view>
+      </view>
+      <view class="cloud-stat-card">
+        <view class="cloud-stat-num">{{cloudStats.totalSizeText || '0B'}}</view>
+        <view class="cloud-stat-label">已用空间</view>
+      </view>
+    </view>
+
+    <!-- 上传按钮 -->
+    <view class="upload-btn-wrap">
+      <view class="upload-btn" bindtap="onUploadFile">
+        <text>📤 上传文件到云盘</text>
+      </view>
+    </view>
+
+    <!-- 文件列表 -->
+    <view class="section-title">
+      <text>云盘文件</text>
+    </view>
+    <view class="file-list">
+      <empty-state wx:if="{{cloudFiles.length === 0}}" text="云盘暂无文件" icon="☁️"></empty-state>
+      <view wx:for="{{cloudFiles}}" wx:key="id" class="file-item">
+        <view class="file-icon">{{item.type === 'csv' || item.type === 'xlsx' || item.type === 'xls' ? '📊' : '📄'}}</view>
+        <view class="file-info">
+          <view class="file-name">{{item.name}}</view>
+          <view class="file-meta">{{item.size}}B · {{item.uploadTime}}</view>
+        </view>
+        <view class="file-action" data-id="{{item.id}}" bindtap="onDeleteFile">删除</view>
+      </view>
+    </view>
+  </view>
+</view>

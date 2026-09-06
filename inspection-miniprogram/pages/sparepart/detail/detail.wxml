@@ -1,0 +1,147 @@
+<!--pages/sparepart/detail/detail.wxml-->
+<view class="page-bg" style="padding-bottom: 160rpx;">
+  <empty-state wx:if="{{!loading && !detail}}" text="备件不存在" icon="❓"></empty-state>
+
+  <block wx:if="{{detail}}">
+    <!-- 备件信息头部 -->
+    <view class="detail-header">
+      <view class="header-top">
+        <view class="title-row">
+          <text class="detail-name">📦 {{detail.partName}}</text>
+          <text class="tag {{isLow ? 'tag-danger' : 'tag-success'}}">{{isLow ? '库存不足' : '充足'}}</text>
+        </view>
+        <view class="tag-row">
+          <text class="tag tag-info">{{detail.category}}</text>
+          <text class="header-code">{{detail.partCode}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 库存不足预警 -->
+    <view wx:if="{{isLow}}" class="alert-banner">
+      <text class="alert-icon">⚠️</text>
+      <view class="alert-content">
+        <text class="alert-title">库存不足预警</text>
+        <text class="alert-desc">当前库存 {{detail.stock}}{{detail.unit}}，低于最低库存 {{detail.minStock}}{{detail.unit}}，请及时补充</text>
+      </view>
+    </view>
+
+    <!-- 规格信息 -->
+    <view class="card">
+      <view class="card-title">规格信息</view>
+      <view class="info-row">
+        <text class="info-label">品牌</text>
+        <text class="info-value">{{detail.brand}}</text>
+      </view>
+      <view class="info-row">
+        <text class="info-label">规格型号</text>
+        <text class="info-value">{{detail.spec}}</text>
+      </view>
+      <view class="info-row">
+        <text class="info-label">计量单位</text>
+        <text class="info-value">{{detail.unit}}</text>
+      </view>
+      <view class="info-row">
+        <text class="info-label">单价</text>
+        <text class="info-value text-warning text-bold">¥{{detail.unitPrice}}</text>
+      </view>
+    </view>
+
+    <!-- 库存信息 -->
+    <view class="card">
+      <view class="card-title">库存信息</view>
+      <view class="info-row">
+        <text class="info-label">当前库存</text>
+        <text class="info-value {{isLow ? 'text-danger text-bold' : 'text-success text-bold'}}">{{detail.stock}} {{detail.unit}}</text>
+      </view>
+      <view class="info-row">
+        <text class="info-label">最低库存</text>
+        <text class="info-value text-danger">{{detail.minStock}} {{detail.unit}}</text>
+      </view>
+      <view class="info-row">
+        <text class="info-label">最高库存</text>
+        <text class="info-value">{{detail.maxStock}} {{detail.unit}}</text>
+      </view>
+      <view class="info-row">
+        <text class="info-label">库存价值</text>
+        <text class="info-value text-primary text-bold">¥{{totalValue}}</text>
+      </view>
+      <view class="stock-progress-wrap">
+        <view class="progress-row">
+          <text class="text-sm text-gray">库存占比</text>
+          <text class="text-sm {{isLow ? 'text-danger' : 'text-primary'}}">{{stockRate}}%</text>
+        </view>
+        <view class="progress-bar" style="height:16rpx;">
+          <view class="progress-bar-fill {{isLow ? 'fill-danger' : ''}}" style="width: {{stockRate}}%;"></view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 位置信息 -->
+    <view class="card">
+      <view class="card-title">位置信息</view>
+      <view class="info-row">
+        <text class="info-label">仓库位置</text>
+        <text class="info-value">📍 {{detail.location}}</text>
+      </view>
+      <view class="info-row">
+        <text class="info-label">供应商</text>
+        <text class="info-value">{{detail.supplier}}</text>
+      </view>
+    </view>
+
+    <!-- 统计信息 -->
+    <view class="card">
+      <view class="card-title">统计信息</view>
+      <view class="info-row">
+        <text class="info-label">累计入库</text>
+        <text class="info-value text-success">↓ {{detail.totalIn}} {{detail.unit}}</text>
+      </view>
+      <view class="info-row">
+        <text class="info-label">累计出库</text>
+        <text class="info-value text-danger">↑ {{detail.totalOut}} {{detail.unit}}</text>
+      </view>
+      <view class="info-row">
+        <text class="info-label">关联设备</text>
+        <text class="info-value">🏭 {{detail.relatedEquip}}</text>
+      </view>
+    </view>
+
+    <!-- 底部操作按钮 -->
+    <view class="bottom-bar">
+      <view class="btn btn-success" style="flex:1;margin-right:20rpx;" bindtap="openStockIn">📥 入库</view>
+      <view class="btn btn-warning" style="flex:1;" bindtap="openStockOut">📤 出库</view>
+    </view>
+
+    <!-- 入库/出库弹窗 -->
+    <view wx:if="{{showModal}}" class="modal-mask" bindtap="closeModal">
+      <view class="modal-content" catchtap="stopPropagation">
+        <view class="modal-header">
+          <text class="modal-title">{{modalTitle}}</text>
+          <text class="modal-close" bindtap="closeModal">✕</text>
+        </view>
+        <view class="modal-body">
+          <view class="modal-part-info">
+            <text class="modal-part-name">{{detail.partName}}</text>
+            <text class="modal-part-stock">当前库存：{{detail.stock}} {{detail.unit}}</text>
+          </view>
+          <view class="form-item">
+            <text class="form-label">{{modalType === 'in' ? '入库' : '出库'}}数量<text class="required">*</text></text>
+            <view class="qty-input-wrap">
+              <input class="qty-input" type="number" placeholder="请输入数量" value="{{modalQty}}" bindinput="onQtyInput"></input>
+              <text class="qty-unit">{{detail.unit}}</text>
+            </view>
+          </view>
+          <view class="form-item">
+            <text class="form-label">备注说明</text>
+            <textarea class="modal-remark" placeholder="请输入备注（选填）" value="{{modalRemark}}" bindinput="onModalRemarkInput" maxlength="200"></textarea>
+          </view>
+        </view>
+        <view class="modal-footer">
+          <view class="btn btn-plain btn-sm" style="flex:1;margin-right:20rpx;" bindtap="closeModal">取消</view>
+          <view class="btn {{modalType === 'in' ? 'btn-success' : 'btn-warning'}} btn-sm" style="flex:1;" bindtap="onConfirmStock">确定</view>
+        </view>
+      </view>
+    </view>
+  </block>
+</view>

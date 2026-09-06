@@ -1,0 +1,537 @@
+<!--pages/dashboard/dashboard.wxml-->
+<view class="page-bg container dashboard-page">
+  <!-- 加载中 -->
+  <view wx:if="{{loading && !stats}}" class="card">
+    <view class="loading-tip">正在加载看板数据...</view>
+  </view>
+
+  <block wx:if="{{stats}}">
+    <!-- 顶部统计卡片 -->
+    <view class="stats-row">
+      <view class="stat-card stat-blue">
+        <text class="stat-icon">🏭</text>
+        <text class="stat-value">{{stats.totalEquip}}</text>
+        <text class="stat-name">设备总数</text>
+      </view>
+      <view class="stat-card stat-green">
+        <text class="stat-icon">✅</text>
+        <text class="stat-value">{{stats.normalCount}}</text>
+        <text class="stat-name">正常运行</text>
+      </view>
+      <view class="stat-card stat-red">
+        <text class="stat-icon">🔧</text>
+        <text class="stat-value">{{stats.faultCount}}</text>
+        <text class="stat-name">故障待修</text>
+      </view>
+      <view class="stat-card stat-orange">
+        <text class="stat-icon">📋</text>
+        <text class="stat-value">{{stats.pendingCalibration}}</text>
+        <text class="stat-name">待校验</text>
+      </view>
+    </view>
+
+    <!-- 辅助统计 -->
+    <view class="sub-stats card">
+      <view class="sub-stat">
+        <text class="sub-stat-num text-gray">{{stats.scrapCount}}</text>
+        <text class="sub-stat-label">报废</text>
+      </view>
+      <view class="sub-divider"></view>
+      <view class="sub-stat">
+        <text class="sub-stat-num text-warning">{{stats.maintainCount}}</text>
+        <text class="sub-stat-label">保养中</text>
+      </view>
+      <view class="sub-divider"></view>
+      <view class="sub-stat">
+        <text class="sub-stat-num text-success">{{stats.runRate}}%</text>
+        <text class="sub-stat-label">运行率</text>
+      </view>
+      <view class="sub-divider"></view>
+      <view class="sub-stat">
+        <text class="sub-stat-num text-primary">{{stats.utilizationRate}}%</text>
+        <text class="sub-stat-label">利用率</text>
+      </view>
+    </view>
+
+    <!-- Tab切换 -->
+    <view class="dashboard-tabs">
+      <view
+        wx:for="{{tabs}}"
+        wx:key="value"
+        class="dashboard-tab {{activeTab === item.value ? 'active' : ''}}"
+        data-value="{{item.value}}"
+        bindtap="onTabChange">
+        {{item.label}}
+      </view>
+    </view>
+
+    <!-- ============ 设备概况 ============ -->
+    <block wx:if="{{activeTab === 'overview'}}">
+      <!-- OEE指标 -->
+      <view class="card" wx:if="{{oeeData}}">
+        <view class="card-title">⚙️ OEE设备综合效率</view>
+        <view class="oee-section">
+          <view class="oee-ring">
+            <view class="oee-ring-outer" style="background: conic-gradient(#10b981 0% {{oeeData.oeeValue}}%, #e5e7eb {{oeeData.oeeValue}}% 100%);">
+              <view class="oee-ring-inner">
+                <text class="oee-value">{{oeeData.oeeValue}}%</text>
+                <text class="oee-label">OEE</text>
+              </view>
+            </view>
+          </view>
+          <view class="oee-details">
+            <view class="oee-detail-item">
+              <text class="oee-detail-label">可用率</text>
+              <text class="oee-detail-value text-success">{{oeeData.availability}}%</text>
+              <view class="oee-detail-bar">
+                <view class="oee-detail-fill" style="width:{{oeeData.availability}}%;background:#10b981;"></view>
+              </view>
+            </view>
+            <view class="oee-detail-item">
+              <text class="oee-detail-label">表现率</text>
+              <text class="oee-detail-value text-primary">{{oeeData.performance}}%</text>
+              <view class="oee-detail-bar">
+                <view class="oee-detail-fill" style="width:{{oeeData.performance}}%;background:#2563eb;"></view>
+              </view>
+            </view>
+            <view class="oee-detail-item">
+              <text class="oee-detail-label">质量率</text>
+              <text class="oee-detail-value text-warning">{{oeeData.quality}}%</text>
+              <view class="oee-detail-bar">
+                <view class="oee-detail-fill" style="width:{{oeeData.quality}}%;background:#f59e0b;"></view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- MTBF/MTTR指标 -->
+      <view class="card">
+        <view class="card-title">📐 关键指标</view>
+        <view class="kpi-grid">
+          <view class="kpi-item">
+            <text class="kpi-icon">⏱️</text>
+            <text class="kpi-value">{{stats.mtbf}}h</text>
+            <text class="kpi-label">MTBF</text>
+            <text class="kpi-sub">平均故障间隔</text>
+          </view>
+          <view class="kpi-item">
+            <text class="kpi-icon">🔧</text>
+            <text class="kpi-value">{{stats.mttr}}h</text>
+            <text class="kpi-label">MTTR</text>
+            <text class="kpi-sub">平均修复时间</text>
+          </view>
+          <view class="kpi-item">
+            <text class="kpi-icon">📉</text>
+            <text class="kpi-value">{{stats.faultRate}}%</text>
+            <text class="kpi-label">故障率</text>
+            <text class="kpi-sub">本期故障占比</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 设备状态分布（饼图） -->
+      <view class="card">
+        <view class="card-title">📊 设备状态分布</view>
+        <view class="pie-section">
+          <view class="pie-wrap">
+            <view class="pie-chart" style="background: {{pieGradient}};">
+              <view class="pie-inner">
+                <text class="pie-total-num">{{pieTotal}}</text>
+                <text class="pie-total-label">总设备</text>
+              </view>
+            </view>
+          </view>
+          <view class="pie-legend">
+            <view wx:for="{{statusDist}}" wx:key="name" class="legend-item">
+              <view class="legend-dot" style="background:{{item.color}};"></view>
+              <view class="legend-info">
+                <text class="legend-name">{{item.name}}</text>
+                <view class="legend-data">
+                  <text class="legend-count">{{item.count}}台</text>
+                  <text class="legend-percent text-sub">{{item.percent}}%</text>
+                </view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 设备类型分布（横向柱状图） -->
+      <view class="card">
+        <view class="card-title">🏷️ 设备类型分布</view>
+        <view class="bar-list">
+          <view wx:for="{{typeDist}}" wx:key="name" class="bar-item">
+            <view class="bar-label-row">
+              <text class="bar-name">{{item.name}}</text>
+              <text class="bar-value">{{item.count}}台</text>
+            </view>
+            <view class="progress-bar chart-bar">
+              <view class="progress-bar-fill" style="width:{{item.percent}}%;background:{{item.color}};"></view>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 车间设备分布 -->
+      <view class="card">
+        <view class="card-title">🏭 车间设备分布</view>
+        <view class="bar-list">
+          <view wx:for="{{workshopDist}}" wx:key="name" class="bar-item">
+            <view class="bar-label-row">
+              <text class="bar-name">{{item.name}}</text>
+              <text class="bar-value">{{item.count}}台</text>
+            </view>
+            <view class="progress-bar chart-bar workshop-bar">
+              <view class="progress-bar-fill workshop-fill" style="width:{{item.percent}}%;"></view>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 故障率趋势 -->
+      <view class="card">
+        <view class="card-title">📉 故障率趋势(近6月)</view>
+        <view class="fault-rate-chart">
+          <view wx:for="{{faultRateData}}" wx:key="month" class="fault-rate-col">
+            <view class="fault-rate-bar-wrap">
+              <text class="fault-rate-value">{{item.rate}}%</text>
+              <view class="fault-rate-bar" style="height:{{item.height}}%;"></view>
+            </view>
+            <text class="fault-rate-month">{{item.month}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 近期趋势（多柱状图） -->
+      <view class="card">
+        <view class="card-title">📈 近期趋势</view>
+        <view class="trend-legend">
+          <view class="trend-legend-item">
+            <view class="trend-legend-dot" style="background:#2563eb;"></view>
+            <text>点检</text>
+          </view>
+          <view class="trend-legend-item">
+            <view class="trend-legend-dot" style="background:#10b981;"></view>
+            <text>巡检</text>
+          </view>
+          <view class="trend-legend-item">
+            <view class="trend-legend-dot" style="background:#ef4444;"></view>
+            <text>维修</text>
+          </view>
+        </view>
+        <view class="trend-chart">
+          <view wx:for="{{trendData}}" wx:key="date" class="trend-col">
+            <view class="trend-bars">
+              <view class="trend-bar trend-bar-spot" style="height:{{item.spotCheckH}}%;"></view>
+              <view class="trend-bar trend-bar-inspect" style="height:{{item.inspectH}}%;"></view>
+              <view class="trend-bar trend-bar-repair" style="height:{{item.repairH}}%;"></view>
+            </view>
+            <text class="trend-date">{{item.date}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 维修费用趋势 -->
+      <view class="card">
+        <view class="card-title">💰 维修费用趋势</view>
+        <view class="cost-summary">
+          <text class="cost-total-label">累计费用</text>
+          <text class="cost-total-value">¥{{costTotal}}</text>
+        </view>
+        <view class="cost-chart">
+          <view wx:for="{{costData}}" wx:key="month" class="cost-col">
+            <view class="cost-bar-wrap">
+              <text wx:if="{{item.cost > 0}}" class="cost-bar-value">¥{{item.cost}}</text>
+              <view class="cost-bar" style="height:{{item.height}}%;"></view>
+            </view>
+            <text class="cost-month">{{item.month}}</text>
+          </view>
+        </view>
+      </view>
+    </block>
+
+    <!-- ============ 点检分布 ============ -->
+    <block wx:if="{{activeTab === 'spotcheck' && spotCheckDist}}">
+      <!-- 点检概览 -->
+      <view class="card">
+        <view class="card-title">✅ 点检概览</view>
+        <view class="dist-stats-grid">
+          <view class="dist-stat-item">
+            <text class="dist-stat-num text-primary">{{spotCheckDist.total}}</text>
+            <text class="dist-stat-label">点检总数</text>
+          </view>
+          <view class="dist-stat-item">
+            <text class="dist-stat-num text-success">{{spotCheckDist.normalCount}}</text>
+            <text class="dist-stat-label">正常</text>
+          </view>
+          <view class="dist-stat-item">
+            <text class="dist-stat-num text-danger">{{spotCheckDist.abnormalCount}}</text>
+            <text class="dist-stat-label">异常</text>
+          </view>
+          <view class="dist-stat-item">
+            <text class="dist-stat-num text-warning">{{spotCheckDist.completionRate}}%</text>
+            <text class="dist-stat-label">完成率</text>
+          </view>
+        </view>
+        <view class="pass-rate-bar">
+          <view class="pass-rate-label">
+            <text>合格率</text>
+            <text class="text-success">{{spotCheckDist.passRate}}%</text>
+          </view>
+          <view class="progress-bar">
+            <view class="progress-bar-fill" style="width:{{spotCheckDist.passRate}}%;background:linear-gradient(90deg,#10b981,#34d399);"></view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 按设备类型分布 -->
+      <view class="card">
+        <view class="card-title">📋 各类型点检分布</view>
+        <view class="type-dist-list">
+          <view wx:for="{{spotCheckByType}}" wx:key="name" class="type-dist-item">
+            <view class="type-dist-header">
+              <text class="type-dist-name">{{item.name}}</text>
+              <text class="type-dist-rate {{item.passRate >= 90 ? 'text-success' : item.passRate >= 75 ? 'text-warning' : 'text-danger'}}">{{item.passRate}}%</text>
+            </view>
+            <view class="type-dist-bar">
+              <view class="type-dist-bar-normal" style="width:{{item.normalPercent}}%;"></view>
+              <view class="type-dist-bar-abnormal" style="width:{{item.abnormalPercent}}%;"></view>
+            </view>
+            <view class="type-dist-info">
+              <text class="text-sm text-success">正常 {{item.normal}}</text>
+              <text class="text-sm text-danger">异常 {{item.abnormal}}</text>
+              <text class="text-sm text-gray">合计 {{item.total}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 近7天点检趋势 -->
+      <view class="card">
+        <view class="card-title">📈 近7天点检趋势</view>
+        <view class="trend-legend">
+          <view class="trend-legend-item">
+            <view class="trend-legend-dot" style="background:#10b981;"></view>
+            <text>正常</text>
+          </view>
+          <view class="trend-legend-item">
+            <view class="trend-legend-dot" style="background:#ef4444;"></view>
+            <text>异常</text>
+          </view>
+        </view>
+        <view class="trend-chart">
+          <view wx:for="{{spotCheckTrend}}" wx:key="date" class="trend-col">
+            <view class="trend-bars">
+              <view class="trend-bar trend-bar-inspect" style="height:{{item.normalH}}%;"></view>
+              <view class="trend-bar trend-bar-repair" style="height:{{item.abnormalH}}%;"></view>
+            </view>
+            <text class="trend-date">{{item.date}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 常见异常项Top5 -->
+      <view class="card">
+        <view class="card-title">⚠️ 常见异常项Top5</view>
+        <view class="top-abnormal-list">
+          <view wx:for="{{topAbnormal}}" wx:key="name" class="top-abnormal-item">
+            <view class="top-abnormal-rank">{{index + 1}}</view>
+            <view class="top-abnormal-info">
+              <view class="top-abnormal-header">
+                <text class="top-abnormal-name">{{item.name}}</text>
+                <text class="top-abnormal-count">{{item.count}}次</text>
+              </view>
+              <view class="progress-bar">
+                <view class="progress-bar-fill" style="width:{{item.barWidth}}%;background:linear-gradient(90deg,#f59e0b,#fbbf24);"></view>
+              </view>
+              <text class="top-abnormal-percent text-sm text-gray">占比 {{item.percent}}%</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </block>
+
+    <!-- ============ 维修分布 ============ -->
+    <block wx:if="{{activeTab === 'repair' && repairDist}}">
+      <!-- 维修概览 -->
+      <view class="card">
+        <view class="card-title">🔧 维修概览</view>
+        <view class="dist-stats-grid">
+          <view class="dist-stat-item">
+            <text class="dist-stat-num text-primary">{{repairDist.total}}</text>
+            <text class="dist-stat-label">维修总数</text>
+          </view>
+          <view class="dist-stat-item">
+            <text class="dist-stat-num text-success">{{repairDist.completed}}</text>
+            <text class="dist-stat-label">已完成</text>
+          </view>
+          <view class="dist-stat-item">
+            <text class="dist-stat-num text-warning">{{repairDist.inProgress}}</text>
+            <text class="dist-stat-label">进行中</text>
+          </view>
+          <view class="dist-stat-item">
+            <text class="dist-stat-num text-danger">{{repairDist.pending}}</text>
+            <text class="dist-stat-label">待受理</text>
+          </view>
+        </view>
+        <view class="response-time-section">
+          <view class="response-time-item">
+            <text class="response-time-icon">⚡</text>
+            <view class="response-time-info">
+              <text class="response-time-value">{{repairDist.avgResponseTime}}分钟</text>
+              <text class="response-time-label">平均响应时间</text>
+            </view>
+          </view>
+          <view class="response-time-item">
+            <text class="response-time-icon">🔨</text>
+            <view class="response-time-info">
+              <text class="response-time-value">{{repairDist.avgRepairTime}}小时</text>
+              <text class="response-time-label">平均维修时间</text>
+            </view>
+          </view>
+          <view class="response-time-item">
+            <text class="response-time-icon">📊</text>
+            <view class="response-time-info">
+              <text class="response-time-value">{{repairDist.completionRate}}%</text>
+              <text class="response-time-label">完成率</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 按故障类型分布 -->
+      <view class="card">
+        <view class="card-title">🏷️ 故障类型分布</view>
+        <view class="fault-type-grid">
+          <view wx:for="{{repairByFaultType}}" wx:key="name" class="fault-type-item">
+            <view class="fault-type-dot" style="background:{{item.color}};"></view>
+            <text class="fault-type-name">{{item.name}}</text>
+            <text class="fault-type-count">{{item.count}}次</text>
+            <text class="fault-type-percent text-sm text-gray">{{item.percent}}%</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 高频故障设备Top5 -->
+      <view class="card">
+        <view class="card-title">🔝 高频故障设备Top5</view>
+        <view class="bar-list">
+          <view wx:for="{{repairByEquip}}" wx:key="name" class="bar-item">
+            <view class="bar-label-row">
+              <text class="bar-name">{{item.name}}</text>
+              <text class="bar-value">{{item.count}}次</text>
+            </view>
+            <view class="progress-bar chart-bar">
+              <view class="progress-bar-fill" style="width:{{item.percent}}%;background:linear-gradient(90deg,#ef4444,#f87171);"></view>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 响应时间分布 -->
+      <view class="card">
+        <view class="card-title">⚡ 响应时间分布</view>
+        <view class="response-dist-list">
+          <view wx:for="{{responseTimeDist}}" wx:key="range" class="response-dist-item">
+            <view class="response-dist-header">
+              <text class="response-dist-range">{{item.range}}</text>
+              <text class="response-dist-count">{{item.count}}次 ({{item.percent}}%)</text>
+            </view>
+            <view class="progress-bar">
+              <view class="progress-bar-fill" style="width:{{item.percent}}%;background:linear-gradient(90deg,#2563eb,#3b82f6);"></view>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 月度维修趋势 -->
+      <view class="card">
+        <view class="card-title">📈 月度维修趋势</view>
+        <view class="trend-chart">
+          <view wx:for="{{repairTrend}}" wx:key="month" class="trend-col">
+            <view class="trend-bars">
+              <view class="trend-bar trend-bar-repair" style="height:{{item.countH}}%;"></view>
+            </view>
+            <text class="trend-date">{{item.month}}</text>
+            <text class="trend-num text-sm">{{item.count}}次</text>
+          </view>
+        </view>
+      </view>
+    </block>
+
+    <!-- ============ 保养分布 ============ -->
+    <block wx:if="{{activeTab === 'maintain' && maintainDist}}">
+      <!-- 保养概览 -->
+      <view class="card">
+        <view class="card-title">🛠️ 保养概览</view>
+        <view class="dist-stats-grid">
+          <view class="dist-stat-item">
+            <text class="dist-stat-num text-primary">{{maintainDist.total}}</text>
+            <text class="dist-stat-label">保养总数</text>
+          </view>
+          <view class="dist-stat-item">
+            <text class="dist-stat-num text-success">{{maintainDist.completed}}</text>
+            <text class="dist-stat-label">已完成</text>
+          </view>
+          <view class="dist-stat-item">
+            <text class="dist-stat-num text-warning">{{maintainDist.pending}}</text>
+            <text class="dist-stat-label">待执行</text>
+          </view>
+          <view class="dist-stat-item">
+            <text class="dist-stat-num text-danger">{{maintainDist.overdue}}</text>
+            <text class="dist-stat-label">已逾期</text>
+          </view>
+        </view>
+        <view class="pass-rate-bar">
+          <view class="pass-rate-label">
+            <text>完成率</text>
+            <text class="text-success">{{maintainDist.completionRate}}%</text>
+          </view>
+          <view class="progress-bar">
+            <view class="progress-bar-fill" style="width:{{maintainDist.completionRate}}%;background:linear-gradient(90deg,#10b981,#34d399);"></view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 按保养类型分布 -->
+      <view class="card">
+        <view class="card-title">📋 保养类型分布</view>
+        <view class="bar-list">
+          <view wx:for="{{maintainByType}}" wx:key="name" class="bar-item">
+            <view class="bar-label-row">
+              <text class="bar-name">{{item.name}}</text>
+              <text class="bar-value">{{item.count}}次</text>
+            </view>
+            <view class="progress-bar chart-bar">
+              <view class="progress-bar-fill" style="width:{{item.percent}}%;background:{{item.color}};"></view>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 保养费用统计 -->
+      <view class="card" wx:if="{{maintainDist.costStats}}">
+        <view class="card-title">💰 保养费用统计</view>
+        <view class="cost-summary">
+          <text class="cost-total-label">累计费用</text>
+          <text class="cost-total-value">¥{{maintainDist.costStats.totalCost}}</text>
+        </view>
+        <view class="cost-chart">
+          <view wx:for="{{maintainCostTrend}}" wx:key="month" class="cost-col">
+            <view class="cost-bar-wrap">
+              <text wx:if="{{item.cost > 0}}" class="cost-bar-value">¥{{item.cost}}</text>
+              <view class="cost-bar maintain-cost-bar" style="height:{{item.height}}%;"></view>
+            </view>
+            <text class="cost-month">{{item.month}}</text>
+          </view>
+        </view>
+      </view>
+    </block>
+
+    <!-- 底部刷新 -->
+    <view class="refresh-footer" bindtap="onRefresh">
+      <text>🔄 刷新数据</text>
+    </view>
+  </block>
+</view>

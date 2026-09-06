@@ -1,0 +1,101 @@
+/* pages/account/bind/bind.wxss */
+.page-bg {
+  min-height: 100vh;
+  background: #f5f6fa;
+}
+
+.card {
+  margin: 20rpx 24rpx;
+  background: #fff;
+  border-radius: 20rpx;
+  padding: 28rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0,0,0,0.04);
+}
+
+.card-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 24rpx;
+  padding-bottom: 16rpx;
+  border-bottom: 1rpx solid #f3f4f6;
+}
+
+/* 当前账号 */
+.current-user-card .user-info-row {
+  display: flex;
+  align-items: center;
+}
+.user-avatar {
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  color: #fff;
+  font-size: 40rpx;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 24rpx;
+  flex-shrink: 0;
+}
+.user-text { flex: 1; }
+.user-nick { font-size: 34rpx; font-weight: 600; color: #1f2937; }
+.user-phone { font-size: 26rpx; color: #6b7280; margin-top: 6rpx; }
+.user-dept { font-size: 24rpx; color: #9ca3af; margin-top: 4rpx; }
+
+/* 绑定项 */
+.bind-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20rpx;
+  border-radius: 16rpx;
+  background: #f9fafb;
+  transition: all 0.2s;
+}
+.bind-item.bound { background: #f0fdf4; }
+.bind-item.unbound { background: #fef3f2; }
+
+.bind-left { display: flex; align-items: center; flex: 1; min-width: 0; }
+.bind-icon {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40rpx;
+  margin-right: 20rpx;
+  flex-shrink: 0;
+}
+.wx-bg { background: #e8f5e9; }
+.feishu-bg { background: #e8f0fe; }
+
+.bind-detail { flex: 1; min-width: 0; }
+.bind-label { font-size: 30rpx; font-weight: 600; color: #1f2937; }
+.bind-info-text { font-size: 24rpx; color: #10b981; margin-top: 6rpx; display: flex; flex-direction: column; }
+.bind-info-text.unbound-text { color: #ef4444; }
+.bind-email { font-size: 22rpx; color: #6b7280; margin-top: 4rpx; }
+
+.bind-right { display: flex; align-items: center; gap: 12rpx; flex-shrink: 0; }
+.bind-action-btn {
+  padding: 10rpx 28rpx;
+  font-size: 24rpx;
+  border-radius: 24rpx;
+  white-space: nowrap;
+}
+.bind-btn { background: #2563eb; color: #fff; }
+.switch-btn { background: #eff6ff; color: #2563eb; border: 2rpx solid #93c5fd; }
+.unbind-btn { background: #fef2f2; color: #ef4444; border: 2rpx solid #fca5a5; }
+
+/* 说明 */
+.tips-card .tip-item {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 16rpx;
+}
+.tip-item:last-child { margin-bottom: 0; }
+.tip-dot { font-size: 16rpx; color: #2563eb; margin-right: 12rpx; margin-top: 6rpx; }
+.tip-text { font-size: 26rpx; color: #6b7280; flex: 1; line-height: 1.6; }

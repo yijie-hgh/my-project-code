@@ -1,0 +1,99 @@
+<!--pages/equipment/scan/scan.wxml-->
+<view class="page-bg scan-page">
+  <!-- 扫码区域 -->
+  <view class="scan-area">
+    <view class="scan-bg">
+      <view class="scan-frame">
+        <view class="frame-corner tl"></view>
+        <view class="frame-corner tr"></view>
+        <view class="frame-corner bl"></view>
+        <view class="frame-corner br"></view>
+        <view class="scan-beam"></view>
+      </view>
+      <view class="scan-center-icon">
+        <text>📋</text>
+      </view>
+    </view>
+    <view class="scan-tip">扫描设备二维码或NFC标签进行识别</view>
+    <button class="btn btn-primary btn-block scan-btn" bindtap="onScanCode">点击扫码</button>
+  </view>
+
+  <!-- 手动输入 -->
+  <view class="card manual-card">
+    <view class="card-title">⌨️ 手动输入编码</view>
+    <view class="manual-input-wrap">
+      <input class="manual-input" type="text" placeholder="请输入设备编码/二维码标识" value="{{manualCode}}" bindinput="onManualInput" confirm-type="search" bindconfirm="onManualSearch" />
+      <view class="btn btn-primary btn-sm" bindtap="onManualSearch">查询</view>
+    </view>
+  </view>
+
+  <!-- 识别结果 -->
+  <view wx:if="{{result}}" class="result-section">
+    <view class="result-header">
+      <text class="result-title">✅ 识别成功</text>
+      <text class="result-reset" bindtap="onReset">重新识别</text>
+    </view>
+
+    <!-- 设备信息卡片 -->
+    <view class="equip-result-card" bindtap="goDetail">
+      <view class="card-top">
+        <view class="equip-name text-ellipsis">{{result.equipName}}</view>
+        <text class="tag {{result.statusInfo.tag}}">{{result.statusInfo.text}}</text>
+      </view>
+      <view class="equip-code">编码：{{result.equipCode}}</view>
+      <view class="result-info">
+        <view class="result-row">
+          <text class="result-label">类型</text>
+          <text class="result-value">{{result.equipType}}</text>
+        </view>
+        <view class="result-row">
+          <text class="result-label">车间</text>
+          <text class="result-value">{{result.workshop}}</text>
+        </view>
+        <view class="result-row">
+          <text class="result-label">位置</text>
+          <text class="result-value">📍 {{result.location}}</text>
+        </view>
+        <view class="result-row">
+          <text class="result-label">负责人</text>
+          <text class="result-value">👤 {{result.manager}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 快捷操作 -->
+    <view class="quick-actions">
+      <view class="quick-btn" bindtap="goDetail">
+        <text class="quick-icon">📋</text>
+        <text class="quick-text">查看详情</text>
+      </view>
+      <view class="quick-btn" catchtap="goSpotCheck">
+        <text class="quick-icon">✅</text>
+        <text class="quick-text">设备点检</text>
+      </view>
+      <view class="quick-btn" catchtap="goRepair">
+        <text class="quick-icon">🔧</text>
+        <text class="quick-text">故障报修</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 未找到 -->
+  <view wx:if="{{notFound}}" class="not-found-section">
+    <view class="not-found-card">
+      <view class="not-found-icon">❌</view>
+      <view class="not-found-text">未找到设备</view>
+      <view class="not-found-desc">未识别到对应设备，请检查编码是否正确</view>
+      <view class="btn btn-outline btn-sm mt-20" bindtap="onReset">重新识别</view>
+    </view>
+  </view>
+
+  <!-- 使用说明 -->
+  <view class="card scan-help">
+    <view class="card-title">使用说明</view>
+    <view class="help-item"><text class="help-num">1</text><text>扫码识别：扫描设备上的二维码标签</text></view>
+    <view class="help-item"><text class="help-num">2</text><text>NFC识别：将手机靠近NFC标签碰触读取</text></view>
+    <view class="help-item"><text class="help-num">3</text><text>手动输入：输入设备编码或二维码标识查询</text></view>
+    <view class="help-item"><text class="help-num">4</text><text>识别成功后可快捷进行点检、报修操作</text></view>
+  </view>
+</view>

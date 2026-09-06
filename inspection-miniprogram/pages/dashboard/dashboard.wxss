@@ -1,0 +1,738 @@
+/* pages/dashboard/dashboard.wxss - 设备动态看板样式 */
+.dashboard-page {
+  padding-bottom: 40rpx;
+}
+
+/* 加载提示 */
+.loading-tip {
+  text-align: center;
+  padding: 40rpx;
+  color: #9ca3af;
+  font-size: 28rpx;
+}
+
+/* 顶部统计卡片 */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14rpx;
+  margin-bottom: 20rpx;
+}
+.stat-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16rpx;
+  padding: 24rpx 8rpx;
+  color: #fff;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.08);
+}
+.stat-blue {
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+}
+.stat-green {
+  background: linear-gradient(135deg, #10b981, #34d399);
+}
+.stat-red {
+  background: linear-gradient(135deg, #ef4444, #f87171);
+}
+.stat-orange {
+  background: linear-gradient(135deg, #f59e0b, #fbbf24);
+}
+.stat-icon {
+  font-size: 36rpx;
+  margin-bottom: 8rpx;
+}
+.stat-value {
+  font-size: 44rpx;
+  font-weight: 700;
+  line-height: 1.1;
+}
+.stat-name {
+  font-size: 22rpx;
+  margin-top: 6rpx;
+  opacity: 0.9;
+}
+
+/* 辅助统计 */
+.sub-stats {
+  display: flex;
+  align-items: center;
+  padding: 24rpx 28rpx;
+}
+.sub-stat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.sub-stat-num {
+  font-size: 36rpx;
+  font-weight: 700;
+}
+.sub-stat-label {
+  font-size: 22rpx;
+  color: #9ca3af;
+  margin-top: 6rpx;
+}
+.sub-divider {
+  width: 1rpx;
+  height: 60rpx;
+  background: #e5e7eb;
+}
+
+/* 饼图区域 */
+.pie-section {
+  display: flex;
+  align-items: center;
+  gap: 30rpx;
+}
+.pie-wrap {
+  flex-shrink: 0;
+}
+.pie-chart {
+  position: relative;
+  width: 220rpx;
+  height: 220rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.1);
+}
+.pie-inner {
+  width: 130rpx;
+  height: 130rpx;
+  border-radius: 50%;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.pie-total-num {
+  font-size: 44rpx;
+  font-weight: 700;
+  color: #1f2937;
+  line-height: 1;
+}
+.pie-total-label {
+  font-size: 22rpx;
+  color: #9ca3af;
+  margin-top: 6rpx;
+}
+.pie-legend {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+}
+.legend-dot {
+  width: 20rpx;
+  height: 20rpx;
+  border-radius: 6rpx;
+  margin-right: 14rpx;
+  flex-shrink: 0;
+}
+.legend-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.legend-name {
+  font-size: 26rpx;
+  color: #374151;
+  font-weight: 500;
+}
+.legend-data {
+  display: flex;
+  align-items: baseline;
+  gap: 12rpx;
+  margin-top: 2rpx;
+}
+.legend-count {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #1f2937;
+}
+.legend-percent {
+  font-size: 22rpx;
+}
+
+/* 横向柱状图 */
+.bar-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+.bar-item {
+  width: 100%;
+}
+.bar-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10rpx;
+}
+.bar-name {
+  font-size: 26rpx;
+  color: #374151;
+}
+.bar-value {
+  font-size: 26rpx;
+  font-weight: 600;
+  color: #1f2937;
+}
+.chart-bar {
+  height: 24rpx;
+  border-radius: 12rpx;
+}
+.chart-bar .progress-bar-fill {
+  transition: width 0.5s ease;
+  border-radius: 12rpx;
+}
+.workshop-bar {
+  height: 20rpx;
+}
+.workshop-fill {
+  background: linear-gradient(90deg, #6366f1, #818cf8) !important;
+}
+
+/* 趋势图 */
+.trend-legend {
+  display: flex;
+  justify-content: center;
+  gap: 40rpx;
+  margin-bottom: 24rpx;
+}
+.trend-legend-item {
+  display: flex;
+  align-items: center;
+  font-size: 24rpx;
+  color: #6b7280;
+}
+.trend-legend-dot {
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: 4rpx;
+  margin-right: 10rpx;
+}
+.trend-chart {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  height: 320rpx;
+  padding: 0 8rpx;
+  border-bottom: 1rpx solid #e5e7eb;
+}
+.trend-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  justify-content: flex-end;
+}
+.trend-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 6rpx;
+  height: 280rpx;
+  width: 100%;
+  justify-content: center;
+}
+.trend-bar {
+  width: 20rpx;
+  min-height: 4rpx;
+  border-radius: 6rpx 6rpx 0 0;
+  transition: height 0.5s ease;
+}
+.trend-bar-spot {
+  background: linear-gradient(180deg, #3b82f6, #2563eb);
+}
+.trend-bar-inspect {
+  background: linear-gradient(180deg, #34d399, #10b981);
+}
+.trend-bar-repair {
+  background: linear-gradient(180deg, #f87171, #ef4444);
+}
+.trend-date {
+  font-size: 20rpx;
+  color: #9ca3af;
+  margin-top: 12rpx;
+}
+
+/* 费用图 */
+.cost-summary {
+  display: flex;
+  align-items: baseline;
+  gap: 16rpx;
+  margin-bottom: 24rpx;
+}
+.cost-total-label {
+  font-size: 26rpx;
+  color: #6b7280;
+}
+.cost-total-value {
+  font-size: 40rpx;
+  font-weight: 700;
+  color: #ef4444;
+}
+.cost-chart {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  height: 280rpx;
+  padding: 0 8rpx;
+  border-bottom: 1rpx solid #e5e7eb;
+}
+.cost-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  justify-content: flex-end;
+}
+.cost-bar-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 240rpx;
+  justify-content: flex-end;
+  width: 100%;
+}
+.cost-bar-value {
+  font-size: 18rpx;
+  color: #ef4444;
+  font-weight: 600;
+  margin-bottom: 6rpx;
+  white-space: nowrap;
+}
+.cost-bar {
+  width: 40rpx;
+  min-height: 4rpx;
+  border-radius: 8rpx 8rpx 0 0;
+  background: linear-gradient(180deg, #fbbf24, #f59e0b);
+  transition: height 0.5s ease;
+}
+.cost-month {
+  font-size: 22rpx;
+  color: #9ca3af;
+  margin-top: 12rpx;
+}
+
+/* 刷新按钮 */
+.refresh-footer {
+  text-align: center;
+  padding: 24rpx;
+  font-size: 26rpx;
+  color: #2563eb;
+}
+
+/* ============ Tab切换 ============ */
+.dashboard-tabs {
+  display: flex;
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 8rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
+}
+.dashboard-tab {
+  flex: 1;
+  text-align: center;
+  padding: 16rpx 0;
+  font-size: 26rpx;
+  color: #6b7280;
+  border-radius: 12rpx;
+  transition: all 0.3s;
+}
+.dashboard-tab.active {
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 4rpx 12rpx rgba(37, 99, 235, 0.3);
+}
+
+/* ============ OEE区域 ============ */
+.oee-section {
+  display: flex;
+  align-items: center;
+  gap: 30rpx;
+}
+.oee-ring {
+  flex-shrink: 0;
+}
+.oee-ring-outer {
+  width: 200rpx;
+  height: 200rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.1);
+}
+.oee-ring-inner {
+  width: 150rpx;
+  height: 150rpx;
+  border-radius: 50%;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.oee-value {
+  font-size: 44rpx;
+  font-weight: 700;
+  color: #10b981;
+  line-height: 1;
+}
+.oee-label {
+  font-size: 22rpx;
+  color: #9ca3af;
+  margin-top: 6rpx;
+}
+.oee-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+.oee-detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+.oee-detail-label {
+  font-size: 24rpx;
+  color: #6b7280;
+}
+.oee-detail-value {
+  font-size: 32rpx;
+  font-weight: 700;
+}
+.oee-detail-bar {
+  height: 12rpx;
+  background: #f0f0f0;
+  border-radius: 6rpx;
+  overflow: hidden;
+}
+.oee-detail-fill {
+  height: 100%;
+  border-radius: 6rpx;
+  transition: width 0.5s ease;
+}
+
+/* ============ KPI网格 ============ */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16rpx;
+}
+.kpi-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24rpx 8rpx;
+  background: #f9fafb;
+  border-radius: 12rpx;
+}
+.kpi-icon {
+  font-size: 36rpx;
+  margin-bottom: 8rpx;
+}
+.kpi-value {
+  font-size: 40rpx;
+  font-weight: 700;
+  color: #1f2937;
+  line-height: 1;
+}
+.kpi-label {
+  font-size: 24rpx;
+  color: #374151;
+  margin-top: 8rpx;
+  font-weight: 600;
+}
+.kpi-sub {
+  font-size: 20rpx;
+  color: #9ca3af;
+  margin-top: 4rpx;
+}
+
+/* ============ 故障率趋势 ============ */
+.fault-rate-chart {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  height: 280rpx;
+  padding: 0 8rpx;
+  border-bottom: 1rpx solid #e5e7eb;
+}
+.fault-rate-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  justify-content: flex-end;
+}
+.fault-rate-bar-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 240rpx;
+  justify-content: flex-end;
+  width: 100%;
+}
+.fault-rate-value {
+  font-size: 20rpx;
+  color: #ef4444;
+  font-weight: 600;
+  margin-bottom: 6rpx;
+}
+.fault-rate-bar {
+  width: 36rpx;
+  min-height: 4rpx;
+  border-radius: 8rpx 8rpx 0 0;
+  background: linear-gradient(180deg, #f87171, #ef4444);
+  transition: height 0.5s ease;
+}
+.fault-rate-month {
+  font-size: 22rpx;
+  color: #9ca3af;
+  margin-top: 12rpx;
+}
+
+/* ============ 分布统计网格 ============ */
+.dist-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12rpx;
+  margin-bottom: 20rpx;
+}
+.dist-stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20rpx 4rpx;
+  background: #f9fafb;
+  border-radius: 12rpx;
+}
+.dist-stat-num {
+  font-size: 40rpx;
+  font-weight: 700;
+  line-height: 1;
+}
+.dist-stat-label {
+  font-size: 22rpx;
+  color: #9ca3af;
+  margin-top: 8rpx;
+}
+
+/* 合格率/完成率进度条 */
+.pass-rate-bar {
+  margin-top: 16rpx;
+}
+.pass-rate-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 26rpx;
+  color: #374151;
+  margin-bottom: 10rpx;
+}
+
+/* ============ 类型分布列表 ============ */
+.type-dist-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+.type-dist-item {
+  width: 100%;
+}
+.type-dist-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10rpx;
+}
+.type-dist-name {
+  font-size: 26rpx;
+  color: #374151;
+}
+.type-dist-rate {
+  font-size: 28rpx;
+  font-weight: 700;
+}
+.type-dist-bar {
+  display: flex;
+  height: 24rpx;
+  border-radius: 12rpx;
+  overflow: hidden;
+  background: #f0f0f0;
+}
+.type-dist-bar-normal {
+  background: linear-gradient(90deg, #10b981, #34d399);
+  transition: width 0.5s ease;
+}
+.type-dist-bar-abnormal {
+  background: linear-gradient(90deg, #ef4444, #f87171);
+  transition: width 0.5s ease;
+}
+.type-dist-info {
+  display: flex;
+  gap: 24rpx;
+  margin-top: 8rpx;
+}
+
+/* ============ 常见异常Top5 ============ */
+.top-abnormal-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+.top-abnormal-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 16rpx;
+}
+.top-abnormal-rank {
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #f59e0b, #fbbf24);
+  color: #fff;
+  font-size: 24rpx;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.top-abnormal-info {
+  flex: 1;
+}
+.top-abnormal-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8rpx;
+}
+.top-abnormal-name {
+  font-size: 26rpx;
+  color: #374151;
+  font-weight: 500;
+}
+.top-abnormal-count {
+  font-size: 26rpx;
+  color: #f59e0b;
+  font-weight: 600;
+}
+.top-abnormal-percent {
+  margin-top: 6rpx;
+}
+
+/* ============ 响应时间区域 ============ */
+.response-time-section {
+  display: flex;
+  justify-content: space-around;
+  padding: 20rpx 0;
+  border-top: 1rpx solid #f0f0f0;
+  margin-top: 16rpx;
+}
+.response-time-item {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+.response-time-icon {
+  font-size: 36rpx;
+}
+.response-time-info {
+  display: flex;
+  flex-direction: column;
+}
+.response-time-value {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: #1f2937;
+}
+.response-time-label {
+  font-size: 22rpx;
+  color: #9ca3af;
+  margin-top: 4rpx;
+}
+
+/* ============ 故障类型网格 ============ */
+.fault-type-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16rpx;
+}
+.fault-type-item {
+  display: flex;
+  align-items: center;
+  padding: 20rpx;
+  background: #f9fafb;
+  border-radius: 12rpx;
+  gap: 12rpx;
+}
+.fault-type-dot {
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: 4rpx;
+  flex-shrink: 0;
+}
+.fault-type-name {
+  font-size: 26rpx;
+  color: #374151;
+  flex: 1;
+}
+.fault-type-count {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #1f2937;
+}
+.fault-type-percent {
+  min-width: 60rpx;
+  text-align: right;
+}
+
+/* ============ 响应时间分布 ============ */
+.response-dist-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+.response-dist-item {
+  width: 100%;
+}
+.response-dist-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8rpx;
+}
+.response-dist-range {
+  font-size: 26rpx;
+  color: #374151;
+}
+.response-dist-count {
+  font-size: 24rpx;
+  color: #6b7280;
+}
+
+/* 保养费用柱图 */
+.maintain-cost-bar {
+  background: linear-gradient(180deg, #818cf8, #6366f1) !important;
+}
+
+/* 趋势数字 */
+.trend-num {
+  margin-top: 4rpx;
+}

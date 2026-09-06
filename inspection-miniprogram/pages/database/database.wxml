@@ -1,0 +1,290 @@
+<!--pages/database/database.wxml-->
+<view class="page-bg">
+  <!-- Tab导航 -->
+  <scroll-view scroll-x class="tab-bar">
+    <view wx:for="{{tabs}}" wx:key="value" class="tab-item {{activeTab === item.value ? 'active' : ''}}" data-value="{{item.value}}" bindtap="onTabChange">{{item.label}}</view>
+  </scroll-view>
+
+  <!-- ========== 数据表 ========== -->
+  <view wx:if="{{activeTab === 'tables'}}" class="tab-content">
+    <!-- 左侧表列表 + 右侧数据 -->
+    <view class="tables-layout">
+      <!-- 表列表 -->
+      <scroll-view scroll-y class="table-list">
+        <view class="list-header">数据表 ({{tableList.length}})</view>
+        <view wx:for="{{tableList}}" wx:key="name" class="table-item {{selectedTable === item.name ? 'active' : ''}}" data-name="{{item.name}}" bindtap="onSelectTable">
+          <view class="ti-left">
+            <text class="ti-icon">📊</text>
+            <view class="ti-info">
+              <text class="ti-name">{{item.name}}</text>
+              <text class="ti-comment">{{item.comment}}</text>
+            </view>
+          </view>
+          <view class="ti-right">
+            <text class="ti-rows">{{item.rowCount}}行</text>
+          </view>
+        </view>
+      </scroll-view>
+
+      <!-- 右侧数据区 -->
+      <view class="data-panel">
+        <view wx:if="{{!selectedTable}}" class="empty-tip">
+          <text class="empty-icon">📋</text>
+          <text class="empty-text">请从左侧选择数据表</text>
+        </view>
+
+        <block wx:if="{{selectedTable}}">
+          <!-- 工具栏 -->
+          <view class="data-toolbar">
+            <view class="toolbar-title">
+              <text class="tb-name">{{tableSchema.name}}</text>
+              <text class="tb-comment">{{tableSchema.comment}}</text>
+            </view>
+            <view class="toolbar-actions">
+              <view class="action-btn action-primary" bindtap="onAddRecord">+ 新增</view>
+              <view class="action-btn" bindtap="onExportCSV">导出</view>
+            </view>
+          </view>
+
+          <!-- 搜索 -->
+          <view class="data-search">
+            <input class="search-input" placeholder="搜索关键字..." value="{{searchKeyword}}" bindinput="onSearchInput" bindconfirm="onSearchConfirm" confirm-type="search" />
+            <text wx:if="{{searchKeyword}}" class="search-clear" bindtap="onClearSearch">✕</text>
+          </view>
+
+          <!-- 数据表格 -->
+          <view class="data-table-wrap">
+            <scroll-view scroll-x scroll-y class="data-table-scroll">
+              <view wx:if="{{tableData && tableData.rows.length > 0}}">
+                <!-- 表头 -->
+                <view class="data-table-header">
+                  <text class="data-cell data-cell-idx">#</text>
+                  <text wx:for="{{tableData.columnInfo}}" wx:key="name" class="data-cell data-cell-head {{item.pk ? 'pk-col' : ''}}">{{item.comment || item.name}}</text>
+                  <text class="data-cell data-cell-action">操作</text>
+                </view>
+                <!-- 数据行 -->
+                <view wx:for="{{tableData.rows}}" wx:key="index" class="data-table-row">
+                  <text class="data-cell data-cell-idx">{{index + 1 + (currentPage - 1) * pageSize}}</text>
+                  <text wx:for="{{tableData.columnInfo}}" wx:key="name" wx:for-item="col" class="data-cell {{col.pk ? 'pk-col' : ''}}">{{item[col.name]}}</text>
+                  <view class="data-cell data-cell-action">
+                    <text class="row-btn edit-btn" data-index="{{index}}" bindtap="onEditRecord">编辑</text>
+                    <text class="row-btn del-btn" data-index="{{index}}" bindtap="onDeleteRecord">删除</text>
+                  </view>
+                </view>
+              </view>
+              <view wx:elif="{{!dataLoading}}" class="empty-data">
+                <text>暂无数据</text>
+              </view>
+            </scroll-view>
+          </view>
+
+          <!-- 分页 -->
+          <view wx:if="{{tableData && tableData.totalPages > 1}}" class="pagination">
+            <view class="page-btn {{currentPage <= 1 ? 'disabled' : ''}}" data-page="{{currentPage - 1}}" bindtap="onPageChange">上一页</view>
+            <text class="page-info">{{currentPage}}/{{tableData.totalPages}} · 共{{tableData.total}}条</text>
+            <view class="page-btn {{currentPage >= tableData.totalPages ? 'disabled' : ''}}" data-page="{{currentPage + 1}}" bindtap="onPageChange">下一页</view>
+          </view>
+        </block>
+      </view>
+    </view>
+  </view>
+
+  <!-- ========== SQL查询 ========== -->
+  <view wx:if="{{activeTab === 'query'}}" class="tab-content">
+    <view class="query-card">
+      <view class="section-title">SQL 查询编辑器</view>
+      <textarea class="sql-input" placeholder="输入SQL语句，如：&#10;SELECT * FROM equipment&#10;SELECT * FROM spare_part LIMIT 20&#10;INSERT INTO sys_user (user_name, nick_name) VALUES ('test', '测试')&#10;UPDATE equipment SET status = '1' WHERE id = 1&#10;DELETE FROM event_record WHERE id = 1" value="{{sqlInput}}" bindinput="onSqlInput" maxlength="1000" auto-height></textarea>
+      <view class="query-actions">
+        <button class="btn btn-primary" bindtap="onExecuteQuery" loading="{{queryLoading}}">执行 SQL</button>
+      </view>
+    </view>
+
+    <!-- 查询结果 -->
+    <view wx:if="{{queryResult}}" class="result-card">
+      <view class="result-meta">
+        <text class="result-status success">✓ 执行成功</text>
+        <text class="result-info">{{queryResult.rowCount !== undefined ? queryResult.rowCount + '行' : (queryResult.affectedRows ? '影响' + queryResult.affectedRows + '行' : '')}}</text>
+        <text class="result-info" wx:if="{{queryResult.executionTime}}">{{queryResult.executionTime}}</text>
+      </view>
+      <scroll-view wx:if="{{queryResult.rows && queryResult.rows.length > 0}}" scroll-x class="result-table">
+        <view class="result-header">
+          <text wx:for="{{queryResult.columns}}" wx:key="*this" class="result-col">{{item}}</text>
+        </view>
+        <view wx:for="{{queryResult.rows}}" wx:key="index" class="result-row">
+          <text wx:for="{{queryResult.columns}}" wx:key="*this" wx:for-item="col" class="result-cell">{{item[col]}}</text>
+        </view>
+      </scroll-view>
+    </view>
+
+    <!-- 查询历史 -->
+    <view wx:if="{{queryHistory.length > 0}}" class="history-card">
+      <view class="history-title">
+        <text>查询历史</text>
+        <text class="clear-btn" bindtap="onClearHistory">清除</text>
+      </view>
+      <view wx:for="{{queryHistory}}" wx:key="index" class="history-item" data-sql="{{item.sql}}" bindtap="onUseHistory">
+        <text class="history-sql">{{item.sql}}</text>
+        <text class="history-meta">{{item.time}} · {{item.rowCount}}行</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- ========== 导入导出 ========== -->
+  <view wx:if="{{activeTab === 'import'}}" class="tab-content">
+    <view class="card-section">
+      <view class="section-title">📥 CSV 数据导入</view>
+      <view class="form-item">
+        <text class="form-label">目标数据表</text>
+        <picker mode="selector" range="{{tableList}}" range-key="name" value="{{importTableIndex}}" bindchange="onImportTableChange">
+          <view class="picker-display">
+            <text wx:if="{{importTable}}">{{importTable}}</text>
+            <text wx:else class="placeholder">请选择数据表</text>
+            <text class="picker-arrow">▼</text>
+          </view>
+        </picker>
+      </view>
+      <view class="form-item">
+        <text class="form-label">CSV 数据</text>
+        <view class="file-actions">
+          <view class="file-btn" bindtap="onChooseFile">📁 选择本地文件</view>
+          <text class="file-hint">支持 .csv / .txt 格式</text>
+        </view>
+        <textarea class="import-textarea" placeholder="粘贴CSV数据，第一行为表头，例如：&#10;user_name,nick_name,email&#10;test01,测试用户,test@example.com" value="{{importText}}" bindinput="onImportTextInput" maxlength="10000" auto-height></textarea>
+      </view>
+      <button class="btn btn-primary btn-block" bindtap="onImportCSV">开始导入</button>
+      <view wx:if="{{importResult}}" class="import-result">
+        <text class="ir-success">成功：{{importResult.successCount}} 条</text>
+        <text class="ir-fail" wx:if="{{importResult.failCount > 0}}">失败：{{importResult.failCount}} 条</text>
+      </view>
+    </view>
+
+    <view class="card-section">
+      <view class="section-title">📤 数据导出</view>
+      <view class="export-info">
+        <text>当前选中表：</text>
+        <text class="export-table">{{selectedTable || '未选择'}}</text>
+      </view>
+      <button class="btn btn-outline btn-block" bindtap="onExportCSV">导出为 CSV（复制到剪贴板）</button>
+    </view>
+
+    <view class="card-section">
+      <view class="section-title">⚠️ 危险操作</view>
+      <button class="btn btn-danger btn-block" bindtap="onTruncateTable">清空当前表数据</button>
+      <view class="danger-tip">清空后数据不可恢复，请谨慎操作！</view>
+    </view>
+  </view>
+
+  <!-- ========== 连接配置 ========== -->
+  <view wx:if="{{activeTab === 'config'}}" class="tab-content">
+    <view class="config-card">
+      <view class="section-title">数据库连接配置</view>
+      <view class="config-item">
+        <text class="config-label">主机地址</text>
+        <input class="config-input" value="{{dbConfig.host}}" data-field="host" bindinput="onConfigInput" />
+      </view>
+      <view class="config-item">
+        <text class="config-label">端口</text>
+        <input class="config-input" type="number" value="{{dbConfig.port}}" data-field="port" bindinput="onConfigInput" />
+      </view>
+      <view class="config-item">
+        <text class="config-label">数据库名</text>
+        <input class="config-input" value="{{dbConfig.database}}" data-field="database" bindinput="onConfigInput" />
+      </view>
+      <view class="config-item">
+        <text class="config-label">用户名</text>
+        <input class="config-input" value="{{dbConfig.username}}" data-field="username" bindinput="onConfigInput" />
+      </view>
+      <view class="config-item">
+        <text class="config-label">密码</text>
+        <input class="config-input" password value="{{dbConfig.password}}" data-field="password" bindinput="onConfigInput" />
+      </view>
+      <view class="config-item">
+        <text class="config-label">字符集</text>
+        <input class="config-input" value="{{dbConfig.charset}}" data-field="charset" bindinput="onConfigInput" />
+      </view>
+      <view class="config-actions">
+        <button class="btn btn-primary" bindtap="onTestConnection" loading="{{testing}}">测试连接</button>
+        <button class="btn btn-outline" bindtap="onSaveConfig">保存配置</button>
+      </view>
+      <view wx:if="{{connectionResult}}" class="conn-result {{connectionResult.code === 0 ? 'success' : 'fail'}}">
+        <text wx:if="{{connectionResult.code === 0}}">✓ 连接成功 · {{connectionResult.data.version}}</text>
+        <text wx:else>✗ {{connectionResult.msg}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- ========== 统计 ========== -->
+  <view wx:if="{{activeTab === 'stats'}}" class="tab-content">
+    <view wx:if="{{dbStats}}" class="stats-card">
+      <view class="stat-grid">
+        <view class="stat-box">
+          <text class="stat-num">{{dbStats.tableCount}}</text>
+          <text class="stat-label">数据表</text>
+        </view>
+        <view class="stat-box">
+          <text class="stat-num">{{dbStats.totalColumns}}</text>
+          <text class="stat-label">总字段数</text>
+        </view>
+        <view class="stat-box">
+          <text class="stat-num">{{dbStats.totalRows}}</text>
+          <text class="stat-label">总记录数</text>
+        </view>
+      </view>
+      <view class="stat-grid second">
+        <view class="stat-box">
+          <text class="stat-num">{{dbStats.dbSize}}</text>
+          <text class="stat-label">数据大小</text>
+        </view>
+        <view class="stat-box">
+          <text class="stat-num small">{{dbStats.charset}}</text>
+          <text class="stat-label">字符集</text>
+        </view>
+        <view class="stat-box">
+          <text class="stat-num small">{{dbStats.collation}}</text>
+          <text class="stat-label">排序规则</text>
+        </view>
+      </view>
+
+      <view class="table-stats">
+        <view class="stats-title">各表详情</view>
+        <view wx:for="{{dbStats.tables}}" wx:key="name" class="table-stat-item">
+          <view class="ts-left">
+            <text class="ts-name">{{item.name}}</text>
+            <text class="ts-comment">{{item.comment}}</text>
+          </view>
+          <view class="ts-right">
+            <text class="ts-rows">{{item.rowCount}} 行</text>
+            <text class="ts-cols">{{item.columnCount}} 列</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 编辑记录弹窗 -->
+  <view wx:if="{{showEditModal}}" class="modal-mask" bindtap="closeEditModal">
+    <view class="modal-content edit-modal" catchtap="noop">
+      <view class="modal-header">
+        <text class="modal-title">{{editMode === 'add' ? '新增记录' : '编辑记录'}}</text>
+        <text class="modal-close" bindtap="closeEditModal">✕</text>
+      </view>
+      <scroll-view scroll-y class="modal-body">
+        <view wx:for="{{editFields}}" wx:key="name" class="edit-item">
+          <text class="edit-label">{{item.comment || item.name}}{{item.pk ? ' 🔑' : ''}}</text>
+          <input 
+            class="edit-input" 
+            placeholder="{{item.type}}" 
+            value="{{editRecord[item.name]}}" 
+            data-field="{{item.name}}" 
+            bindinput="onEditInput"
+            disabled="{{item.autoIncrement}}"
+          />
+        </view>
+      </scroll-view>
+      <view class="modal-footer">
+        <button class="modal-btn-cancel" bindtap="closeEditModal">取消</button>
+        <button class="modal-btn-confirm" bindtap="onSaveRecord">保存</button>
+      </view>
+    </view>
+  </view>
+</view>

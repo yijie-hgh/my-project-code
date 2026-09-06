@@ -1,0 +1,195 @@
+<!--pages/equipment/detail/detail.wxml-->
+<view class="page-bg" wx:if="{{detail}}">
+  <!-- 顶部信息 -->
+  <view class="info-header">
+    <view class="info-top">
+      <view class="info-name-row">
+        <text class="info-name">{{detail.equipName}}</text>
+        <text class="tag {{detail.statusInfo.tag}}">{{detail.statusInfo.text}}</text>
+      </view>
+      <view class="info-code">设备编码：{{detail.equipCode}}</view>
+    </view>
+    <view class="info-tags">
+      <text class="header-tag">{{detail.equipType}}</text>
+      <text class="header-tag">{{detail.equipCategory}}</text>
+      <view class="edit-btn" catchtap="goEdit">
+        <text>✏️ 编辑</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 设备健康分 -->
+  <view class="card" wx:if="{{healthScore}}">
+    <view class="card-title">💚 设备健康评估</view>
+    <view class="health-section">
+      <view class="health-ring">
+        <view class="health-ring-outer" style="background: conic-gradient({{healthScore.color}} 0% {{healthScore.score}}%, #e5e7eb {{healthScore.score}}% 100%);">
+          <view class="health-ring-inner">
+            <text class="health-score" style="color:{{healthScore.color}};">{{healthScore.score}}</text>
+            <text class="health-label">健康分</text>
+          </view>
+        </view>
+      </view>
+      <view class="health-info">
+        <view class="health-level" style="color:{{healthScore.color}};">{{healthScore.level}}</view>
+        <view class="health-suggestions">{{healthScore.suggestions}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 基本信息 -->
+  <view class="card">
+    <view class="card-title">📋 基本信息</view>
+    <view class="info-grid">
+      <view class="grid-item">
+        <text class="grid-label">设备类型</text>
+        <text class="grid-value">{{detail.equipType || '-'}}</text>
+      </view>
+      <view class="grid-item">
+        <text class="grid-label">设备分类</text>
+        <text class="grid-value">{{detail.equipCategory || '-'}}</text>
+      </view>
+      <view class="grid-item">
+        <text class="grid-label">规格型号</text>
+        <text class="grid-value">{{detail.spec || '-'}}</text>
+      </view>
+      <view class="grid-item">
+        <text class="grid-label">所在车间</text>
+        <text class="grid-value">{{detail.workshop || '-'}}</text>
+      </view>
+      <view class="grid-item">
+        <text class="grid-label">安装位置</text>
+        <text class="grid-value">📍 {{detail.location || '-'}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 人员信息 -->
+  <view class="card">
+    <view class="card-title">👤 人员信息</view>
+    <view class="info-row">
+      <text class="row-label">负责人</text>
+      <text class="row-value">{{detail.manager || '-'}}</text>
+    </view>
+    <view class="info-row">
+      <text class="row-label">联系电话</text>
+      <view class="row-value-wrap">
+        <text class="row-value">{{detail.managerPhone || '-'}}</text>
+        <view class="call-btn" wx:if="{{detail.managerPhone}}" catchtap="onCallPhone">
+          <text>📞 拨打</text>
+        </view>
+      </view>
+    </view>
+    <view class="info-row">
+      <text class="row-label">制造商</text>
+      <text class="row-value">{{detail.manufacturer || '-'}}</text>
+    </view>
+    <view class="info-row">
+      <text class="row-label">供应商</text>
+      <text class="row-value">{{detail.supplier || '-'}}</text>
+    </view>
+  </view>
+
+  <!-- 维护时间线 -->
+  <view class="card" wx:if="{{timeline.length > 0}}">
+    <view class="card-title">📅 维护时间线</view>
+    <view class="timeline">
+      <view wx:for="{{timeline}}" wx:key="index" class="timeline-item">
+        <view class="timeline-dot" style="background:{{item.color}};">
+          <text class="timeline-icon">{{item.icon}}</text>
+        </view>
+        <view class="timeline-line {{index === timeline.length - 1 ? 'last' : ''}}"></view>
+        <view class="timeline-content">
+          <view class="timeline-header">
+            <text class="timeline-action">{{item.action}}</text>
+            <text class="timeline-time text-sm text-gray">{{item.time}}</text>
+          </view>
+          <text class="timeline-desc text-sm text-sub">{{item.desc}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 校验信息 -->
+  <view class="card">
+    <view class="card-title">🔧 校验信息</view>
+    <view class="info-row">
+      <text class="row-label">校验周期</text>
+      <text class="row-value">{{detail.calibrationCycle ? detail.calibrationCycle + '天' : '-'}}</text>
+    </view>
+    <view class="info-row">
+      <text class="row-label">最近校验</text>
+      <text class="row-value">{{detail.calibrationDate || '-'}}</text>
+    </view>
+    <view class="info-row">
+      <text class="row-label">校验到期</text>
+      <view class="row-value-wrap">
+        <text class="row-value {{calibrationExpired ? 'text-danger' : ''}}">{{detail.calibrationExpire || '-'}}</text>
+        <text class="tag tag-danger" wx:if="{{calibrationExpired}}">已过期</text>
+      </view>
+    </view>
+    <view class="calib-warn" wx:if="{{calibrationExpired}}">
+      <text>⚠️ 该设备校验已过期，请尽快安排校验！</text>
+    </view>
+  </view>
+
+  <!-- 标识信息 -->
+  <view class="card">
+    <view class="card-title">📱 设备标识</view>
+    <view class="id-tags">
+      <view class="id-tag-item" bindtap="onCopyQrcode">
+        <view class="id-tag-icon">📋</view>
+        <view class="id-tag-info">
+          <text class="id-tag-label">二维码</text>
+          <text class="id-tag-value">{{detail.qrcode || '-'}}</text>
+        </view>
+        <text class="id-tag-action">复制</text>
+      </view>
+      <view class="id-tag-item">
+        <view class="id-tag-icon">📡</view>
+        <view class="id-tag-info">
+          <text class="id-tag-label">NFC标签</text>
+          <text class="id-tag-value">{{detail.nfcTag || '-'}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 关联记录快捷入口 -->
+  <view class="card">
+    <view class="card-title">🔗 关联记录</view>
+    <view class="link-grid">
+      <view class="link-item" bindtap="goSpotCheckList">
+        <view class="link-icon" style="background:#d1fae5;">✅</view>
+        <text class="link-text">点检记录</text>
+        <text class="link-arrow">›</text>
+      </view>
+      <view class="link-item" bindtap="goRepairList">
+        <view class="link-icon" style="background:#fee2e2;">🔧</view>
+        <text class="link-text">报修记录</text>
+        <text class="link-arrow">›</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部操作按钮 -->
+  <view class="bottom-actions">
+    <view class="action-btn spotcheck-btn" bindtap="goSpotCheck">
+      <text class="action-icon">✅</text>
+      <text class="action-text">点检</text>
+    </view>
+    <view class="action-btn repair-btn" bindtap="goRepair">
+      <text class="action-icon">🔧</text>
+      <text class="action-text">报修</text>
+    </view>
+    <view class="action-btn maintain-btn" bindtap="goMaintain">
+      <text class="action-icon">🛠️</text>
+      <text class="action-text">保养</text>
+    </view>
+  </view>
+</view>
+
+<!-- 加载中 -->
+<view wx:if="{{!detail && loading}}" class="loading-mask">
+  <text>加载中...</text>
+</view>

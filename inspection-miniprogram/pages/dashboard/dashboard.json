@@ -1,0 +1,5 @@
+{
+  "usingComponents": {},
+  "navigationBarTitleText": "设备动态看板",
+  "enablePullDownRefresh": true
+}

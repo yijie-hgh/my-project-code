@@ -1,0 +1,198 @@
+<!--pages/repair/list/list.wxml-->
+<view class="page-bg" style="padding-bottom: 140rpx;">
+  <!-- 搜索栏 + 工具栏 -->
+  <view class="search-bar">
+    <view class="search-input-wrap">
+      <text class="search-icon">🔍</text>
+      <input class="search-input" placeholder="搜索报修标题" value="{{queryParams.title}}" bindinput="onSearch" confirm-type="search"></input>
+    </view>
+    <view class="view-toolbar">
+      <view class="tool-btn" bindtap="onOpenImport" title="Excel导入">
+        <text class="tool-icon">📥</text>
+      </view>
+      <view class="tool-btn" bindtap="onSyncToFeishu" title="飞书同步">
+        <text class="tool-icon">🔄</text>
+      </view>
+      <view class="tool-btn" bindtap="onToggleViewMode" title="切换视图">
+        <text class="tool-icon">{{viewMode === 'card' ? '📊' : '🗂️'}}</text>
+      </view>
+      <view class="tool-btn" bindtap="onOpenFieldConfig" title="字段配置">
+        <text class="tool-icon">⚙️</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 状态筛选 -->
+  <scroll-view class="tab-bar-scroll" scroll-x="true" enhanced show-scrollbar="{{false}}">
+    <view class="tab-list">
+      <view wx:for="{{tabs}}" wx:key="key" class="tab-item {{activeTab === item.key ? 'active' : ''}}" data-key="{{item.key}}" bindtap="onTabChange">
+        <text>{{item.label}}</text>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- ========== 卡片视图 ========== -->
+  <view wx:if="{{viewMode === 'card'}}" class="repair-list">
+    <empty-state wx:if="{{!loading && list.length === 0}}" text="暂无报修记录" icon="🔧" subText="点击右下角按钮发起报修"></empty-state>
+
+    <view wx:for="{{list}}" wx:key="id" class="repair-card" data-id="{{item.id}}" bindtap="goDetail">
+      <view class="card-top">
+        <view class="card-title-area">
+          <view class="card-title-row">
+            <view class="level-dot" style="background: {{item.levelInfo.color}};"></view>
+            <text class="repair-title">{{item.title}}</text>
+          </view>
+          <text class="repair-no">{{item.repairNo}}</text>
+        </view>
+        <text class="tag {{item.statusInfo.tag}}">{{item.statusInfo.text}}</text>
+      </view>
+
+      <view class="card-info">
+        <view wx:for="{{visibleFieldInfos}}" wx:for-item="field" wx:key="key" wx:if="{{field.key !== 'title' && field.key !== 'repairNo' && field.key !== 'status' && field.key !== 'level'}}" class="info-item">
+          <text class="info-icon">📌</text>
+          <text class="info-label">{{field.label}}:</text>
+          <text class="info-text text-ellipsis">{{item[field.key] || '-'}}</text>
+        </view>
+      </view>
+
+      <view class="card-footer">
+        <view class="card-tags">
+          <text class="tag {{item.levelInfo.tag}}">{{item.levelInfo.text}}</text>
+          <text wx:if="{{item.faultType}}" class="tag tag-info">{{item.faultType}}</text>
+        </view>
+        <text wx:if="{{item.repairer}}" class="repairer-text">维修人：{{item.repairer}}</text>
+      </view>
+
+      <!-- 快捷操作按钮 -->
+      <view class="card-actions" catchtap="">
+        <view class="action-btn" data-id="{{item.id}}" catchtap="onEdit">
+          <text>✏️ 编辑</text>
+        </view>
+        <view class="action-btn danger" data-id="{{item.id}}" catchtap="onDelete">
+          <text>🗑️ 删除</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- ========== 表格视图 ========== -->
+  <view wx:if="{{viewMode === 'table'}}" class="table-view-wrap">
+    <view wx:if="{{loading}}" class="loading-tip">加载中...</view>
+    <empty-state wx:if="{{!loading && list.length === 0}}" text="暂无报修记录" icon="🔧"></empty-state>
+
+    <scroll-view wx:if="{{list.length > 0}}" scroll-x scroll-y class="table-scroll">
+      <view class="table-header">
+        <text class="table-cell table-cell-idx">#</text>
+        <text wx:for="{{visibleFieldInfos}}" wx:for-item="field" wx:key="key" class="table-cell table-cell-head" style="min-width: {{field.width}}rpx;">{{field.label}}</text>
+        <text class="table-cell table-cell-action">操作</text>
+      </view>
+      <view wx:for="{{list}}" wx:key="id" class="table-row" data-id="{{item.id}}" bindtap="goDetail">
+        <text class="table-cell table-cell-idx">{{index + 1}}</text>
+        <text wx:for="{{visibleFieldInfos}}" wx:for-item="field" wx:key="key" class="table-cell" style="min-width: {{field.width}}rpx;">
+          <block wx:if="{{field.key === 'status'}}">
+            <text class="tag {{item.statusInfo.tag}}">{{item.statusInfo.text}}</text>
+          </block>
+          <block wx:elif="{{field.key === 'level'}}">
+            <text class="tag {{item.levelInfo.tag}}">{{item.levelInfo.text}}</text>
+          </block>
+          <block wx:else>
+            {{item[field.key] || '-'}}
+          </block>
+        </text>
+        <view class="table-cell table-cell-action">
+          <text class="row-action-btn" catchtap="onEdit" data-id="{{item.id}}">编辑</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 悬浮按钮 -->
+  <view class="fab-btn" bindtap="goCreate">
+    <text class="fab-icon">+</text>
+  </view>
+
+  <!-- ========== 字段配置弹窗 ========== -->
+  <view wx:if="{{showFieldConfig}}" class="modal-mask" bindtap="onCloseFieldConfig">
+    <view class="modal-popup field-config-popup" catchtap="">
+      <view class="popup-header">
+        <text class="popup-title">字段显示配置</text>
+        <text class="popup-close" bindtap="onCloseFieldConfig">✕</text>
+      </view>
+      <view class="popup-subtitle">选择需要在列表中显示的字段（已选{{configVisibleFields.length}}个）</view>
+      <scroll-view scroll-y class="field-config-scroll">
+        <view wx:for="{{fieldGroups}}" wx:for-item="fields" wx:for-index="groupName" wx:key="groupName" class="field-group">
+          <view class="field-group-title">{{groupName}}</view>
+          <view class="field-list">
+            <view wx:for="{{fields}}" wx:for-item="field" wx:key="key" class="field-item {{configVisibleFields.indexOf(field.key) > -1 ? 'selected' : ''}} {{field.required ? 'required' : ''}}" data-key="{{field.key}}" bindtap="onToggleField">
+              <view class="field-checkbox">{{configVisibleFields.indexOf(field.key) > -1 ? '✓' : ''}}</view>
+              <view class="field-info">
+                <text class="field-label">{{field.label}}</text>
+                <text wx:if="{{field.required}}" class="field-badge">必填</text>
+              </view>
+            </view>
+          </view>
+        </view>
+      </scroll-view>
+      <view class="popup-actions">
+        <view class="popup-action-btn secondary" bindtap="onSelectAllFields">全选</view>
+        <view class="popup-action-btn secondary" bindtap="onResetFieldConfig">恢复默认</view>
+        <view class="popup-action-btn primary" bindtap="onSaveFieldConfig">保存</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- ========== Excel导入弹窗 ========== -->
+  <view wx:if="{{showImportModal}}" class="modal-mask" bindtap="onCloseImport">
+    <view class="modal-popup import-popup" catchtap="">
+      <view class="popup-header">
+        <text class="popup-title">维修记录导入</text>
+        <text class="popup-close" bindtap="onCloseImport">✕</text>
+      </view>
+      <view class="import-content">
+        <view class="import-tip">
+          <text>支持 .xlsx / .xls / .csv 格式文件导入</text>
+        </view>
+        <view class="import-actions">
+          <view class="import-btn primary" bindtap="onChooseImportFile">
+            <text class="import-btn-icon">📁</text>
+            <text class="import-btn-text">选择文件</text>
+          </view>
+          <view class="import-btn" bindtap="onDownloadTemplate">
+            <text class="import-btn-icon">📄</text>
+            <text class="import-btn-text">下载模板</text>
+          </view>
+        </view>
+        <view wx:if="{{importResult}}" class="import-result">
+          <view class="result-header">
+            <text class="result-title">解析结果</text>
+            <text class="result-status {{importResult.success ? 'success' : 'fail'}}">{{importResult.success ? '成功' : '失败'}}</text>
+          </view>
+          <view wx:if="{{importResult.success}}" class="result-stats">
+            <view class="result-stat">
+              <text class="stat-num">{{importResult.total}}</text>
+              <text class="stat-label">总数</text>
+            </view>
+            <view class="result-stat">
+              <text class="stat-num text-success">{{importResult.validCount}}</text>
+              <text class="stat-label">有效</text>
+            </view>
+            <view class="result-stat">
+              <text class="stat-num text-danger">{{importResult.failCount}}</text>
+              <text class="stat-label">失败</text>
+            </view>
+          </view>
+          <view wx:if="{{importResult.errors && importResult.errors.length > 0}}" class="result-errors">
+            <view class="errors-title">错误详情（前3条）：</view>
+            <view wx:for="{{importResult.errors}}" wx:for-item="err" wx:key="row" wx:if="{{index < 3}}" class="error-item">
+              第{{err.row}}行: {{err.errors[0]}}
+            </view>
+          </view>
+        </view>
+      </view>
+      <view wx:if="{{importResult && importResult.success}}" class="popup-actions">
+        <view class="popup-action-btn secondary" bindtap="onCloseImport">取消</view>
+        <view class="popup-action-btn primary" bindtap="onConfirmImport">确认导入</view>
+      </view>
+    </view>
+  </view>
+</view>

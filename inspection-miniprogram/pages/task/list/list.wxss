@@ -1,0 +1,129 @@
+/* pages/task/list/list.wxss */
+.search-bar {
+  padding: 20rpx 24rpx;
+  background: #fff;
+}
+.search-input-wrap {
+  display: flex;
+  align-items: center;
+  background: #f3f4f6;
+  border-radius: 40rpx;
+  padding: 0 24rpx;
+  height: 72rpx;
+}
+.search-icon {
+  font-size: 32rpx;
+  margin-right: 12rpx;
+  opacity: 0.5;
+}
+.search-input {
+  flex: 1;
+  font-size: 28rpx;
+}
+
+.tab-bar-scroll {
+  white-space: nowrap;
+  background: #fff;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+.tab-list {
+  display: inline-flex;
+  padding: 0 12rpx;
+}
+.tab-item {
+  display: inline-flex;
+  padding: 20rpx 28rpx;
+  font-size: 28rpx;
+  color: #6b7280;
+  position: relative;
+}
+.tab-item.active {
+  color: #2563eb;
+  font-weight: 600;
+}
+.tab-item.active::after {
+  content: '';
+  position: absolute;
+  bottom: 4rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 48rpx;
+  height: 6rpx;
+  background: #2563eb;
+  border-radius: 3rpx;
+}
+
+.task-list {
+  padding: 20rpx 24rpx;
+}
+.task-card {
+  background: #fff;
+  border-radius: 20rpx;
+  padding: 28rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0,0,0,0.04);
+}
+.task-card:active {
+  transform: scale(0.99);
+  opacity: 0.95;
+}
+.task-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20rpx;
+}
+.task-title-area {
+  flex: 1;
+  margin-right: 16rpx;
+}
+.task-no {
+  font-size: 22rpx;
+  color: #9ca3af;
+  display: block;
+  margin-bottom: 6rpx;
+}
+.task-name {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #1f2937;
+  display: block;
+}
+
+.task-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24rpx;
+  margin-bottom: 16rpx;
+}
+.info-item {
+  display: flex;
+  align-items: center;
+}
+.info-icon {
+  font-size: 24rpx;
+  margin-right: 6rpx;
+}
+.info-text {
+  font-size: 24rpx;
+  color: #6b7280;
+}
+
+.task-remark {
+  font-size: 24rpx;
+  color: #9ca3af;
+  background: #f9fafb;
+  padding: 12rpx 16rpx;
+  border-radius: 8rpx;
+  margin-bottom: 16rpx;
+}
+
+.task-progress {
+  display: flex;
+  align-items: center;
+}
+.progress-text {
+  font-size: 24rpx;
+  color: #2563eb;
+  font-weight: 600;
+}

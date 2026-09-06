@@ -1,0 +1,199 @@
+/* components/inspection-item/index.wxss */
+.insp-item {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.03);
+}
+.insp-item.disabled { opacity: 0.85; }
+
+.item-header {
+  display: flex;
+  align-items: center;
+}
+.item-index {
+  width: 36rpx;
+  height: 36rpx;
+  border-radius: 50%;
+  background: #2563eb;
+  color: #fff;
+  font-size: 22rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 16rpx;
+  flex-shrink: 0;
+}
+.item-name {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #1f2937;
+  flex: 1;
+}
+.item-required {
+  color: #ef4444;
+  font-size: 28rpx;
+  margin-left: 4rpx;
+}
+.item-type-tag {
+  font-size: 20rpx;
+  color: #9ca3af;
+  background: #f3f4f6;
+  padding: 4rpx 12rpx;
+  border-radius: 8rpx;
+  margin-left: 12rpx;
+}
+
+.item-standard {
+  font-size: 24rpx;
+  color: #6b7280;
+  margin: 12rpx 0 0 52rpx;
+  background: #f9fafb;
+  padding: 8rpx 16rpx;
+  border-radius: 8rpx;
+}
+
+.item-body {
+  margin-top: 20rpx;
+  padding-left: 52rpx;
+}
+
+.item-input {
+  width: 100%;
+  min-height: 80rpx;
+  padding: 16rpx 20rpx;
+  background: #f9fafb;
+  border-radius: 12rpx;
+  font-size: 28rpx;
+  border: 2rpx solid #e5e7eb;
+}
+
+.number-row {
+  display: flex;
+  align-items: center;
+  background: #f9fafb;
+  border-radius: 12rpx;
+  border: 2rpx solid #e5e7eb;
+  padding: 0 20rpx;
+}
+.number-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+}
+.unit-text {
+  font-size: 26rpx;
+  color: #6b7280;
+  margin-left: 12rpx;
+}
+
+.choice-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+}
+.choice-btn {
+  padding: 12rpx 32rpx;
+  border-radius: 12rpx;
+  background: #f3f4f6;
+  font-size: 26rpx;
+  color: #4b5563;
+  border: 2rpx solid transparent;
+  transition: all 0.2s;
+}
+.choice-btn.active-success {
+  background: #d1fae5;
+  color: #10b981;
+  border-color: #10b981;
+  font-weight: 600;
+}
+.choice-btn.active-danger {
+  background: #fee2e2;
+  color: #ef4444;
+  border-color: #ef4444;
+  font-weight: 600;
+}
+.choice-btn.active-primary {
+  background: #dbeafe;
+  color: #2563eb;
+  border-color: #2563eb;
+  font-weight: 600;
+}
+
+/* 拍照 */
+.photo-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+}
+.photo-item {
+  position: relative;
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 12rpx;
+  overflow: hidden;
+}
+.photo-img {
+  width: 100%;
+  height: 100%;
+}
+.photo-del {
+  position: absolute;
+  top: 4rpx;
+  right: 4rpx;
+  width: 36rpx;
+  height: 36rpx;
+  background: rgba(0,0,0,0.5);
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28rpx;
+}
+.photo-add {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 12rpx;
+  border: 2rpx dashed #d1d5db;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #f9fafb;
+}
+.add-icon {
+  font-size: 48rpx;
+  color: #9ca3af;
+}
+.add-text {
+  font-size: 22rpx;
+  color: #9ca3af;
+  margin-top: 8rpx;
+}
+
+/* 签名 */
+.signature-box {
+  height: 200rpx;
+  border: 2rpx dashed #d1d5db;
+  border-radius: 12rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f9fafb;
+}
+.signature-img {
+  width: 100%;
+  height: 100%;
+}
+.signature-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #9ca3af;
+}
+.sig-icon {
+  font-size: 48rpx;
+  margin-bottom: 12rpx;
+}

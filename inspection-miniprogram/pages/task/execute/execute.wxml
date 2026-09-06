@@ -1,0 +1,64 @@
+<!--pages/task/execute/execute.wxml-->
+<view class="page-bg" style="padding-bottom: 160rpx;">
+  <!-- 巡检点信息 -->
+  <view class="point-header">
+    <view class="point-header-icon">📍</view>
+    <view class="point-header-info">
+      <text class="point-header-name">{{pointName}}</text>
+      <text wx:if="{{point}}" class="point-header-loc">{{point.location}} · {{point.pointCode}}</text>
+    </view>
+    <view wx:if="{{viewMode}}" class="view-badge">查看模式</view>
+  </view>
+
+  <!-- 签到组件 -->
+  <view class="section">
+    <check-in
+      point="{{point}}"
+      checked="{{checked}}"
+      checkInType="{{checkInType}}"
+      checkInTime="{{checkInTime}}"
+      bindcheckin="onCheckIn">
+    </check-in>
+  </view>
+
+  <!-- 巡检项列表 -->
+  <view class="section">
+    <view class="section-title">
+      <text class="section-title-text">巡检内容</text>
+      <text class="section-title-count">{{items.length}}项</text>
+    </view>
+    <inspection-item
+      wx:for="{{items}}"
+      wx:key="id"
+      item="{{item}}"
+      index="{{index}}"
+      disabled="{{viewMode}}"
+      bindchange="onItemChange"
+      bindsignature="onSignature">
+    </inspection-item>
+  </view>
+
+  <!-- 备注 -->
+  <view class="section" wx:if="{{!viewMode}}">
+    <view class="card">
+      <view class="card-title">巡检备注</view>
+      <textarea class="remark-input" placeholder="请输入巡检备注（选填）" value="{{remark}}" bindinput="onRemarkInput" maxlength="500" auto-height></textarea>
+    </view>
+  </view>
+
+  <!-- 异常提示 -->
+  <view wx:if="{{hasAbnormal && !viewMode}}" class="abnormal-tip">
+    <text class="abnormal-icon">⚠️</text>
+    <text>本次巡检存在异常项，提交后可上报事件</text>
+  </view>
+
+  <!-- 底部提交 -->
+  <view wx:if="{{!viewMode}}" class="bottom-bar">
+    <button class="btn btn-primary btn-block" bindtap="onSubmit" loading="{{submitting}}" disabled="{{submitting}}">
+      {{submitting ? '提交中...' : '提交巡检记录'}}
+    </button>
+  </view>
+  <view wx:else class="bottom-bar">
+    <button class="btn btn-plain btn-block" bindtap="navigateBack">返回</button>
+  </view>
+</view>

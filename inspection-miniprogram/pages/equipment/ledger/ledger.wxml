@@ -1,0 +1,163 @@
+<!--pages/equipment/ledger/ledger.wxml-->
+<view class="page-bg" style="padding-bottom: 160rpx;">
+
+  <!-- 顶部操作栏 -->
+  <view class="top-bar">
+    <view class="top-tip">
+      <text class="top-tip-icon">{{isEdit ? '✏️' : '➕'}}</text>
+      <text class="top-tip-text">{{isEdit ? '编辑设备台账信息' : '新增设备台账信息'}}</text>
+    </view>
+    <view class="btn btn-outline btn-sm import-btn" bindtap="onImportExcel">
+      <text>📥 Excel导入</text>
+    </view>
+  </view>
+
+  <!-- 基本信息组 -->
+  <view class="card form-card">
+    <view class="card-title">基本信息</view>
+
+    <view class="form-item">
+      <view class="form-label"><text class="required">*</text>设备编码</view>
+      <input class="form-input" placeholder="请输入设备编码" value="{{form.equipCode}}" data-field="equipCode" bindinput="onInput" maxlength="50" />
+    </view>
+
+    <view class="form-item">
+      <view class="form-label"><text class="required">*</text>设备名称</view>
+      <input class="form-input" placeholder="请输入设备名称" value="{{form.equipName}}" data-field="equipName" bindinput="onInput" maxlength="50" />
+    </view>
+
+    <view class="form-item">
+      <view class="form-label"><text class="required">*</text>设备类型</view>
+      <picker mode="selector" range="{{equipTypes}}" range-key="typeName" value="{{form.equipTypeIndex}}" bindchange="onEquipTypeChange">
+        <view class="form-picker {{form.equipTypeIndex >= 0 ? '' : 'placeholder'}}">
+          <text>{{form.equipTypeIndex >= 0 ? equipTypes[form.equipTypeIndex].typeName : '请选择设备类型'}}</text>
+          <text class="picker-arrow">›</text>
+        </view>
+      </picker>
+    </view>
+
+    <view class="form-item">
+      <view class="form-label">设备类别</view>
+      <input class="form-input" placeholder="请输入设备类别（选填）" value="{{form.equipCategory}}" data-field="equipCategory" bindinput="onInput" maxlength="50" />
+    </view>
+
+    <view class="form-item">
+      <view class="form-label">规格型号</view>
+      <input class="form-input" placeholder="请输入规格型号（选填）" value="{{form.spec}}" data-field="spec" bindinput="onInput" maxlength="100" />
+    </view>
+  </view>
+
+  <!-- 状态信息组 -->
+  <view class="card form-card">
+    <view class="card-title">状态信息</view>
+
+    <view class="form-item">
+      <view class="form-label">设备状态</view>
+      <picker mode="selector" range="{{statusOptions}}" range-key="text" value="{{form.statusIndex}}" bindchange="onStatusChange">
+        <view class="form-picker {{form.statusIndex >= 0 ? '' : 'placeholder'}}">
+          <text>{{form.statusIndex >= 0 ? statusOptions[form.statusIndex].text : '请选择设备状态'}}</text>
+          <text class="picker-arrow">›</text>
+        </view>
+      </picker>
+    </view>
+
+    <view class="form-item">
+      <view class="form-label">所在车间</view>
+      <input class="form-input" placeholder="请输入所在车间（选填）" value="{{form.workshop}}" data-field="workshop" bindinput="onInput" maxlength="50" />
+    </view>
+
+    <view class="form-item">
+      <view class="form-label">区域位置</view>
+      <input class="form-input" placeholder="请输入区域位置（选填）" value="{{form.location}}" data-field="location" bindinput="onInput" maxlength="100" />
+    </view>
+  </view>
+
+  <!-- 责任信息组 -->
+  <view class="card form-card">
+    <view class="card-title">责任信息</view>
+
+    <view class="form-item">
+      <view class="form-label">负责人</view>
+      <input class="form-input" placeholder="请输入负责人（选填）" value="{{form.manager}}" data-field="manager" bindinput="onInput" maxlength="30" />
+    </view>
+
+    <view class="form-item">
+      <view class="form-label">联系电话</view>
+      <input class="form-input" type="number" placeholder="请输入联系电话（选填）" value="{{form.managerPhone}}" data-field="managerPhone" bindinput="onInput" maxlength="11" />
+    </view>
+
+    <view class="form-item">
+      <view class="form-label">制造商</view>
+      <input class="form-input" placeholder="请输入制造商（选填）" value="{{form.manufacturer}}" data-field="manufacturer" bindinput="onInput" maxlength="100" />
+    </view>
+
+    <view class="form-item">
+      <view class="form-label">供应商</view>
+      <input class="form-input" placeholder="请输入供应商（选填）" value="{{form.supplier}}" data-field="supplier" bindinput="onInput" maxlength="100" />
+    </view>
+  </view>
+
+  <!-- 时间信息组 -->
+  <view class="card form-card">
+    <view class="card-title">时间信息</view>
+
+    <view class="form-item">
+      <view class="form-label">购买日期</view>
+      <picker mode="date" value="{{form.purchaseDate}}" end="{{today}}" bindchange="onDateChange" data-field="purchaseDate">
+        <view class="form-picker {{form.purchaseDate ? '' : 'placeholder'}}">
+          <text>{{form.purchaseDate || '请选择购买日期'}}</text>
+          <text class="picker-arrow">›</text>
+        </view>
+      </picker>
+    </view>
+
+    <view class="form-item">
+      <view class="form-label">启用日期</view>
+      <picker mode="date" value="{{form.startDate}}" end="{{today}}" bindchange="onDateChange" data-field="startDate">
+        <view class="form-picker {{form.startDate ? '' : 'placeholder'}}">
+          <text>{{form.startDate || '请选择启用日期'}}</text>
+          <text class="picker-arrow">›</text>
+        </view>
+      </picker>
+    </view>
+
+    <view class="form-item">
+      <view class="form-label">校验周期（天）</view>
+      <input class="form-input" type="number" placeholder="请输入校验周期天数（选填）" value="{{form.calibrationCycle}}" data-field="calibrationCycle" bindinput="onInput" maxlength="5" />
+    </view>
+
+    <view class="form-item">
+      <view class="form-label">校验日期</view>
+      <picker mode="date" value="{{form.calibrationDate}}" end="{{today}}" bindchange="onDateChange" data-field="calibrationDate">
+        <view class="form-picker {{form.calibrationDate ? '' : 'placeholder'}}">
+          <text>{{form.calibrationDate || '请选择校验日期'}}</text>
+          <text class="picker-arrow">›</text>
+        </view>
+      </picker>
+    </view>
+  </view>
+
+  <!-- 标识信息组 -->
+  <view class="card form-card">
+    <view class="card-title">标识信息</view>
+
+    <view class="form-item">
+      <view class="form-label">
+        <text>二维码标识</text>
+        <text class="form-label-sub" bindtap="onGenQrcode">重新生成</text>
+      </view>
+      <input class="form-input" placeholder="自动生成，可手动修改" value="{{form.qrcode}}" data-field="qrcode" bindinput="onInput" maxlength="50" />
+    </view>
+
+    <view class="form-item">
+      <view class="form-label">NFC标签</view>
+      <input class="form-input" placeholder="请输入NFC标签（选填）" value="{{form.nfcTag}}" data-field="nfcTag" bindinput="onInput" maxlength="50" />
+    </view>
+  </view>
+
+  <!-- 底部操作按钮 -->
+  <view class="bottom-action">
+    <view class="btn btn-plain" style="flex:1;margin-right:20rpx;" bindtap="onCancel">取消</view>
+    <view class="btn btn-primary" style="flex:1;" bindtap="onSave">{{submitting ? '保存中...' : '保存'}}</view>
+  </view>
+</view>

@@ -1,0 +1,148 @@
+/* pages/mine/about/about.wxss */
+
+/* 头部Logo */
+.about-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 50rpx 0 40rpx;
+  margin-bottom: 20rpx;
+}
+.logo-box {
+  width: 140rpx;
+  height: 140rpx;
+  border-radius: 32rpx;
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24rpx;
+  box-shadow: 0 8rpx 30rpx rgba(37, 99, 235, 0.3);
+}
+.logo-icon {
+  font-size: 72rpx;
+}
+.app-name {
+  font-size: 38rpx;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 12rpx;
+}
+.app-version {
+  font-size: 26rpx;
+  color: #9ca3af;
+  background: #f3f4f6;
+  padding: 6rpx 24rpx;
+  border-radius: 20rpx;
+}
+
+/* 系统介绍 */
+.intro-text {
+  font-size: 28rpx;
+  color: #4b5563;
+  line-height: 1.8;
+}
+
+/* 技术架构 */
+.tech-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+.tech-item {
+  display: flex;
+  align-items: center;
+  background: #f9fafb;
+  border-radius: 16rpx;
+  padding: 24rpx;
+}
+.tech-icon {
+  font-size: 44rpx;
+  margin-right: 20rpx;
+}
+.tech-info {
+  display: flex;
+  flex-direction: column;
+}
+.tech-name {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #1f2937;
+}
+.tech-desc {
+  font-size: 24rpx;
+  color: #9ca3af;
+  margin-top: 4rpx;
+}
+
+/* 功能模块 */
+.module-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx 0;
+}
+.module-item {
+  display: flex;
+  align-items: center;
+  width: 50%;
+  padding: 12rpx 0;
+}
+.module-dot {
+  font-size: 20rpx;
+  color: #2563eb;
+  margin-right: 12rpx;
+}
+.module-item text:last-child {
+  font-size: 26rpx;
+  color: #4b5563;
+}
+
+/* 开源须知 */
+.notice-box {
+  display: flex;
+  align-items: flex-start;
+  background: #fef3c7;
+  border-radius: 12rpx;
+  padding: 20rpx;
+}
+.notice-icon {
+  font-size: 32rpx;
+  margin-right: 16rpx;
+  flex-shrink: 0;
+}
+.notice-text {
+  font-size: 26rpx;
+  color: #92400e;
+  line-height: 1.6;
+}
+
+/* 著作权信息 */
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+.info-row:last-child {
+  border-bottom: none;
+}
+.info-label {
+  font-size: 28rpx;
+  color: #6b7280;
+}
+.info-value {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+/* 版权 */
+.copyright {
+  display: block;
+  text-align: center;
+  font-size: 22rpx;
+  color: #9ca3af;
+  margin-top: 30rpx;
+  margin-bottom: 20rpx;
+}

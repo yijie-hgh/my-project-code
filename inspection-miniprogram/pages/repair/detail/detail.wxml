@@ -1,0 +1,142 @@
+<!--pages/repair/detail/detail.wxml-->
+<view class="page-bg" style="padding-bottom: 160rpx;">
+  <empty-state wx:if="{{!loading && !repair}}" text="报修记录不存在" icon="❓"></empty-state>
+
+  <block wx:if="{{repair}}">
+    <!-- 头部信息 -->
+    <view class="repair-header">
+      <view class="header-top">
+        <view class="header-title-row">
+          <text class="repair-title">{{repair.title}}</text>
+          <text class="tag {{repair.statusInfo.tag}}">{{repair.statusInfo.text}}</text>
+        </view>
+        <text class="repair-no">编号：{{repair.repairNo}}</text>
+      </view>
+      <view class="header-tags">
+        <text class="tag {{repair.levelInfo.tag}}">{{repair.levelInfo.text}}</text>
+        <text wx:if="{{repair.faultType}}" class="tag tag-info">{{repair.faultType}}</text>
+      </view>
+    </view>
+
+    <!-- 故障信息 -->
+    <view class="card info-card">
+      <view class="card-title">故障信息</view>
+      <view class="fault-desc">{{repair.description}}</view>
+      <view wx:if="{{repair.images && repair.images.length > 0}}" class="fault-images">
+        <image wx:for="{{repair.images}}" wx:key="*this" class="fault-img" src="{{item}}" mode="aspectFill"></image>
+      </view>
+      <view wx:else class="fault-images-placeholder">
+        <text class="text-gray text-sm">暂无现场照片</text>
+      </view>
+    </view>
+
+    <!-- 设备信息 -->
+    <view class="card info-card">
+      <view class="card-title">设备信息</view>
+      <view class="info-row" bindtap="goEquipDetail">
+        <text class="info-label">设备名称</text>
+        <view class="info-value-link">
+          <text class="info-value">{{repair.equipName}}</text>
+          <text class="link-arrow">›</text>
+        </view>
+      </view>
+      <view class="info-row">
+        <text class="info-label">设备编号</text>
+        <text class="info-value">{{repair.equipCode}}</text>
+      </view>
+    </view>
+
+    <!-- 报修信息 -->
+    <view class="card info-card">
+      <view class="card-title">报修信息</view>
+      <view class="info-row">
+        <text class="info-label">报修人</text>
+        <text class="info-value">{{repair.reporter}}</text>
+      </view>
+      <view class="info-row">
+        <text class="info-label">联系电话</text>
+        <view class="phone-link" bindtap="onCallPhone">
+          <text class="text-primary">{{repair.reporterPhone || '无'}}</text>
+          <text wx:if="{{repair.reporterPhone}}" class="phone-icon">📞</text>
+        </view>
+      </view>
+      <view class="info-row">
+        <text class="info-label">报修时间</text>
+        <text class="info-value">{{repair.createTime}}</text>
+      </view>
+    </view>
+
+    <!-- 维修信息 -->
+    <view class="card info-card">
+      <view class="card-title">维修信息</view>
+      <view class="info-row">
+        <text class="info-label">维修人</text>
+        <text class="info-value">{{repair.repairer || '未分配'}}</text>
+      </view>
+      <view class="info-row">
+        <text class="info-label">受理时间</text>
+        <text class="info-value">{{repair.acceptTime || '-'}}</text>
+      </view>
+      <view class="info-row">
+        <text class="info-label">开始时间</text>
+        <text class="info-value">{{repair.startTime || '-'}}</text>
+      </view>
+      <view class="info-row">
+        <text class="info-label">完成时间</text>
+        <text class="info-value">{{repair.finishTime || '-'}}</text>
+      </view>
+      <view class="info-row">
+        <text class="info-label">使用备件</text>
+        <text class="info-value">{{repair.partsUsed || '-'}}</text>
+      </view>
+      <view wx:if="{{repair.repairDesc}}" class="info-row info-row-vertical">
+        <text class="info-label">维修说明</text>
+        <view class="info-value-block">{{repair.repairDesc}}</view>
+      </view>
+      <view wx:if="{{repair.cost > 0}}" class="info-row">
+        <text class="info-label">维修费用</text>
+        <text class="info-value text-warning">¥{{repair.cost}}</text>
+      </view>
+    </view>
+
+    <!-- 状态时间线 -->
+    <view class="card info-card">
+      <view class="card-title">处理进度</view>
+      <view class="timeline">
+        <view wx:for="{{timeline}}" wx:key="status" class="timeline-item">
+          <view class="timeline-dot {{item.done ? 'dot-done' : ''}} {{item.active ? 'dot-active' : ''}}">
+            <text class="timeline-icon">{{item.icon}}</text>
+          </view>
+          <view class="timeline-line {{item.done ? 'line-done' : ''}}" wx:if="{{!item.isLast}}"></view>
+          <view class="timeline-content">
+            <text class="timeline-label {{item.done ? 'text-bold' : 'text-gray'}}">{{item.label}}</text>
+            <text wx:if="{{item.time}}" class="timeline-time text-sm text-gray">{{item.time}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 底部操作 -->
+    <view class="bottom-bar">
+      <!-- 待受理：受理 -->
+      <block wx:if="{{repair.status === '0'}}">
+        <button class="btn btn-primary btn-block" bindtap="onAccept">受理报修</button>
+      </block>
+
+      <!-- 已派单：开始维修 -->
+      <block wx:if="{{repair.status === '1'}}">
+        <button class="btn btn-primary btn-block" bindtap="onStartRepair">开始维修</button>
+      </block>
+
+      <!-- 维修中：完成维修 -->
+      <block wx:if="{{repair.status === '2'}}">
+        <button class="btn btn-success btn-block" bindtap="onFinishRepair">完成维修</button>
+      </block>
+
+      <!-- 已完成/已关闭 -->
+      <block wx:if="{{repair.status === '3' || repair.status === '4'}}">
+        <button class="btn btn-plain btn-block" disabled>{{repair.status === '3' ? '维修已完成' : '已关闭'}}</button>
+      </block>
+    </view>
+  </block>
+</view>

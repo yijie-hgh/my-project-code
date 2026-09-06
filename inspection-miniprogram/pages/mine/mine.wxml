@@ -1,0 +1,96 @@
+<!--pages/mine/mine.wxml-->
+<view class="page-bg" style="padding-bottom: 140rpx;">
+  <!-- 用户信息头部 -->
+  <view class="mine-header">
+    <view class="header-bg-deco"></view>
+    <view class="user-card">
+      <view class="avatar-lg">{{userInfo.nickName ? userInfo.nickName.charAt(0) : '巡'}}</view>
+      <view class="user-detail">
+        <view class="user-name">{{userInfo.nickName || '巡检员'}}</view>
+        <view class="user-meta">
+          <text class="tag tag-primary">{{currentRole ? currentRole.name : (userInfo.postName || '巡检员')}}</text>
+          <text class="user-dept">{{userInfo.deptName || '巡检部'}}</text>
+        </view>
+        <view class="user-phone">📱 {{userInfo.phonenumber || '未绑定'}}</view>
+        <!-- 账号绑定状态 -->
+        <view class="account-bindings">
+          <view class="binding-tag {{userInfo.wxBound ? 'bound' : ''}}">
+            <text>💬 {{userInfo.wxBound ? '微信已绑定' : '微信未绑定'}}</text>
+          </view>
+          <view class="binding-tag {{feishuLoggedIn ? 'bound' : ''}}">
+            <text>🔗 {{feishuLoggedIn ? '飞书已绑定' : '飞书未绑定'}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 账号切换 -->
+  <view class="card account-switch-card">
+    <view class="card-title">账号管理</view>
+    <view class="switch-row" bindtap="onSwitchWxAccount">
+      <view class="switch-left">
+        <text class="switch-icon">💬</text>
+        <text class="switch-title">切换微信账号</text>
+      </view>
+      <text class="switch-arrow">›</text>
+    </view>
+    <view wx:if="{{feishuLoggedIn}}" class="switch-row" bindtap="onSwitchFeishuAccount">
+      <view class="switch-left">
+        <text class="switch-icon">🔗</text>
+        <text class="switch-title">切换飞书账号</text>
+      </view>
+      <text class="switch-arrow">›</text>
+    </view>
+    <view wx:if="{{feishuLoggedIn}}" class="switch-row" bindtap="onLogoutFeishu">
+      <view class="switch-left">
+        <text class="switch-icon">🚪</text>
+        <text class="switch-title">退出飞书账号</text>
+      </view>
+      <text class="switch-arrow">›</text>
+    </view>
+  </view>
+
+  <!-- 功能菜单 -->
+  <view class="card menu-card">
+    <view class="card-title">功能菜单</view>
+    <view class="menu-grid">
+      <view wx:for="{{menuList}}" wx:key="title" class="menu-item" data-url="{{item.url}}" bindtap="goPage">
+        <view class="menu-icon" style="background: {{item.color}}1a;">{{item.icon}}</view>
+        <text class="menu-text">{{item.title}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 设置 -->
+  <view class="card setting-card">
+    <view wx:for="{{settingList}}" wx:key="title" class="setting-item" data-url="{{item.url}}" bindtap="goPage">
+      <view class="setting-left">
+        <text class="setting-icon">{{item.icon}}</text>
+        <text class="setting-title">{{item.title}}</text>
+      </view>
+      <view class="setting-right">
+        <view wx:if="{{item.badge && unreadCount > 0}}" class="badge">{{unreadCount}}</view>
+        <text class="setting-arrow">›</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 联系客服 -->
+  <view class="card setting-card">
+    <view class="setting-item" bindtap="onCallPhone">
+      <view class="setting-left">
+        <text class="setting-icon">📞</text>
+        <text class="setting-title">联系客服</text>
+      </view>
+      <text class="setting-arrow">›</text>
+    </view>
+  </view>
+
+  <!-- 退出登录 -->
+  <view class="logout-area">
+    <button class="btn btn-plain btn-block logout-btn" bindtap="onLogout">退出登录</button>
+  </view>
+
+  <view class="version-text">设备巡检系统 v5.0.0 · 开源版</view>
+</view>

@@ -1,0 +1,28 @@
+<!--custom-tab-bar/index.wxml-->
+<view class="tab-bar">
+  <view class="tab-bar-border"></view>
+  <view wx:for="{{list}}" wx:key="index" class="tab-bar-item" data-path="{{item.pagePath}}" data-index="{{index}}" bindtap="switchTab">
+    <!-- 中间凸起扫码按钮 -->
+    <block wx:if="{{item.center}}">
+      <view class="center-btn-wrap">
+        <view class="center-btn">
+          <view class="scan-icon">
+            <view class="scan-corner tl"></view>
+            <view class="scan-corner tr"></view>
+            <view class="scan-corner bl"></view>
+            <view class="scan-corner br"></view>
+            <view class="scan-line"></view>
+          </view>
+        </view>
+        <text class="center-text">{{item.text}}</text>
+      </view>
+    </block>
+    <!-- 普通按钮 -->
+    <block wx:else>
+      <view class="icon-wrap">
+        <text class="icon-emoji {{selected === index ? 'active' : ''}}">{{item.icon}}</text>
+      </view>
+      <text class="tab-text {{selected === index ? 'active' : ''}}">{{item.text}}</text>
+    </block>
+  </view>
+</view>

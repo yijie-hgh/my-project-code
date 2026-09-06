@@ -1,0 +1,64 @@
+<!--pages/reminder/reminder.wxml-->
+<view class="page-bg">
+  <!-- 统计概览 -->
+  <view class="stats-header">
+    <view class="stats-item">
+      <text class="stats-num text-danger">{{stats.expired}}</text>
+      <text class="stats-label">已过期</text>
+    </view>
+    <view class="stats-item">
+      <text class="stats-num text-warning">{{stats.soon}}</text>
+      <text class="stats-label">即将到期</text>
+    </view>
+    <view class="stats-item">
+      <text class="stats-num text-success">{{stats.normal}}</text>
+      <text class="stats-label">正常</text>
+    </view>
+    <view class="stats-item">
+      <text class="stats-num text-primary">{{stats.total}}</text>
+      <text class="stats-label">合计</text>
+    </view>
+  </view>
+
+  <!-- 筛选标签 -->
+  <view class="filter-tabs">
+    <view wx:for="{{tabs}}" wx:key="value" class="filter-tab {{activeTab === item.value ? 'active' : ''}}" data-value="{{item.value}}" bindtap="onTabChange">{{item.label}}</view>
+  </view>
+
+  <!-- 提醒列表 -->
+  <view class="list-wrap">
+    <empty-state wx:if="{{!loading && filteredList.length === 0}}" text="暂无到期提醒" icon="🔔"></empty-state>
+
+    <view wx:for="{{filteredList}}" wx:key="id" class="reminder-card {{item.status}}" data-id="{{item.equipId}}" bindtap="goDetail">
+      <view class="reminder-left">
+        <view class="reminder-icon-wrap">
+          <text class="reminder-icon">{{item.type === '校验到期' ? '🔧' : '🛠️'}}</text>
+        </view>
+      </view>
+      <view class="reminder-content">
+        <view class="reminder-top">
+          <text class="reminder-name text-ellipsis">{{item.equipName}}</text>
+          <text class="tag {{item.statusInfo.tag}}">{{item.statusInfo.text}}</text>
+        </view>
+        <view class="reminder-code">{{item.equipCode}}</view>
+        <view class="reminder-info">
+          <view class="reminder-info-item">
+            <text class="info-label">类型</text>
+            <text class="info-value">{{item.type}}</text>
+          </view>
+          <view class="reminder-info-item">
+            <text class="info-label">到期日期</text>
+            <text class="info-value">{{item.expireDate}}</text>
+          </view>
+          <view class="reminder-info-item">
+            <text class="info-label">负责人</text>
+            <text class="info-value">👤 {{item.manager}}</text>
+          </view>
+        </view>
+        <view class="reminder-days {{item.status}}">
+          <text>{{item.daysLeftText}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

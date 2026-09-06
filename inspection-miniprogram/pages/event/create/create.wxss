@@ -1,0 +1,103 @@
+/* pages/event/create/create.wxss - 事件创建页样式 */
+
+.form-card {
+  margin: 20rpx 24rpx;
+}
+.form-item {
+  padding: 8rpx 0;
+}
+.form-label {
+  display: flex;
+  align-items: center;
+  font-size: 28rpx;
+  color: #374151;
+  font-weight: 500;
+  margin-bottom: 16rpx;
+}
+.required {
+  color: #ef4444;
+  margin-right: 6rpx;
+}
+.form-input {
+  height: 80rpx;
+  background: #f3f4f6;
+  border-radius: 12rpx;
+  padding: 0 24rpx;
+  font-size: 28rpx;
+  color: #333;
+}
+
+/* 级别选择 */
+.level-options {
+  display: flex;
+  gap: 16rpx;
+}
+.level-option {
+  flex: 1;
+  height: 72rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f3f4f6;
+  border-radius: 12rpx;
+  border: 2rpx solid transparent;
+  font-size: 28rpx;
+  color: #6b7280;
+  transition: all 0.2s;
+}
+.level-option.active {
+  font-weight: 600;
+}
+
+/* Picker */
+.form-picker {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 80rpx;
+  background: #f3f4f6;
+  border-radius: 12rpx;
+  padding: 0 24rpx;
+  font-size: 28rpx;
+  color: #333;
+}
+.form-picker.placeholder {
+  color: #9ca3af;
+}
+.picker-arrow {
+  font-size: 32rpx;
+  color: #9ca3af;
+}
+
+/* 描述 */
+.form-textarea {
+  width: 100%;
+  min-height: 160rpx;
+  background: #f3f4f6;
+  border-radius: 12rpx;
+  padding: 20rpx 24rpx;
+  font-size: 28rpx;
+  color: #333;
+  box-sizing: border-box;
+}
+.textarea-count {
+  text-align: right;
+  font-size: 24rpx;
+  color: #9ca3af;
+  margin-top: 8rpx;
+}
+
+/* 底部操作区 */
+.bottom-action {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #fff;
+  padding: 20rpx 24rpx;
+  padding-bottom: calc(20rpx + env(safe-area-inset-bottom));
+  display: flex;
+  align-items: center;
+  box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, 0.06);
+  z-index: 100;
+}

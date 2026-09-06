@@ -1,0 +1,142 @@
+<!--pages/repair/create/create.wxml-->
+<view class="page-bg" style="padding-bottom: 160rpx;">
+  <view class="card form-card">
+    <!-- 设备选择 -->
+    <view class="form-item">
+      <view class="form-label">
+        <text class="required">*</text>
+        <text>故障设备</text>
+      </view>
+      <picker
+        mode="selector"
+        range="{{equipmentList}}"
+        range-key="equipName"
+        value="{{equipPickerIndex}}"
+        bindchange="onEquipChange">
+        <view class="form-picker {{equipPickerIndex >= 0 ? '' : 'placeholder'}}">
+          <view wx:if="{{equipPickerIndex >= 0}}" class="picker-content">
+            <text>{{equipmentList[equipPickerIndex].equipName}}</text>
+            <text class="picker-sub">{{equipmentList[equipPickerIndex].equipCode}}</text>
+          </view>
+          <text wx:else>请选择故障设备</text>
+          <text class="picker-arrow">›</text>
+        </view>
+      </picker>
+    </view>
+
+    <view class="divider"></view>
+
+    <!-- 故障标题 -->
+    <view class="form-item">
+      <view class="form-label">
+        <text class="required">*</text>
+        <text>故障标题</text>
+      </view>
+      <input
+        class="form-input"
+        placeholder="请简要描述故障"
+        value="{{form.title}}"
+        bindinput="onTitleInput"
+        maxlength="50" />
+    </view>
+
+    <view class="divider"></view>
+
+    <!-- 故障描述 -->
+    <view class="form-item">
+      <view class="form-label">
+        <text class="required">*</text>
+        <text>故障描述</text>
+      </view>
+      <textarea
+        class="form-textarea"
+        placeholder="请详细描述故障情况..."
+        value="{{form.description}}"
+        bindinput="onDescInput"
+        maxlength="500"
+        auto-height />
+      <view class="textarea-count">{{form.description.length}}/500</view>
+    </view>
+
+    <view class="divider"></view>
+
+    <!-- 故障类型 -->
+    <view class="form-item">
+      <view class="form-label">
+        <text class="required">*</text>
+        <text>故障类型</text>
+      </view>
+      <picker
+        mode="selector"
+        range="{{faultTypes}}"
+        value="{{form.faultTypeIndex}}"
+        bindchange="onFaultTypeChange">
+        <view class="form-picker {{form.faultTypeIndex >= 0 ? '' : 'placeholder'}}">
+          <text>{{form.faultTypeIndex >= 0 ? faultTypes[form.faultTypeIndex] : '请选择故障类型'}}</text>
+          <text class="picker-arrow">›</text>
+        </view>
+      </picker>
+    </view>
+
+    <view class="divider"></view>
+
+    <!-- 紧急程度 -->
+    <view class="form-item">
+      <view class="form-label">
+        <text class="required">*</text>
+        <text>紧急程度</text>
+      </view>
+      <view class="level-options">
+        <view
+          wx:for="{{levelOptions}}"
+          wx:key="value"
+          class="level-option {{form.level === item.value ? 'active' : ''}}"
+          data-value="{{item.value}}"
+          bindtap="onLevelChange"
+          style="{{form.level === item.value ? 'background:' + item.color + '1a;color:' + item.color + ';border-color:' + item.color : ''}}">
+          {{item.text}}
+        </view>
+      </view>
+    </view>
+
+    <view class="divider"></view>
+
+    <!-- 联系电话 -->
+    <view class="form-item">
+      <view class="form-label">联系电话</view>
+      <input
+        class="form-input"
+        type="number"
+        placeholder="请输入联系电话"
+        value="{{form.reporterPhone}}"
+        bindinput="onPhoneInput"
+        maxlength="11" />
+    </view>
+
+    <view class="divider"></view>
+
+    <!-- 现场照片 -->
+    <view class="form-item">
+      <view class="form-label">
+        <text>现场照片</text>
+        <text class="form-label-sub">最多{{maxImages}}张</text>
+      </view>
+      <view class="photo-list">
+        <view wx:for="{{images}}" wx:key="*this" class="photo-item">
+          <image class="photo-img" src="{{item}}" mode="aspectFill" data-urls="{{images}}" data-current="{{item}}" bindtap="onPreviewImage"></image>
+          <view class="photo-delete" data-index="{{index}}" catchtap="onDeleteImage">✕</view>
+        </view>
+        <view wx:if="{{images.length < maxImages}}" class="photo-add" bindtap="onChooseImage">
+          <text class="photo-add-icon">📷</text>
+          <text class="photo-add-text">添加照片</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部按钮 -->
+  <view class="bottom-action">
+    <button class="btn btn-plain" style="flex:1;margin-right:20rpx;" bindtap="onCancel">取消</button>
+    <button class="btn btn-primary" style="flex:1;" bindtap="onSubmit" disabled="{{submitting}}">{{submitting ? '提交中...' : (isEdit ? '保存' : '提交')}}</button>
+  </view>
+</view>

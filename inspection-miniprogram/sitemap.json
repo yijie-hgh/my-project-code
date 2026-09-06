@@ -1,0 +1,9 @@
+{
+  "desc": "设备巡检小程序 sitemap 配置",
+  "rules": [
+    {
+      "action": "allow",
+      "page": "*"
+    }
+  ]
+}

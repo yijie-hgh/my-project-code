@@ -1,0 +1,107 @@
+/* pages/mine/profile/profile.wxss */
+
+/* 用户头部 */
+.profile-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 50rpx 0 40rpx;
+  background: linear-gradient(180deg, #2563eb, #1d4ed8);
+  border-radius: 0 0 32rpx 32rpx;
+  margin: -24rpx -24rpx 20rpx;
+}
+.avatar-large {
+  width: 140rpx;
+  height: 140rpx;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.25);
+  color: #fff;
+  font-size: 60rpx;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0,0,0,0.15);
+}
+.user-name {
+  font-size: 38rpx;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 16rpx;
+}
+.user-role {
+  display: flex;
+  align-items: center;
+}
+
+/* 表单项 */
+.form-item {
+  display: flex;
+  align-items: center;
+  padding: 24rpx 0;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+.form-item:last-child {
+  border-bottom: none;
+}
+.form-label {
+  width: 160rpx;
+  font-size: 28rpx;
+  color: #6b7280;
+  flex-shrink: 0;
+}
+.form-input {
+  flex: 1;
+  font-size: 30rpx;
+  color: #1f2937;
+  text-align: right;
+}
+.form-input[placeholder] {
+  color: #9ca3af;
+}
+.form-readonly {
+  color: #9ca3af;
+}
+
+/* 修改密码弹窗 */
+.pwd-mask {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pwd-box {
+  width: 86%;
+  background: #fff;
+  border-radius: 24rpx;
+  overflow: hidden;
+}
+.pwd-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 28rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+.pwd-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #1f2937;
+}
+.pwd-close {
+  font-size: 36rpx;
+  color: #9ca3af;
+  padding: 0 10rpx;
+}
+.pwd-body {
+  padding: 12rpx 28rpx;
+}
+.pwd-footer {
+  display: flex;
+  gap: 20rpx;
+  padding: 0 28rpx 28rpx;
+}

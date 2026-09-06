@@ -1,0 +1,85 @@
+<!--pages/report/list/list.wxml-->
+<view class="page-bg" style="padding-bottom: 40rpx;">
+  <!-- 项目筛选 -->
+  <view class="filter-bar">
+    <picker 
+      mode="selector" 
+      range="{{projectList}}" 
+      range-key="projectName" 
+      value="{{projectIndex}}" 
+      bindchange="onProjectChange">
+      <view class="filter-picker">
+        <text class="filter-label">项目筛选</text>
+        <text class="filter-value">{{projectList[projectIndex].projectName}}</text>
+        <text class="filter-arrow">›</text>
+      </view>
+    </picker>
+  </view>
+
+  <!-- 报表列表 -->
+  <view class="report-list" wx:if="{{list.length > 0}}">
+    <view 
+      class="card report-card" 
+      wx:for="{{list}}" 
+      wx:key="id" 
+      data-id="{{item.id}}" 
+      bindtap="goDetail">
+      <!-- 报表名称 -->
+      <view class="report-card-header">
+        <view class="report-name-wrap">
+          <text class="report-icon">📊</text>
+          <text class="report-name text-ellipsis">{{item.reportName}}</text>
+        </view>
+        <text class="text-primary text-sm">详情 ›</text>
+      </view>
+
+      <!-- 项目和周期 -->
+      <view class="report-meta">
+        <view class="meta-item">
+          <text class="meta-label">所属项目</text>
+          <text class="meta-value">{{item.projectName}}</text>
+        </view>
+        <view class="meta-item">
+          <text class="meta-label">统计周期</text>
+          <text class="meta-value">{{item.period}}</text>
+        </view>
+      </view>
+
+      <!-- 完成率进度条 -->
+      <view class="rate-section">
+        <view class="rate-info">
+          <text class="rate-label">完成率</text>
+          <text class="rate-value">{{item.completionRate}}%</text>
+        </view>
+        <view class="progress-bar">
+          <view 
+            class="progress-bar-fill" 
+            style="width: {{item.completionRate}}%; background: {{item.completionRate >= 90 ? 'linear-gradient(90deg,#10b981,#34d399)' : item.completionRate >= 75 ? 'linear-gradient(90deg,#2563eb,#3b82f6)' : 'linear-gradient(90deg,#f59e0b,#fbbf24)'}};"></view>
+        </view>
+      </view>
+
+      <!-- 统计数据 -->
+      <view class="report-stats">
+        <view class="stat-item">
+          <text class="stat-num">{{item.totalTasks}}</text>
+          <text class="stat-label">总任务</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-num text-success">{{item.doneTasks}}</text>
+          <text class="stat-label">已完成</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-num text-danger">{{item.abnormalCount}}</text>
+          <text class="stat-label">异常数</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-num text-warning">{{item.eventCount}}</text>
+          <text class="stat-label">事件数</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <empty-state wx:if="{{!loading && list.length === 0}}" text="暂无报表" icon="📊"></empty-state>
+</view>

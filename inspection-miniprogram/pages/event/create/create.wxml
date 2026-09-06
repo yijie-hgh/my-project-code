@@ -1,0 +1,100 @@
+<!--pages/event/create/create.wxml-->
+<view class="page-bg" style="padding-bottom: 160rpx;">
+  <view class="card form-card">
+    <!-- 事件标题 -->
+    <view class="form-item">
+      <view class="form-label">
+        <text class="required">*</text>
+        <text>事件标题</text>
+      </view>
+      <input 
+        class="form-input" 
+        placeholder="请输入事件标题" 
+        value="{{form.title}}" 
+        bindinput="onTitleInput" 
+        maxlength="50" />
+    </view>
+
+    <view class="divider"></view>
+
+    <!-- 级别选择 -->
+    <view class="form-item">
+      <view class="form-label">
+        <text class="required">*</text>
+        <text>事件级别</text>
+      </view>
+      <view class="level-options">
+        <view 
+          wx:for="{{levelOptions}}" 
+          wx:key="value" 
+          class="level-option {{form.level === item.value ? 'active' : ''}}" 
+          data-value="{{item.value}}" 
+          bindtap="onLevelChange"
+          style="{{form.level === item.value ? 'background:' + item.color + '1a;color:' + item.color + ';border-color:' + item.color : ''}}">
+          {{item.text}}
+        </view>
+      </view>
+    </view>
+
+    <view class="divider"></view>
+
+    <!-- 关联项目 -->
+    <view class="form-item">
+      <view class="form-label">关联项目</view>
+      <picker 
+        mode="selector" 
+        range="{{projectList}}" 
+        range-key="projectName" 
+        value="{{projectIndex}}" 
+        bindchange="onProjectChange">
+        <view class="form-picker {{projectIndex >= 0 ? '' : 'placeholder'}}">
+          <text>{{projectIndex >= 0 ? projectList[projectIndex].projectName : '请选择关联项目'}}</text>
+          <text class="picker-arrow">›</text>
+        </view>
+      </picker>
+    </view>
+
+    <view class="divider"></view>
+
+    <!-- 关联巡检点 -->
+    <view class="form-item">
+      <view class="form-label">关联巡检点</view>
+      <picker 
+        mode="selector" 
+        range="{{pointList}}" 
+        range-key="pointName" 
+        value="{{pointIndex}}" 
+        bindchange="onPointChange"
+        disabled="{{pointList.length === 0}}">
+        <view class="form-picker {{pointIndex >= 0 ? '' : 'placeholder'}}">
+          <text>{{pointList.length === 0 ? '请先选择项目' : (pointIndex >= 0 ? pointList[pointIndex].pointName : '请选择巡检点')}}</text>
+          <text class="picker-arrow">›</text>
+        </view>
+      </picker>
+    </view>
+
+    <view class="divider"></view>
+
+    <!-- 事件描述 -->
+    <view class="form-item">
+      <view class="form-label">
+        <text class="required">*</text>
+        <text>事件描述</text>
+      </view>
+      <textarea 
+        class="form-textarea" 
+        placeholder="请详细描述事件情况..." 
+        value="{{form.description}}" 
+        bindinput="onDescInput" 
+        maxlength="500" 
+        auto-height />
+      <view class="textarea-count">{{form.description.length}}/500</view>
+    </view>
+  </view>
+
+  <!-- 底部按钮 -->
+  <view class="bottom-action">
+    <button class="btn btn-plain" style="flex:1;margin-right:20rpx;" bindtap="onCancel">取消</button>
+    <button class="btn btn-primary" style="flex:1;" bindtap="onSubmit" disabled="{{submitting}}">提交</button>
+  </view>
+</view>

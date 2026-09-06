@@ -1,0 +1,100 @@
+/* pages/task/execute/execute.wxss */
+.point-header {
+  display: flex;
+  align-items: center;
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  padding: 32rpx 28rpx;
+  border-radius: 0 0 28rpx 28rpx;
+}
+.point-header-icon {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 20rpx;
+  background: rgba(255,255,255,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 44rpx;
+  margin-right: 24rpx;
+}
+.point-header-info { flex: 1; }
+.point-header-name {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #fff;
+  display: block;
+}
+.point-header-loc {
+  font-size: 24rpx;
+  color: rgba(255,255,255,0.8);
+  margin-top: 8rpx;
+  display: block;
+}
+.view-badge {
+  background: rgba(255,255,255,0.25);
+  color: #fff;
+  font-size: 22rpx;
+  padding: 8rpx 20rpx;
+  border-radius: 20rpx;
+}
+
+.section {
+  padding: 20rpx 24rpx 0;
+}
+.section-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16rpx;
+  padding: 0 8rpx;
+}
+.section-title-text {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #1f2937;
+}
+.section-title-count {
+  font-size: 24rpx;
+  color: #9ca3af;
+}
+
+.remark-input {
+  width: 100%;
+  min-height: 120rpx;
+  padding: 20rpx;
+  background: #f9fafb;
+  border-radius: 12rpx;
+  font-size: 28rpx;
+  border: 2rpx solid #e5e7eb;
+}
+
+.abnormal-tip {
+  display: flex;
+  align-items: center;
+  margin: 20rpx 24rpx;
+  padding: 24rpx;
+  background: #fff7ed;
+  border-radius: 16rpx;
+  border: 2rpx solid #fed7aa;
+}
+.abnormal-icon {
+  font-size: 36rpx;
+  margin-right: 16rpx;
+}
+.abnormal-tip text:last-child {
+  font-size: 26rpx;
+  color: #c2410c;
+  flex: 1;
+}
+
+.bottom-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 20rpx 24rpx;
+  padding-bottom: calc(20rpx + env(safe-area-inset-bottom));
+  background: #fff;
+  box-shadow: 0 -2rpx 12rpx rgba(0,0,0,0.06);
+  z-index: 100;
+}

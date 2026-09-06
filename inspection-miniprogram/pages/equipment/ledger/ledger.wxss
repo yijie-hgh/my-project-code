@@ -1,0 +1,102 @@
+/* pages/equipment/ledger/ledger.wxss */
+
+/* 顶部操作栏 */
+.top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20rpx 24rpx;
+  background: #fff;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+.top-tip {
+  display: flex;
+  align-items: center;
+}
+.top-tip-icon {
+  font-size: 32rpx;
+  margin-right: 12rpx;
+}
+.top-tip-text {
+  font-size: 28rpx;
+  color: #374151;
+  font-weight: 500;
+}
+.import-btn {
+  flex-shrink: 0;
+}
+
+/* 表单卡片 */
+.form-card {
+  margin: 20rpx 24rpx;
+  border-radius: 16rpx;
+}
+.form-item {
+  padding: 8rpx 0;
+}
+.form-item + .form-item {
+  margin-top: 8rpx;
+}
+.form-label {
+  display: flex;
+  align-items: center;
+  font-size: 28rpx;
+  color: #374151;
+  font-weight: 500;
+  margin-bottom: 14rpx;
+}
+.required {
+  color: #ef4444;
+  margin-right: 6rpx;
+}
+.form-label-sub {
+  font-size: 24rpx;
+  color: #2563eb;
+  margin-left: auto;
+  font-weight: 400;
+}
+
+.form-input {
+  height: 80rpx;
+  background: #f3f4f6;
+  border-radius: 12rpx;
+  padding: 0 24rpx;
+  font-size: 28rpx;
+  color: #333;
+}
+
+/* Picker */
+.form-picker {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 80rpx;
+  background: #f3f4f6;
+  border-radius: 12rpx;
+  padding: 0 24rpx;
+  font-size: 28rpx;
+  color: #333;
+}
+.form-picker.placeholder {
+  color: #9ca3af;
+}
+.picker-arrow {
+  font-size: 32rpx;
+  color: #9ca3af;
+  margin-left: 12rpx;
+}
+
+/* 底部操作区 */
+.bottom-action {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #fff;
+  padding: 20rpx 24rpx;
+  padding-bottom: calc(20rpx + env(safe-area-inset-bottom));
+  display: flex;
+  align-items: center;
+  box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, 0.06);
+  z-index: 100;
+}

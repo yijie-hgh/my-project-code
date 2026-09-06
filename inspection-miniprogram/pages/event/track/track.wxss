@@ -1,0 +1,159 @@
+/* pages/event/track/track.wxss - 事件跟踪页样式 */
+
+/* 顶部事件标题 */
+.event-header-card {
+  margin: 20rpx 24rpx;
+}
+.event-header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12rpx;
+}
+.event-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #1f2937;
+  flex: 1;
+  margin-right: 16rpx;
+}
+.track-count {
+  padding-top: 8rpx;
+  border-top: 1rpx solid #f0f0f0;
+}
+
+/* 跟踪列表 */
+.track-list-card {
+  margin: 20rpx 24rpx;
+}
+.track-timeline {
+  position: relative;
+}
+.track-item {
+  display: flex;
+  align-items: flex-start;
+}
+.track-line-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 64rpx;
+  flex-shrink: 0;
+}
+.track-icon {
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 50%;
+  background: #f3f4f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28rpx;
+  flex-shrink: 0;
+  z-index: 1;
+}
+.track-icon.icon-active {
+  background: #dbeafe;
+}
+.track-line {
+  flex: 1;
+  width: 2rpx;
+  background: #e5e7eb;
+  min-height: 40rpx;
+  margin-top: 8rpx;
+}
+.track-content-wrap {
+  flex: 1;
+  padding-bottom: 30rpx;
+  padding-left: 12rpx;
+}
+.track-content-card {
+  background: #f9fafb;
+  border-radius: 16rpx;
+  padding: 24rpx;
+}
+.track-content-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12rpx;
+}
+.track-action {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #2563eb;
+}
+.track-operator {
+  margin-bottom: 12rpx;
+}
+.track-text {
+  font-size: 28rpx;
+  color: #4b5563;
+  line-height: 1.6;
+}
+.track-images {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  margin-top: 16rpx;
+}
+.track-image {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 12rpx;
+}
+
+/* 底部操作区 */
+.bottom-action {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #fff;
+  padding: 20rpx 24rpx;
+  padding-bottom: calc(20rpx + env(safe-area-inset-bottom));
+  box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, 0.06);
+  z-index: 100;
+}
+
+/* 输入弹窗 */
+.track-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: flex-end;
+  z-index: 200;
+}
+.track-popup {
+  width: 100%;
+  background: #fff;
+  border-radius: 24rpx 24rpx 0 0;
+  padding: 32rpx 24rpx;
+  padding-bottom: calc(32rpx + env(safe-area-inset-bottom));
+}
+.popup-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 24rpx;
+  text-align: center;
+}
+.track-textarea {
+  width: 100%;
+  min-height: 160rpx;
+  background: #f3f4f6;
+  border-radius: 16rpx;
+  padding: 20rpx;
+  font-size: 28rpx;
+  color: #333;
+  margin-bottom: 24rpx;
+  box-sizing: border-box;
+}
+.popup-actions {
+  display: flex;
+  gap: 20rpx;
+}

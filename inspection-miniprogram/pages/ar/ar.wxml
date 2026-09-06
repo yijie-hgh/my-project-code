@@ -1,0 +1,153 @@
+<!--pages/ar/ar.wxml-->
+<view class="page-bg ar-page">
+  <!-- 顶部说明卡片 -->
+  <view class="ar-intro">
+    <view class="intro-bg"></view>
+    <view class="intro-content">
+      <view class="intro-icon">🥽</view>
+      <view class="intro-text">
+        <view class="intro-title">AR智能巡检</view>
+        <view class="intro-desc">通过AR眼镜或手机摄像头叠加设备信息，实现可视化巡检。实时识别设备状态，智能标注故障点，远程协助指导，让巡检更高效。</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 功能入口网格 -->
+  <view class="card ar-card">
+    <view class="card-title">功能中心</view>
+    <view class="func-grid">
+      <view class="func-item {{scanning ? 'pulse' : ''}}" bindtap="onDeviceIdentify">
+        <view class="func-icon icon-identify">📷</view>
+        <text class="func-name">设备识别</text>
+      </view>
+      <view class="func-item" bindtap="onFaultMark">
+        <view class="func-icon icon-fault">⚠️</view>
+        <text class="func-name">故障标注</text>
+      </view>
+      <view class="func-item" bindtap="onRemoteAssist">
+        <view class="func-icon icon-remote">🎧</view>
+        <text class="func-name">远程协助</text>
+      </view>
+      <view class="func-item" bindtap="onArNavigate">
+        <view class="func-icon icon-nav">🧭</view>
+        <text class="func-name">AR导航</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- AR扫描界面 -->
+  <view class="ar-scan-mask" wx:if="{{scanning}}" bindtap="onCloseScan">
+    <view class="scan-container" catchtap="noop">
+      <view class="scan-header">
+        <text class="scan-title">AR设备识别</text>
+        <text class="scan-close" bindtap="onCloseScan">✕</text>
+      </view>
+      <view class="scan-viewport">
+        <view class="scan-grid"></view>
+        <view class="scan-frame">
+          <view class="frame-corner tl"></view>
+          <view class="frame-corner tr"></view>
+          <view class="frame-corner bl"></view>
+          <view class="frame-corner br"></view>
+          <view class="scan-beam {{scanning ? 'beam-anim' : ''}}"></view>
+        </view>
+        <view class="scan-tip-text">{{scanTip}}</view>
+        <view class="scan-info-overlay" wx:if="{{scanProgress > 0}}">
+          <view class="scan-progress-bar">
+            <view class="scan-progress-fill" style="width: {{scanProgress}}%;"></view>
+          </view>
+          <text class="scan-progress-text">识别中... {{scanProgress}}%</text>
+        </view>
+      </view>
+      <view class="scan-actions">
+        <view class="btn btn-primary btn-block" bindtap="onStartIdentify">开始识别</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 识别结果弹窗 -->
+  <view class="result-mask" wx:if="{{showResult}}" bindtap="onCloseResult">
+    <view class="result-box" catchtap="noop">
+      <view class="result-header">
+        <view class="result-badge">✓</view>
+        <text class="result-title">识别成功</text>
+      </view>
+      <view class="result-body">
+        <view class="result-device">
+          <text class="device-icon">⚙️</text>
+          <view class="device-info">
+            <text class="device-name">{{resultData.deviceName}}</text>
+            <text class="device-code">{{resultData.deviceCode}}</text>
+          </view>
+          <text class="tag {{resultData.statusTag}}">{{resultData.statusText}}</text>
+        </view>
+        <view class="divider"></view>
+        <view class="result-section-title">巡检项目</view>
+        <view class="result-items">
+          <view class="result-item" wx:for="{{resultData.items}}" wx:key="name">
+            <text class="item-dot {{item.status}}"></text>
+            <text class="item-name">{{item.name}}</text>
+            <text class="item-value {{item.status}}">{{item.value}}</text>
+          </view>
+        </view>
+        <view class="result-section-title mt-20">实时数据</view>
+        <view class="result-data-grid">
+          <view class="data-cell">
+            <text class="data-label">温度</text>
+            <text class="data-value {{resultData.temp > 60 ? 'text-danger' : 'text-success'}}">{{resultData.temp}}℃</text>
+          </view>
+          <view class="data-cell">
+            <text class="data-label">振动</text>
+            <text class="data-value text-success">{{resultData.vibration}}mm/s</text>
+          </view>
+          <view class="data-cell">
+            <text class="data-label">电流</text>
+            <text class="data-value text-success">{{resultData.current}}A</text>
+          </view>
+          <view class="data-cell">
+            <text class="data-label">电压</text>
+            <text class="data-value text-success">{{resultData.voltage}}V</text>
+          </view>
+        </view>
+      </view>
+      <view class="result-footer">
+        <view class="btn btn-plain btn-sm flex-1" bindtap="onCloseResult">关闭</view>
+        <view class="btn btn-primary btn-sm flex-1" bindtap="onConfirmResult">记录巡检</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- AR巡检记录 -->
+  <view class="card ar-card">
+    <view class="flex-between mb-20">
+      <view class="card-title" style="margin-bottom:0;">AR巡检记录</view>
+      <text class="text-sm text-gray">共{{records.length}}条</text>
+    </view>
+    <empty-state wx:if="{{records.length === 0}}" text="暂无AR巡检记录" icon="📭"></empty-state>
+    <view wx:for="{{records}}" wx:key="id" class="record-item">
+      <view class="record-top">
+        <view class="record-device">
+          <text class="record-icon">⚙️</text>
+          <text class="record-name">{{item.deviceName}}</text>
+        </view>
+        <text class="tag {{item.statusTag}}">{{item.statusText}}</text>
+      </view>
+      <view class="record-mid">
+        <text class="text-sm text-sub">📍 {{item.location}}</text>
+        <text class="text-sm text-sub">🎯 {{item.checkCount}}项已检</text>
+      </view>
+      <view class="record-bottom">
+        <text class="text-sm text-gray">🕐 {{item.time}}</text>
+        <text class="text-sm {{item.result === '正常' ? 'text-success' : 'text-danger'}}">{{item.result}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部开始按钮 -->
+  <view class="ar-bottom">
+    <button class="btn btn-primary btn-block ar-start-btn {{scanning ? 'scanning' : ''}}" bindtap="onStartArInspect">
+      <text class="btn-icon">🥽</text>
+      <text>{{scanning ? 'AR巡检进行中...' : '开始AR巡检'}}</text>
+    </button>
+  </view>
+</view>

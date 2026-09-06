@@ -1,0 +1,71 @@
+<!--components/inspection-item/index.wxml-->
+<view class="insp-item {{disabled ? 'disabled' : ''}}">
+  <view class="item-header">
+    <view class="item-index">{{index + 1}}</view>
+    <view class="item-name">{{item.itemName}}</view>
+    <text wx:if="{{item.required}}" class="item-required">*</text>
+    <text class="item-type-tag">{{item.itemType === 'input' ? '文本' : item.itemType === 'number' ? '数值' : item.itemType === 'choice' ? '单选' : item.itemType === 'multi' ? '多选' : item.itemType === 'photo' ? '拍照' : item.itemType === 'signature' ? '签名' : ''}}</text>
+  </view>
+
+  <view wx:if="{{item.standard}}" class="item-standard">标准：{{item.standard}}</view>
+
+  <!-- 文本输入 -->
+  <view wx:if="{{item.itemType === 'input'}}" class="item-body">
+    <textarea class="item-input" placeholder="请输入{{item.itemName}}" value="{{item.value}}" disabled="{{disabled}}" bindinput="onInput" maxlength="200" auto-height></textarea>
+  </view>
+
+  <!-- 数值输入 -->
+  <view wx:elif="{{item.itemType === 'number'}}" class="item-body">
+    <view class="number-row">
+      <input class="item-input number-input" type="digit" placeholder="请输入数值" value="{{item.value}}" disabled="{{disabled}}" bindinput="onInput"></input>
+      <text class="unit-text">{{item.unit}}</text>
+    </view>
+  </view>
+
+  <!-- 单选 -->
+  <view wx:elif="{{item.itemType === 'choice'}}" class="item-body">
+    <view class="choice-row">
+      <view wx:for="{{item.options}}" wx:key="*this" wx:for-item="opt" wx:for-index="oi"
+        class="choice-btn {{item.value === opt ? (opt === '正常' ? 'active-success' : 'active-danger') : ''}}"
+        data-val="{{opt}}" bindtap="onChoice">
+        <text>{{opt}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 多选 -->
+  <view wx:elif="{{item.itemType === 'multi'}}" class="item-body">
+    <view class="choice-row">
+      <view wx:for="{{item.options}}" wx:key="*this" wx:for-item="opt" wx:for-index="oi"
+        class="choice-btn {{(item.value && item.value.indexOf(opt) > -1) ? 'active-primary' : ''}}"
+        data-val="{{opt}}" bindtap="onMulti">
+        <text>{{opt}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 拍照 -->
+  <view wx:elif="{{item.itemType === 'photo'}}" class="item-body">
+    <view class="photo-list">
+      <view wx:for="{{item.value || []}}" wx:key="*this" wx:for-item="pic" wx:for-index="pi" class="photo-item">
+        <image src="{{pic}}" mode="aspectFill" class="photo-img" data-url="{{pic}}" bindtap="onPreviewPhoto"></image>
+        <view wx:if="{{!disabled}}" class="photo-del" data-idx="{{pi}}" catchtap="onRemovePhoto">×</view>
+      </view>
+      <view wx:if="{{!disabled && (!item.value || item.value.length < 3)}}" class="photo-add" bindtap="onPhoto">
+        <text class="add-icon">+</text>
+        <text class="add-text">拍照</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 签名 -->
+  <view wx:elif="{{item.itemType === 'signature'}}" class="item-body">
+    <view class="signature-box" bindtap="onSignature">
+      <image wx:if="{{item.value}}" src="{{item.value}}" mode="aspectFit" class="signature-img"></image>
+      <view wx:else class="signature-placeholder">
+        <text class="sig-icon">✍️</text>
+        <text>点击签名</text>
+      </view>
+    </view>
+  </view>
+</view>

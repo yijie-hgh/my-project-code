@@ -1,0 +1,73 @@
+<!--pages/mine/profile/profile.wxml-->
+<view class="page-bg container">
+  <!-- 用户头部 -->
+  <view class="profile-header">
+    <view class="avatar-large">{{userInfo.nickName ? userInfo.nickName.charAt(0) : 'U'}}</view>
+    <view class="user-name">{{userInfo.nickName || '未设置'}}</view>
+    <view class="user-role">
+      <text class="tag tag-primary">{{userInfo.postName || '巡检员'}}</text>
+      <text class="tag tag-info ml-10">{{userInfo.deptName || '巡检部'}}</text>
+    </view>
+  </view>
+
+  <!-- 资料表单 -->
+  <view class="card">
+    <view class="card-title">基本信息</view>
+    <view class="form-item">
+      <text class="form-label">用户名</text>
+      <input class="form-input form-readonly" value="{{userInfo.userName}}" disabled />
+    </view>
+    <view class="form-item">
+      <text class="form-label">昵称</text>
+      <input class="form-input" value="{{form.nickName}}" data-field="nickName" bindinput="onInput" placeholder="请输入昵称" />
+    </view>
+    <view class="form-item">
+      <text class="form-label">手机号</text>
+      <input class="form-input" value="{{form.phonenumber}}" data-field="phonenumber" bindinput="onInput" placeholder="请输入手机号" type="number" maxlength="11" />
+    </view>
+    <view class="form-item">
+      <text class="form-label">邮箱</text>
+      <input class="form-input" value="{{form.email}}" data-field="email" bindinput="onInput" placeholder="请输入邮箱" />
+    </view>
+    <view class="form-item">
+      <text class="form-label">部门</text>
+      <input class="form-input form-readonly" value="{{userInfo.deptName}}" disabled />
+    </view>
+    <view class="form-item">
+      <text class="form-label">岗位</text>
+      <input class="form-input form-readonly" value="{{userInfo.postName}}" disabled />
+    </view>
+  </view>
+
+  <!-- 操作按钮 -->
+  <view class="btn btn-primary btn-block mt-20" bindtap="onSave">保存修改</view>
+  <view class="btn btn-outline btn-block mt-20" bindtap="onChangePassword">修改密码</view>
+
+  <!-- 修改密码弹窗 -->
+  <view class="pwd-mask" wx:if="{{showPwdModal}}" bindtap="onClosePwd">
+    <view class="pwd-box" catchtap="noop">
+      <view class="pwd-header">
+        <text class="pwd-title">修改密码</text>
+        <text class="pwd-close" bindtap="onClosePwd">✕</text>
+      </view>
+      <view class="pwd-body">
+        <view class="form-item">
+          <text class="form-label">旧密码</text>
+          <input class="form-input" value="{{pwdForm.oldPassword}}" data-field="oldPassword" bindinput="onPwdInput" placeholder="请输入旧密码" password />
+        </view>
+        <view class="form-item">
+          <text class="form-label">新密码</text>
+          <input class="form-input" value="{{pwdForm.newPassword}}" data-field="newPassword" bindinput="onPwdInput" placeholder="请输入新密码" password />
+        </view>
+        <view class="form-item">
+          <text class="form-label">确认密码</text>
+          <input class="form-input" value="{{pwdForm.confirmPassword}}" data-field="confirmPassword" bindinput="onPwdInput" placeholder="请再次输入新密码" password />
+        </view>
+      </view>
+      <view class="pwd-footer">
+        <view class="btn btn-plain btn-sm flex-1" bindtap="onClosePwd">取消</view>
+        <view class="btn btn-primary btn-sm flex-1" bindtap="onConfirmPwd">确认修改</view>
+      </view>
+    </view>
+  </view>
+</view>

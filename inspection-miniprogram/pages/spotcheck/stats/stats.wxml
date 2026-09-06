@@ -1,0 +1,145 @@
+<!--pages/spotcheck/stats/stats.wxml-->
+<view class="page-bg container stats-page">
+  <!-- 加载中 -->
+  <view wx:if="{{loading && !dist}}" class="card">
+    <view class="loading-tip">正在加载点检统计数据...</view>
+  </view>
+
+  <!-- 空状态 -->
+  <view wx:elif="{{!dist}}" class="card">
+    <view class="loading-tip">暂无点检统计数据</view>
+  </view>
+
+  <block wx:if="{{dist}}">
+    <!-- 顶部统计概览 -->
+    <view class="stats-row">
+      <view class="stat-card stat-blue">
+        <text class="stat-icon">📋</text>
+        <text class="stat-value">{{overview.total}}</text>
+        <text class="stat-name">点检总数</text>
+      </view>
+      <view class="stat-card stat-green">
+        <text class="stat-icon">✅</text>
+        <text class="stat-value">{{overview.normal}}</text>
+        <text class="stat-name">正常数</text>
+      </view>
+      <view class="stat-card stat-red">
+        <text class="stat-icon">⚠️</text>
+        <text class="stat-value">{{overview.abnormal}}</text>
+        <text class="stat-name">异常数</text>
+      </view>
+      <view class="stat-card stat-orange">
+        <text class="stat-icon">📊</text>
+        <text class="stat-value">{{overview.completionRate}}%</text>
+        <text class="stat-name">完成率</text>
+      </view>
+    </view>
+
+    <!-- 合格率进度条 -->
+    <view class="card">
+      <view class="card-title">🎯 合格率</view>
+      <view class="pass-rate-section">
+        <view class="pass-rate-display">
+          <text class="pass-rate-big {{passRate >= 90 ? 'text-success' : passRate >= 75 ? 'text-warning' : 'text-danger'}}">{{passRate}}%</text>
+          <text class="pass-rate-desc text-sub">设备点检合格率</text>
+        </view>
+        <view class="progress-bar pass-rate-progress">
+          <view class="progress-bar-fill" style="width:{{passRate}}%;background:linear-gradient(90deg,#10b981,#34d399);"></view>
+        </view>
+        <view class="pass-rate-info">
+          <view class="pass-rate-info-item">
+            <view class="pass-rate-dot dot-normal"></view>
+            <text class="text-sm text-sub">正常 {{overview.normal}} 次</text>
+          </view>
+          <view class="pass-rate-info-item">
+            <view class="pass-rate-dot dot-abnormal"></view>
+            <text class="text-sm text-sub">异常 {{overview.abnormal}} 次</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 各设备类型点检分布（堆叠柱状图） -->
+    <view class="card">
+      <view class="card-title">📋 各设备类型点检分布</view>
+      <view class="chart-legend">
+        <view class="chart-legend-item">
+          <view class="chart-legend-dot" style="background:#10b981;"></view>
+          <text>正常</text>
+        </view>
+        <view class="chart-legend-item">
+          <view class="chart-legend-dot" style="background:#ef4444;"></view>
+          <text>异常</text>
+        </view>
+      </view>
+      <view class="type-dist-list">
+        <view wx:for="{{byType}}" wx:key="name" class="type-dist-item">
+          <view class="type-dist-header">
+            <text class="type-dist-name">{{item.name}}</text>
+            <text class="type-dist-rate {{item.passRate >= 90 ? 'text-success' : item.passRate >= 75 ? 'text-warning' : 'text-danger'}}">{{item.passRate}}%</text>
+          </view>
+          <view class="type-dist-bar">
+            <view class="type-dist-bar-normal" style="width:{{item.normalPercent}}%;"></view>
+            <view class="type-dist-bar-abnormal" style="width:{{item.abnormalPercent}}%;"></view>
+          </view>
+          <view class="type-dist-info">
+            <text class="text-sm text-success">正常 {{item.normal}}</text>
+            <text class="text-sm text-danger">异常 {{item.abnormal}}</text>
+            <text class="text-sm text-gray">合计 {{item.total}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 近7天点检趋势（双柱状图） -->
+    <view class="card">
+      <view class="card-title">📈 近7天点检趋势</view>
+      <view class="chart-legend">
+        <view class="chart-legend-item">
+          <view class="chart-legend-dot" style="background:#10b981;"></view>
+          <text>正常</text>
+        </view>
+        <view class="chart-legend-item">
+          <view class="chart-legend-dot" style="background:#ef4444;"></view>
+          <text>异常</text>
+        </view>
+      </view>
+      <view class="trend-chart">
+        <view wx:for="{{trend}}" wx:key="date" class="trend-col">
+          <view class="trend-bars">
+            <view class="trend-bar trend-bar-normal" style="height:{{item.normalH}}%;"></view>
+            <view class="trend-bar trend-bar-abnormal" style="height:{{item.abnormalH}}%;"></view>
+          </view>
+          <text class="trend-date">{{item.date}}</text>
+          <text class="trend-num text-sm">{{item.total}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 常见异常项Top5 -->
+    <view class="card">
+      <view class="card-title">⚠️ 常见异常项Top5</view>
+      <view wx:if="{{topAbnormal.length === 0}}" class="loading-tip">暂无异常项数据</view>
+      <view wx:else class="top-abnormal-list">
+        <view wx:for="{{topAbnormal}}" wx:key="name" class="top-abnormal-item">
+          <view class="top-abnormal-rank rank-{{index + 1}}">{{index + 1}}</view>
+          <view class="top-abnormal-info">
+            <view class="top-abnormal-header">
+              <text class="top-abnormal-name">{{item.name}}</text>
+              <text class="top-abnormal-count">{{item.count}}次</text>
+            </view>
+            <view class="progress-bar">
+              <view class="progress-bar-fill" style="width:{{item.barWidth}}%;background:linear-gradient(90deg,#f59e0b,#fbbf24);"></view>
+            </view>
+            <text class="top-abnormal-percent text-sm text-gray">占比 {{item.percent}}%</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 底部刷新 -->
+    <view class="refresh-footer" bindtap="onRefresh">
+      <text>🔄 刷新数据</text>
+    </view>
+  </block>
+</view>

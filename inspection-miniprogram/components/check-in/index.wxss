@@ -1,0 +1,109 @@
+/* components/check-in/index.wxss */
+.check-in {
+  background: #fff;
+  border-radius: 20rpx;
+  padding: 32rpx 28rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0,0,0,0.04);
+}
+
+.checkin-title {
+  font-size: 34rpx;
+  font-weight: 700;
+  color: #1f2937;
+  display: flex;
+  align-items: center;
+}
+.checkin-title::before {
+  content: '🔐';
+  margin-right: 12rpx;
+}
+.checkin-desc {
+  font-size: 24rpx;
+  color: #9ca3af;
+  margin: 12rpx 0 28rpx;
+}
+
+.checkin-methods {
+  display: flex;
+  justify-content: space-around;
+}
+.method-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24rpx 20rpx;
+  border-radius: 16rpx;
+  transition: all 0.2s;
+}
+.method-item:active {
+  background: #f3f4f6;
+  transform: scale(0.96);
+}
+.method-icon {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48rpx;
+  margin-bottom: 16rpx;
+}
+.method-qr { background: #dbeafe; }
+.method-nfc { background: #d1fae5; }
+.method-gps { background: #fef3c7; }
+.method-gps.locating { animation: pulse 1s infinite; }
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+.method-name {
+  font-size: 26rpx;
+  font-weight: 600;
+  color: #1f2937;
+}
+.method-desc {
+  font-size: 22rpx;
+  color: #9ca3af;
+  margin-top: 6rpx;
+}
+
+/* 已签到 */
+.checked-result {
+  display: flex;
+  align-items: center;
+}
+.checked-icon {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  background: #d1fae5;
+  color: #10b981;
+  font-size: 44rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 24rpx;
+}
+.checked-info {
+  display: flex;
+  flex-direction: column;
+}
+.checked-title {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #10b981;
+}
+.checked-type {
+  font-size: 24rpx;
+  color: #6b7280;
+  margin-top: 4rpx;
+}
+.checked-time {
+  font-size: 22rpx;
+  color: #9ca3af;
+  margin-top: 4rpx;
+}

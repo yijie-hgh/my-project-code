@@ -1,0 +1,111 @@
+<!--pages/point/list/list.wxml-->
+<view class="page-bg">
+  <!-- 搜索栏 -->
+  <view class="search-bar">
+    <view class="search-input-wrap">
+      <text class="search-icon">🔍</text>
+      <input class="search-input" type="text" placeholder="搜索巡检点名称" value="{{queryParams.pointName}}" bindinput="onSearchInput" confirm-type="search" />
+      <text wx:if="{{queryParams.pointName}}" class="search-clear" bindtap="onClearSearch">✕</text>
+    </view>
+    <!-- 项目筛选 -->
+    <picker class="project-picker" range="{{projectNames}}" value="{{projectIndex}}" bindchange="onProjectChange">
+      <view class="picker-value">
+        <text>{{projectNames[projectIndex]}}</text>
+        <text class="picker-arrow">▾</text>
+      </view>
+    </picker>
+  </view>
+
+  <!-- 巡检点列表 -->
+  <view class="list-wrap">
+    <empty-state wx:if="{{!loading && list.length === 0}}" text="暂无巡检点数据" icon="📍"></empty-state>
+
+    <view wx:for="{{list}}" wx:key="id" class="point-card" data-id="{{item.id}}" bindtap="goDetail">
+      <view class="card-top">
+        <view class="point-name text-ellipsis">{{item.pointName}}</view>
+        <text class="tag {{item.statusInfo.tag}}">{{item.statusInfo.text}}</text>
+      </view>
+      <view class="point-code">编码：{{item.pointCode}}</view>
+
+      <view class="info-row">
+        <text class="info-label">所属项目</text>
+        <text class="info-value text-ellipsis">{{item.projectName}}</text>
+      </view>
+      <view class="info-row">
+        <text class="info-label">位置</text>
+        <text class="info-value text-ellipsis">{{item.location || '—'}}</text>
+      </view>
+
+      <view class="tag-row">
+        <view class="mini-tag">
+          <text class="mini-tag-icon">📡</text>
+          <text class="mini-tag-text">{{item.nfcTag || '无NFC'}}</text>
+        </view>
+        <view class="mini-tag">
+          <text class="mini-tag-icon">🔳</text>
+          <text class="mini-tag-text">{{item.qrcode || '无二维码'}}</text>
+        </view>
+        <view class="mini-tag">
+          <text class="mini-tag-icon">🧾</text>
+          <text class="mini-tag-text">{{item.checkItems || 0}}项</text>
+        </view>
+      </view>
+
+      <view class="card-bottom">
+        <text class="bottom-time" wx:if="{{item.lastInspectTime}}">最后巡检：{{item.lastTimeText}}</text>
+        <text class="bottom-time" wx:else>暂未巡检</text>
+        <text class="tag {{item.lastResult === '异常' ? 'tag-danger' : 'tag-success'}}" wx:if="{{item.lastResult}}">{{item.lastResult}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 浮动新增按钮 -->
+  <view class="fab-btn" bindtap="onAdd">
+    <text class="fab-icon">+</text>
+  </view>
+
+  <!-- 新增弹窗 -->
+  <view wx:if="{{showForm}}" class="modal-mask" bindtap="onCloseForm">
+    <view class="modal-content" catchtap="stopPropagation">
+      <view class="modal-header">
+        <text class="modal-title">新增巡检点</text>
+        <text class="modal-close" bindtap="onCloseForm">✕</text>
+      </view>
+      <view class="modal-body">
+        <view class="form-item">
+          <text class="form-label">巡检点名称<text class="required">*</text></text>
+          <input class="form-input" placeholder="请输入巡检点名称" value="{{form.pointName}}" data-field="pointName" bindinput="onFormInput" />
+        </view>
+        <view class="form-item">
+          <text class="form-label">巡检点编码<text class="required">*</text></text>
+          <input class="form-input" placeholder="请输入巡检点编码" value="{{form.pointCode}}" data-field="pointCode" bindinput="onFormInput" />
+        </view>
+        <view class="form-item">
+          <text class="form-label">所属项目<text class="required">*</text></text>
+          <picker range="{{projectNames}}" value="{{formProjectIndex}}" bindchange="onFormProjectChange">
+            <view class="form-picker">
+              <text class="{{form.projectId ? '' : 'placeholder'}}">{{form.projectId ? projectNames[formProjectIndex] : '请选择所属项目'}}</text>
+              <text class="picker-arrow">▾</text>
+            </view>
+          </picker>
+        </view>
+        <view class="form-item">
+          <text class="form-label">位置</text>
+          <input class="form-input" placeholder="请输入位置信息" value="{{form.location}}" data-field="location" bindinput="onFormInput" />
+        </view>
+        <view class="form-item">
+          <text class="form-label">NFC标签</text>
+          <input class="form-input" placeholder="请输入NFC标签（选填）" value="{{form.nfcTag}}" data-field="nfcTag" bindinput="onFormInput" />
+        </view>
+        <view class="form-item">
+          <text class="form-label">二维码编号</text>
+          <input class="form-input" placeholder="请输入二维码编号（选填）" value="{{form.qrcode}}" data-field="qrcode" bindinput="onFormInput" />
+        </view>
+      </view>
+      <view class="modal-footer">
+        <view class="btn btn-plain btn-sm" style="flex:1;margin-right:20rpx;" bindtap="onCloseForm">取消</view>
+        <view class="btn btn-primary btn-sm" style="flex:1;" bindtap="onSubmitForm">确定</view>
+      </view>
+    </view>
+  </view>
+</view>

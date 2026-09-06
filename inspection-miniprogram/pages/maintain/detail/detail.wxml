@@ -1,0 +1,101 @@
+<!--pages/maintain/detail/detail.wxml-->
+<view class="page-bg" style="padding-bottom: 160rpx;">
+  <empty-state wx:if="{{!loading && !detail}}" text="保养记录不存在" icon="❓"></empty-state>
+
+  <block wx:if="{{detail}}">
+    <!-- 保养信息头部 -->
+    <view class="detail-header">
+      <view class="header-top">
+        <view class="title-row">
+          <text class="detail-plan">{{detail.planName}}</text>
+          <text class="tag {{detail.statusInfo.tag}}">{{detail.statusInfo.text}}</text>
+        </view>
+        <text class="detail-no">编号：{{detail.maintainNo}}</text>
+      </view>
+
+      <view class="header-progress">
+        <view class="progress-row">
+          <text class="progress-label">保养进度</text>
+          <text class="progress-num">{{doneCount}}/{{totalCount}}</text>
+        </view>
+        <view class="progress-bar" style="height:16rpx;">
+          <view class="progress-bar-fill" style="width: {{rate}}%;"></view>
+        </view>
+        <text class="progress-rate">{{rate}}%</text>
+      </view>
+    </view>
+
+    <!-- 设备信息 -->
+    <view class="card">
+      <view class="card-title">设备信息</view>
+      <view class="info-row" bindtap="goEquipDetail">
+        <text class="info-label">设备名称</text>
+        <view class="info-value-wrap">
+          <text class="info-value text-primary">{{detail.equipName}}</text>
+          <text class="info-arrow">›</text>
+        </view>
+      </view>
+      <view class="info-row" bindtap="goEquipDetail">
+        <text class="info-label">设备编号</text>
+        <view class="info-value-wrap">
+          <text class="info-value">{{detail.equipCode}}</text>
+          <text class="info-arrow">›</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 保养信息 -->
+    <view class="card">
+      <view class="card-title">保养信息</view>
+      <view class="info-row">
+        <text class="info-label">保养类型</text>
+        <text class="info-value">{{detail.type}}</text>
+      </view>
+      <view class="info-row">
+        <text class="info-label">保养内容</text>
+        <text class="info-value">{{detail.content}}</text>
+      </view>
+      <view class="info-row">
+        <text class="info-label">保养人员</text>
+        <text class="info-value">{{detail.maintainer}}</text>
+      </view>
+      <view class="info-row">
+        <text class="info-label">计划日期</text>
+        <text class="info-value {{detail.status === '3' ? 'text-danger' : ''}}">{{detail.planDate}}</text>
+      </view>
+      <view wx:if="{{detail.finishTime}}" class="info-row">
+        <text class="info-label">完成时间</text>
+        <text class="info-value text-success">{{detail.finishTime}}</text>
+      </view>
+      <view class="info-row">
+        <text class="info-label">保养费用</text>
+        <text class="info-value {{detail.cost ? 'text-warning' : ''}}">{{detail.cost ? '¥' + detail.cost : '—'}}</text>
+      </view>
+      <view wx:if="{{detail.remark}}" class="info-row">
+        <text class="info-label">备注说明</text>
+        <text class="info-value">{{detail.remark}}</text>
+      </view>
+    </view>
+
+    <!-- 保养项目 -->
+    <view class="card">
+      <view class="card-title">保养项目（{{totalCount}}）</view>
+      <view class="item-list">
+        <view wx:for="{{detail.items}}" wx:key="name" class="check-item {{item.done ? 'done' : ''}}">
+          <view class="check-box {{item.done ? 'checked' : ''}}">
+            <text wx:if="{{item.done}}" class="check-icon">✓</text>
+          </view>
+          <text class="check-name">{{item.name}}</text>
+          <text class="check-status {{item.done ? 'text-success' : 'text-gray'}}">{{item.done ? '已完成' : '未完成'}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 底部操作 -->
+    <view class="bottom-bar">
+      <button wx:if="{{canExecute}}" class="btn btn-primary btn-block" bindtap="goExecute">🔧 执行保养</button>
+      <button wx:elif="{{detail.status === '2'}}" class="btn btn-plain btn-block" disabled>保养已完成</button>
+      <button wx:elif="{{detail.status === '3'}}" class="btn btn-plain btn-block" disabled>已逾期</button>
+    </view>
+  </block>
+</view>

@@ -1,0 +1,477 @@
+<!--pages/equipment/inventory/inventory.wxml-->
+<view class="page-bg">
+  <!-- 搜索栏 -->
+  <view class="search-bar">
+    <view class="search-input-wrap">
+      <text class="search-icon">🔍</text>
+      <input class="search-input" type="text" placeholder="搜索设备名称/编码" value="{{keyword}}" bindinput="onSearchInput" confirm-type="search" />
+      <text wx:if="{{keyword}}" class="search-clear" bindtap="onClearSearch">✕</text>
+    </view>
+  </view>
+
+  <!-- 筛选栏 -->
+  <view class="filter-bar">
+    <!-- 状态筛选 -->
+    <scroll-view class="status-tabs" scroll-x>
+      <view wx:for="{{statusTabs}}" wx:key="value" class="status-tab {{queryParams.status === item.value ? 'active' : ''}}" data-value="{{item.value}}" bindtap="onStatusChange">{{item.label}}</view>
+    </scroll-view>
+    <!-- 车间和类型筛选 -->
+    <view class="filter-pickers">
+      <picker class="filter-picker" mode="selector" range="{{workshopOptions}}" value="{{workshopIndex}}" bindchange="onWorkshopChange">
+        <view class="picker-value {{workshopIndex > 0 ? 'active' : ''}}">
+          <text class="picker-text">{{workshopOptions[workshopIndex]}}</text>
+          <text class="picker-arrow">▼</text>
+        </view>
+      </picker>
+      <picker class="filter-picker" mode="selector" range="{{typeOptions}}" value="{{typeIndex}}" bindchange="onTypeChange">
+        <view class="picker-value {{typeIndex > 0 ? 'active' : ''}}">
+          <text class="picker-text">{{typeOptions[typeIndex]}}</text>
+          <text class="picker-arrow">▼</text>
+        </view>
+      </picker>
+      <view wx:if="{{workshopIndex > 0 || typeIndex > 0 || queryParams.status}}" class="reset-btn" bindtap="onResetFilter">重置</view>
+    </view>
+  </view>
+
+  <!-- 统计概览 -->
+  <view class="stats-overview">
+    <view class="stat-card stat-total">
+      <view class="stat-num text-primary">{{stats.total}}</view>
+      <view class="stat-label">设备总数</view>
+    </view>
+    <view class="stat-card stat-normal">
+      <view class="stat-num text-success">{{stats.normal}}</view>
+      <view class="stat-label">正常运行</view>
+    </view>
+    <view class="stat-card stat-fault">
+      <view class="stat-num text-danger">{{stats.fault}}</view>
+      <view class="stat-label">故障数</view>
+    </view>
+    <view class="stat-card stat-calib">
+      <view class="stat-num text-warning">{{stats.pendingCalibration}}</view>
+      <view class="stat-label">待校验</view>
+    </view>
+  </view>
+
+  <!-- 设备清单列表 -->
+  <view class="list-wrap">
+    <view wx:if="{{loading}}" class="loading-tip">加载中...</view>
+    <empty-state wx:if="{{!loading && list.length === 0}}" text="暂无设备清单数据" icon="📋"></empty-state>
+
+    <!-- 卡片视图 -->
+    <block wx:if="{{viewMode === 'card'}}">
+      <view wx:for="{{list}}" wx:key="id" class="inv-card" data-id="{{item.id}}">
+      <!-- 卡片头部 -->
+      <view class="card-header" data-id="{{item.id}}" bindtap="goDetail">
+        <view class="header-left">
+          <view class="equip-name text-ellipsis">{{item.equipName}}</view>
+          <view class="equip-code text-sm text-gray">编码：{{item.equipCode}}</view>
+        </view>
+        <view class="header-right">
+          <text class="tag {{item.statusInfo.tag}}">{{item.statusInfo.text}}</text>
+        </view>
+      </view>
+
+      <!-- 基础信息 -->
+      <view class="card-info">
+        <view class="info-row">
+          <text class="info-label">类型</text>
+          <text class="info-value">{{item.equipType}}</text>
+          <text class="info-label ml-20">规格</text>
+          <text class="info-value">{{item.spec}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">车间</text>
+          <text class="info-value">{{item.workshop}}</text>
+          <text class="info-label ml-20">位置</text>
+          <text class="info-value">📍 {{item.location}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">负责人</text>
+          <text class="info-value">👤 {{item.manager}}</text>
+          <text class="info-label ml-20">电话</text>
+          <text class="info-value">{{item.managerPhone}}</text>
+        </view>
+      </view>
+
+      <!-- 健康分 -->
+      <view wx:if="{{item.healthLevel}}" class="health-bar">
+        <text class="health-label">健康分</text>
+        <view class="health-score" style="color: {{item.healthLevel.color}}; background: {{item.healthLevel.bg}};">
+          {{item.healthScore.score}}
+        </view>
+        <text class="health-level" style="color: {{item.healthLevel.color}};">{{item.healthLevel.text}}</text>
+      </view>
+
+      <!-- 模块关联标签 -->
+      <view class="module-tags">
+        <view class="module-tag">
+          <text class="module-icon">✅</text>
+          <text class="module-count">点检 {{item.spotCheckCount}}</text>
+          <text wx:if="{{item.lastSpotCheckResult !== '未点检'}}" class="module-sub {{item.lastSpotCheckResult === '正常' ? 'text-success' : 'text-danger'}}">{{item.lastSpotCheckResult}}</text>
+        </view>
+        <view class="module-tag">
+          <text class="module-icon">🔧</text>
+          <text class="module-count">维修 {{item.repairCount}}</text>
+          <text wx:if="{{item.pendingRepairCount > 0}}" class="module-sub text-danger">待处理{{item.pendingRepairCount}}</text>
+        </view>
+        <view class="module-tag">
+          <text class="module-icon">🛠️</text>
+          <text class="module-count">保养 {{item.maintainCount}}</text>
+          <text wx:if="{{item.pendingMaintainCount > 0}}" class="module-sub text-warning">待保养{{item.pendingMaintainCount}}</text>
+        </view>
+        <view class="module-tag">
+          <text class="module-icon">📡</text>
+          <text class="module-count {{item.iotOnline ? 'text-success' : 'text-gray'}}">{{item.iotOnline ? '在线' : '离线'}}</text>
+        </view>
+        <view wx:if="{{item.reminderCount > 0}}" class="module-tag">
+          <text class="module-icon">🔔</text>
+          <text class="module-count text-warning">提醒 {{item.reminderCount}}</text>
+        </view>
+        <view wx:if="{{item.andonCount > 0}}" class="module-tag">
+          <text class="module-icon">🚨</text>
+          <text class="module-count text-danger">安灯 {{item.andonCount}}</text>
+        </view>
+        <view class="module-tag">
+          <text class="module-icon">📱</text>
+          <text class="module-count text-sub">二维码</text>
+        </view>
+      </view>
+
+      <!-- 展开更多 -->
+      <view wx:if="{{expandedId === item.id}}" class="expand-section">
+        <view class="expand-title">设备参数</view>
+        <view class="params-grid">
+          <view wx:for="{{item.params}}" wx:key="paramName" wx:for-item="param" class="param-item">
+            <text class="param-name">{{param.paramName}}</text>
+            <text class="param-value">{{param.value || '-'}}{{param.unit ? ' ' + param.unit : ''}}</text>
+          </view>
+        </view>
+
+        <view class="expand-title mt-20">适用保养项目</view>
+        <view class="maintain-items">
+          <text wx:for="{{item.applicableMaintainItems}}" wx:key="itemName" wx:for-item="maintain" class="maintain-tag tag tag-info">{{maintain.itemName}}</text>
+          <text wx:if="{{item.applicableMaintainItems.length === 0}}" class="text-sm text-gray">暂无适用保养项目</text>
+        </view>
+
+        <view class="expand-title mt-20">校验信息</view>
+        <view class="info-row">
+          <text class="info-label">校验周期</text>
+          <text class="info-value">{{item.calibrationCycle}}天</text>
+          <text class="info-label ml-20">校验日期</text>
+          <text class="info-value">{{item.calibrationDate}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">到期日期</text>
+          <text class="info-value {{item.calibrationExpire && item.calibrationExpire < '2026-08-14' ? 'text-danger' : ''}}">{{item.calibrationExpire}}</text>
+        </view>
+
+        <view class="expand-title mt-20">其他信息</view>
+        <view class="info-row">
+          <text class="info-label">制造商</text>
+          <text class="info-value">{{item.manufacturer}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">供应商</text>
+          <text class="info-value">{{item.supplier}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">购买日期</text>
+          <text class="info-value">{{item.purchaseDate}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">投用日期</text>
+          <text class="info-value">{{item.startDate}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">NFC标签</text>
+          <text class="info-value">{{item.nfcTag}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">二维码</text>
+          <text class="info-value">{{item.qrcode}}</text>
+        </view>
+
+        <!-- 关联模块详情（来自getRelatedModules） -->
+        <block wx:if="{{item.relatedModules}}">
+          <view class="expand-title mt-20">关联模块详情</view>
+
+          <!-- 点检记录 -->
+          <view wx:if="{{item.relatedModules.spotChecks.length > 0}}" class="related-block">
+            <view class="related-block-title text-success">✅ 点检记录 ({{item.relatedModules.spotChecks.length}})</view>
+            <view wx:for="{{item.relatedModules.spotChecks}}" wx:key="id" wx:for-item="sc" class="related-item">
+              <text class="related-time">{{sc.checkTime}}</text>
+              <text class="related-desc">{{sc.checker}} · 结果：{{sc.result}}</text>
+            </view>
+          </view>
+
+          <!-- 维修记录 -->
+          <view wx:if="{{item.relatedModules.repairs.length > 0}}" class="related-block">
+            <view class="related-block-title text-danger">🔧 维修记录 ({{item.relatedModules.repairs.length}})</view>
+            <view wx:for="{{item.relatedModules.repairs}}" wx:key="id" wx:for-item="rp" class="related-item">
+              <text class="related-time">{{rp.repairNo}}</text>
+              <text class="related-desc">{{rp.title}} · {{rp.status === '3' ? '已完成' : '处理中'}}</text>
+            </view>
+          </view>
+
+          <!-- 保养记录 -->
+          <view wx:if="{{item.relatedModules.maintains.length > 0}}" class="related-block">
+            <view class="related-block-title text-warning">🛠️ 保养记录 ({{item.relatedModules.maintains.length}})</view>
+            <view wx:for="{{item.relatedModules.maintains}}" wx:key="id" wx:for-item="mn" class="related-item">
+              <text class="related-time">{{mn.maintainNo}}</text>
+              <text class="related-desc">{{mn.planName}} · {{mn.status === '2' ? '已完成' : '待执行'}}</text>
+            </view>
+          </view>
+
+          <!-- 物联网数据 -->
+          <view wx:if="{{item.relatedModules.iotDevice}}" class="related-block">
+            <view class="related-block-title {{item.relatedModules.iotDevice.online ? 'text-success' : 'text-gray'}}">📡 物联网数采 ({{item.relatedModules.iotDevice.online ? '在线' : '离线'}})</view>
+            <view class="iot-sensors">
+              <view wx:for="{{item.relatedModules.iotDevice.sensors}}" wx:key="name" wx:for-item="sensor" class="sensor-item">
+                <text class="sensor-name">{{sensor.name}}</text>
+                <text class="sensor-value {{sensor.status === 'normal' ? 'text-success' : sensor.status === 'warning' ? 'text-warning' : sensor.status === 'danger' ? 'text-danger' : 'text-gray'}}">{{sensor.value}}{{sensor.unit}}</text>
+              </view>
+            </view>
+          </view>
+
+          <!-- 到期提醒 -->
+          <view wx:if="{{item.relatedModules.reminders.length > 0}}" class="related-block">
+            <view class="related-block-title text-warning">🔔 到期提醒 ({{item.relatedModules.reminders.length}})</view>
+            <view wx:for="{{item.relatedModules.reminders}}" wx:key="id" wx:for-item="rm" class="related-item">
+              <text class="related-time">{{rm.type}}</text>
+              <text class="related-desc {{rm.status === 'expired' ? 'text-danger' : ''}}">到期日：{{rm.expireDate}} · {{rm.status === 'expired' ? '已过期' : rm.daysLeft + '天后到期'}}</text>
+            </view>
+          </view>
+
+          <!-- 安灯呼叫 -->
+          <view wx:if="{{item.relatedModules.andons.length > 0}}" class="related-block">
+            <view class="related-block-title text-danger">🚨 安灯呼叫 ({{item.relatedModules.andons.length}})</view>
+            <view wx:for="{{item.relatedModules.andons}}" wx:key="id" wx:for-item="ad" class="related-item">
+              <text class="related-time">{{ad.callType}}</text>
+              <text class="related-desc">{{ad.description}} · {{ad.statusText}}</text>
+            </view>
+          </view>
+        </block>
+      </view>
+
+      <!-- 卡片底部操作 -->
+      <view class="card-footer">
+        <view class="footer-btn" data-id="{{item.id}}" catchtap="toggleExpand">
+          <text>{{expandedId === item.id ? '收起' : '展开更多'}}</text>
+        </view>
+        <view class="footer-btn text-primary" data-id="{{item.id}}" catchtap="goDetail">
+          <text>查看详情</text>
+        </view>
+      </view>
+    </view>
+    </block>
+
+    <!-- 表单视图 -->
+    <view wx:if="{{viewMode === 'form'}}" class="form-view-wrap">
+      <view class="form-toolbar">
+        <text class="form-count">共 {{list.length}} 条记录</text>
+        <view class="form-toolbar-right">
+          <view class="toolbar-btn" bindtap="onOpenFieldPicker">⚙️ 字段设置</view>
+          <view class="toolbar-btn" bindtap="onToggleViewMode">📋 卡片视图</view>
+        </view>
+      </view>
+      <scroll-view scroll-x class="form-table-wrap">
+        <view class="form-table">
+          <!-- 表头 -->
+          <view class="form-header-row">
+            <view wx:for="{{fieldConfig.fields}}" wx:key="key" wx:for-item="field" wx:if="{{formVisibleFields.indexOf(field.key) > -1}}" class="form-header-cell">
+              {{field.label}}
+              <text wx:if="{{field.required}}" class="required-mark">*</text>
+            </view>
+            <view class="form-header-cell form-action-cell">操作</view>
+          </view>
+          <!-- 数据行 -->
+          <view wx:for="{{list}}" wx:key="id" wx:for-item="row" class="form-data-row">
+            <view wx:for="{{fieldConfig.fields}}" wx:key="key" wx:for-item="field" wx:if="{{formVisibleFields.indexOf(field.key) > -1}}" class="form-data-cell">
+              <text wx:if="{{field.key === 'status'}}">
+                <text class="tag {{row.statusInfo.tag}}">{{row.statusInfo.text}}</text>
+              </text>
+              <text wx:elif="{{field.key === 'healthScore'}}">
+                <text wx:if="{{row.healthScore}}" style="color: {{row.healthLevel.color}};">{{row.healthScore.score}}</text>
+                <text wx:else>-</text>
+              </text>
+              <text wx:else>{{row[field.key] || '-'}}</text>
+            </view>
+            <view class="form-data-cell form-action-cell">
+              <text class="action-link" data-id="{{row.id}}" catchtap="onEditItem">编辑</text>
+              <text class="action-link" data-id="{{row.id}}" catchtap="goDetail">详情</text>
+            </view>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+
+  <!-- 视图切换按钮（卡片模式下显示） -->
+  <view wx:if="{{viewMode === 'card'}}" class="view-toggle-btn" bindtap="onToggleViewMode">📊 表单视图</view>
+
+  <!-- 底部操作栏 -->
+  <view class="bottom-bar">
+    <view class="bottom-btn btn-add" bindtap="goAdd">
+      <text class="btn-icon">＋</text>
+      <text>添加设备</text>
+    </view>
+    <view class="bottom-btn btn-import" bindtap="onImportExcel">
+      <text class="btn-icon">📥</text>
+      <text>导入Excel</text>
+    </view>
+    <view class="bottom-btn btn-feishu" bindtap="onSyncToFeishu">
+      <text class="btn-icon">🔗</text>
+      <text>同步飞书</text>
+    </view>
+  </view>
+</view>
+
+<!-- 字段选择器弹窗 -->
+<view wx:if="{{showFieldPicker}}" class="field-picker-mask" catchtap="onCloseFieldPicker">
+  <view class="field-picker-panel" catchtap="">
+    <view class="picker-header">
+      <view class="picker-title">字段设置</view>
+      <text class="picker-close" bindtap="onCloseFieldPicker">✕</text>
+    </view>
+    <scroll-view class="picker-content" scroll-y>
+      <view wx:for="{{fieldConfig.fields}}" wx:key="key" wx:for-item="field" class="field-item" data-key="{{field.key}}" bindtap="onToggleField">
+        <view class="field-check {{formVisibleFields.indexOf(field.key) > -1 ? 'checked' : ''}}">
+          {{formVisibleFields.indexOf(field.key) > -1 ? '✓' : ''}}
+        </view>
+        <view class="field-info">
+          <text class="field-name">{{field.label}}</text>
+          <text wx:if="{{field.required}}" class="field-required">必填</text>
+          <text wx:if="{{field.group}}" class="field-group">{{field.group}}</text>
+        </view>
+      </view>
+    </scroll-view>
+    <view class="picker-footer">
+      <view class="picker-btn reset" bindtap="onResetFieldConfig">重置默认</view>
+      <view class="picker-btn save" bindtap="onSaveFieldConfig">保存设置</view>
+    </view>
+  </view>
+</view>
+
+<!-- 编辑表单弹窗 -->
+<view wx:if="{{editMode && editingItem}}" class="edit-form-mask" catchtap="onCancelEdit">
+  <view class="edit-form-panel" catchtap="">
+    <view class="edit-header">
+      <view class="edit-title">编辑设备信息</view>
+      <text class="edit-close" bindtap="onCancelEdit">✕</text>
+    </view>
+    <scroll-view class="edit-content" scroll-y>
+      <view wx:for="{{fieldConfig.fields}}" wx:key="key" wx:for-item="field" wx:if="{{formVisibleFields.indexOf(field.key) > -1}}" class="edit-field">
+        <text class="edit-label">{{field.label}}<text wx:if="{{field.required}}" class="required-mark">*</text></text>
+        <input wx:if="{{field.type === 'text' || field.type === 'phone' || field.type === 'number'}}" class="edit-input" value="{{editingItem[field.key]}}" data-field="{{field.key}}" bindinput="onFormInput" placeholder="请输入{{field.label}}" />
+        <input wx:elif="{{field.type === 'date'}}" class="edit-input" value="{{editingItem[field.key]}}" data-field="{{field.key}}" bindinput="onFormInput" placeholder="请输入日期(yyyy-MM-dd)" />
+        <textarea wx:elif="{{field.type === 'textarea'}}" class="edit-textarea" value="{{editingItem[field.key]}}" data-field="{{field.key}}" bindinput="onFormInput" placeholder="请输入{{field.label}}" auto-height></textarea>
+      </view>
+    </scroll-view>
+    <view class="edit-footer">
+      <view class="edit-btn cancel" bindtap="onCancelEdit">取消</view>
+      <view class="edit-btn save" bindtap="onSaveEdit">保存</view>
+    </view>
+  </view>
+</view>
+
+<!-- 导入预览弹窗 -->
+<view wx:if="{{importPreview.show}}" class="import-mask" catchtap="onCloseImportPreview">
+  <view class="import-panel" catchtap="">
+    <!-- 头部 -->
+    <view class="import-header">
+      <view class="import-title">导入预览</view>
+      <text class="import-close" bindtap="onCloseImportPreview">✕</text>
+    </view>
+
+    <!-- 解析中 -->
+    <view wx:if="{{importPreview.parsing}}" class="import-parsing">
+      <view class="parsing-icon">⏳</view>
+      <text class="parsing-text">正在解析文件：{{importPreview.fileName}}</text>
+      <text class="parsing-hint">请稍候...</text>
+    </view>
+
+    <!-- 解析结果 -->
+    <block wx:if="{{!importPreview.parsing}}">
+      <!-- 文件信息 -->
+      <view class="import-file-info">
+        <text class="file-name">📄 {{importPreview.fileName}}</text>
+      </view>
+
+      <!-- 统计概览 -->
+      <view class="import-stats">
+        <view class="import-stat">
+          <text class="import-stat-num">{{importPreview.total}}</text>
+          <text class="import-stat-label">总行数</text>
+        </view>
+        <view class="import-stat import-stat-success">
+          <text class="import-stat-num">{{importPreview.validCount}}</text>
+          <text class="import-stat-label">有效数据</text>
+        </view>
+        <view class="import-stat import-stat-error">
+          <text class="import-stat-num">{{importPreview.failCount}}</text>
+          <text class="import-stat-label">异常行</text>
+        </view>
+      </view>
+
+      <!-- 无有效数据提示 -->
+      <view wx:if="{{importPreview.validCount === 0}}" class="import-empty">
+        <text class="import-empty-icon">⚠️</text>
+        <text class="import-empty-text">没有可导入的有效数据</text>
+        <text class="import-empty-hint">请检查文件格式或下载模板参考</text>
+      </view>
+
+      <!-- 数据预览表格 -->
+      <scroll-view wx:if="{{importPreview.validCount > 0}}" class="import-table-wrap" scroll-y>
+        <view class="import-table">
+          <!-- 表头 -->
+          <view class="import-row import-row-header">
+            <text class="import-cell import-cell-idx">#</text>
+            <text class="import-cell import-cell-code">设备编码</text>
+            <text class="import-cell import-cell-name">设备名称</text>
+            <text class="import-cell import-cell-type">类型</text>
+            <text class="import-cell import-cell-status">状态</text>
+            <text class="import-cell import-cell-workshop">车间</text>
+          </view>
+          <!-- 数据行 -->
+          <view wx:for="{{importPreview.data}}" wx:key="index" class="import-row">
+            <text class="import-cell import-cell-idx">{{item.index}}</text>
+            <text class="import-cell import-cell-code">{{item.equipCode}}</text>
+            <text class="import-cell import-cell-name">{{item.equipName}}</text>
+            <text class="import-cell import-cell-type">{{item.equipType}}</text>
+            <text class="import-cell import-cell-status">
+              <text class="mini-tag {{item.status === '1' ? 'tag-success' : item.status === '2' ? 'tag-danger' : item.status === '3' ? 'tag-warning' : 'tag-gray'}}">{{item.statusText}}</text>
+            </text>
+            <text class="import-cell import-cell-workshop">{{item.workshop || '-'}}</text>
+          </view>
+        </view>
+      </scroll-view>
+
+      <!-- 错误列表 -->
+      <view wx:if="{{importPreview.errors.length > 0}}" class="import-errors">
+        <view class="errors-title">
+          <text>⚠️ 异常数据 ({{importPreview.errors.length}})</text>
+        </view>
+        <scroll-view class="errors-list" scroll-y>
+          <view wx:for="{{importPreview.errors}}" wx:key="row" class="error-item">
+            <text class="error-row">第{{item.row}}行</text>
+            <text class="error-msg">{{item.message}}</text>
+          </view>
+        </scroll-view>
+      </view>
+
+      <!-- 底部操作按钮 -->
+      <view class="import-footer">
+        <view class="import-btn btn-template" bindtap="onDownloadTemplate">
+          <text>下载模板</text>
+        </view>
+        <view wx:if="{{importPreview.validCount > 0}}" class="import-btn btn-confirm" bindtap="onConfirmImport">
+          <text>确认导入 {{importPreview.validCount}} 条</text>
+        </view>
+        <view wx:else class="import-btn btn-confirm-disabled">
+          <text>无可导入数据</text>
+        </view>
+      </view>
+    </block>
+  </view>
+</view>

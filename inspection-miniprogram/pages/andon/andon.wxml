@@ -1,0 +1,220 @@
+<!--pages/andon/andon.wxml-->
+<view class="page-bg container andon-page">
+  <!-- 快速呼叫区 -->
+  <view class="call-hero card">
+    <view class="hero-title">
+      <text class="hero-icon">🚨</text>
+      <view class="flex-col">
+        <text class="hero-text">安灯呼叫</text>
+        <text class="hero-sub">选择呼叫类型，快速发起求助</text>
+      </view>
+    </view>
+
+    <!-- 呼叫类型选择网格 -->
+    <view class="type-grid">
+      <view
+        wx:for="{{callTypes}}"
+        wx:key="value"
+        class="type-cell {{selectedType === item.value ? 'active' : ''}}"
+        data-type="{{item.value}}"
+        bindtap="onSelectType"
+        style="{{selectedType === item.value ? 'background:' + item.color + '14;border-color:' + item.color + ';' : ''}}">
+        <text class="type-cell-icon">{{item.icon}}</text>
+        <text class="type-cell-text" style="{{selectedType === item.value ? 'color:' + item.color + ';' : ''}}">{{item.value}}</text>
+      </view>
+    </view>
+
+    <!-- 呼叫表单 -->
+    <block wx:if="{{showForm}}">
+      <view class="call-form">
+        <view class="form-header">
+          <text class="form-header-text">
+            <text wx:if="{{selectedType === '设备故障'}}">🔧</text>
+            <text wx:elif="{{selectedType === '质量异常'}}">⚠️</text>
+            <text wx:elif="{{selectedType === '物料短缺'}}">📦</text>
+            <text wx:elif="{{selectedType === '求助支援'}}">🆘</text>
+            <text wx:else>📋</text>
+            {{selectedType}} - 发起呼叫
+          </text>
+          <text class="form-close" bindtap="onCancelType">✕</text>
+        </view>
+
+        <!-- 设备选择 -->
+        <view class="form-item">
+          <view class="form-label">
+            <text class="required">*</text>
+            <text>设备名称</text>
+          </view>
+          <picker
+            mode="selector"
+            range="{{equipList}}"
+            range-key="equipName"
+            value="{{equipIndex}}"
+            bindchange="onEquipChange">
+            <view class="form-picker {{equipIndex >= 0 ? '' : 'placeholder'}}">
+              <text>{{equipIndex >= 0 ? equipList[equipIndex].equipName : '点击选择设备（可手动输入）'}}</text>
+              <text class="picker-arrow">›</text>
+            </view>
+          </picker>
+          <input
+            class="form-input"
+            placeholder="或手动输入设备名称"
+            value="{{form.equipName}}"
+            bindinput="onEquipNameInput"
+            maxlength="50" />
+        </view>
+
+        <!-- 位置 -->
+        <view class="form-item">
+          <view class="form-label">
+            <text>所在位置</text>
+          </view>
+          <input
+            class="form-input"
+            placeholder="如：C-1区"
+            value="{{form.location}}"
+            bindinput="onLocationInput"
+            maxlength="30" />
+        </view>
+
+        <!-- 描述 -->
+        <view class="form-item">
+          <view class="form-label">
+            <text class="required">*</text>
+            <text>呼叫描述</text>
+          </view>
+          <textarea
+            class="form-textarea"
+            placeholder="请描述具体问题或需求..."
+            value="{{form.description}}"
+            bindinput="onDescInput"
+            maxlength="500"
+            auto-height />
+          <view class="textarea-count">{{form.description.length}}/500</view>
+        </view>
+
+        <!-- 操作按钮 -->
+        <view class="form-actions">
+          <button class="btn btn-plain" style="flex:1;margin-right:20rpx;" bindtap="onCancelType">取消</button>
+          <button class="btn btn-danger" style="flex:1;" bindtap="onSubmitCall" disabled="{{submitting}}">
+            <text class="btn-icon">📢</text> 发起呼叫
+          </button>
+        </view>
+      </view>
+    </block>
+  </view>
+
+  <!-- 呼叫历史 -->
+  <view class="history-section">
+    <view class="section-title">
+      <view class="card-title" style="margin-bottom:0;">呼叫记录</view>
+      <text class="section-count">共 {{recordList.length}} 条</text>
+    </view>
+
+    <!-- 过滤Tab -->
+    <view class="filter-tabs">
+      <view
+        wx:for="{{filterTabs}}"
+        wx:key="value"
+        class="filter-tab {{activeFilter === item.value ? 'active' : ''}}"
+        data-value="{{item.value}}"
+        bindtap="onFilterChange">
+        {{item.text}}
+      </view>
+    </view>
+
+    <!-- 加载中 -->
+    <view wx:if="{{loading}}" class="card">
+      <view class="loading-tip">正在加载...</view>
+    </view>
+
+    <!-- 空状态 -->
+    <view wx:elif="{{recordList.length === 0}}" class="card empty-state">
+      <text class="empty-icon">📭</text>
+      <text class="empty-text">暂无呼叫记录</text>
+    </view>
+
+    <!-- 记录列表 -->
+    <block wx:else>
+      <view
+        wx:for="{{recordList}}"
+        wx:key="id"
+        class="record-card card {{item.status === '0' ? 'record-urgent' : ''}}"
+        data-id="{{item.id}}"
+        bindtap="onToggleExpand">
+        <!-- 卡片头部 -->
+        <view class="record-header">
+          <view class="record-equip">
+            <text class="record-icon">{{item.callTypeIcon}}</text>
+            <view class="flex-col">
+              <text class="record-equip-name text-ellipsis">{{item.equipName}}</text>
+              <text class="record-equip-code text-sm text-gray">{{item.equipCode}}</text>
+            </view>
+          </view>
+          <view class="record-tags">
+            <text class="tag {{item.callTypeTag}}">{{item.callType}}</text>
+            <text class="tag {{item.statusTag}}">{{item.statusText}}</text>
+          </view>
+        </view>
+
+        <!-- 基本信息 -->
+        <view class="record-body">
+          <view class="record-row">
+            <text class="record-label">呼叫人</text>
+            <text class="record-value">{{item.caller}}</text>
+          </view>
+          <view class="record-row">
+            <text class="record-label">呼叫时间</text>
+            <text class="record-value">{{item.callTime}}</text>
+          </view>
+          <view class="record-row">
+            <text class="record-label">呼叫原因</text>
+            <text class="record-value desc">{{item.description}}</text>
+          </view>
+          <view wx:if="{{item.location}}" class="record-row">
+            <text class="record-label">所在位置</text>
+            <text class="record-value">📍 {{item.location}}</text>
+          </view>
+        </view>
+
+        <!-- 展开详情：响应/处理信息 -->
+        <view wx:if="{{expandedId === item.id}}" class="record-detail">
+          <view wx:if="{{item.responder}}" class="record-row">
+            <text class="record-label">响应人</text>
+            <text class="record-value text-primary">{{item.responder}}</text>
+          </view>
+          <view wx:if="{{item.responseTime}}" class="record-row">
+            <text class="record-label">响应时间</text>
+            <text class="record-value">{{item.responseTime}}</text>
+          </view>
+          <view wx:if="{{item.resolveTime}}" class="record-row">
+            <text class="record-label">处理时间</text>
+            <text class="record-value text-success">{{item.resolveTime}}</text>
+          </view>
+
+          <!-- 响应按钮 -->
+          <button
+            wx:if="{{item.status === '0'}}"
+            class="btn btn-primary btn-block mt-20"
+            data-id="{{item.id}}"
+            catchtap="onRespond">
+            <text class="btn-icon">✋</text> 响应呼叫
+          </button>
+        </view>
+
+        <!-- 展开提示 -->
+        <view class="expand-tip">
+          <text>{{expandedId === item.id ? '收起 ▲' : '查看详情 ▼'}}</text>
+        </view>
+      </view>
+    </block>
+  </view>
+
+  <!-- 成功动画遮罩 -->
+  <view wx:if="{{showSuccess}}" class="success-mask">
+    <view class="success-box">
+      <view class="success-icon">✓</view>
+      <text class="success-text">呼叫已发起</text>
+    </view>
+  </view>
+</view>

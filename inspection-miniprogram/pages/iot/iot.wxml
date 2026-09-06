@@ -1,0 +1,233 @@
+<!--pages/iot/iot.wxml-->
+<view class="page-bg container iot-page">
+  <!-- 顶部概览 -->
+  <view class="overview-card card">
+    <view class="overview-title">
+      <view class="card-title" style="margin-bottom:0;">📡 设备数采概览</view>
+    </view>
+    <view class="overview-stats">
+      <view class="stat-block stat-total">
+        <text class="stat-num">{{deviceList.length}}</text>
+        <text class="stat-label">设备总数</text>
+      </view>
+      <view class="stat-block stat-online">
+        <view class="stat-dot dot-online"></view>
+        <text class="stat-num text-success">{{onlineCount}}</text>
+        <text class="stat-label">在线</text>
+      </view>
+      <view class="stat-block stat-offline">
+        <view class="stat-dot dot-offline"></view>
+        <text class="stat-num text-gray">{{offlineCount}}</text>
+        <text class="stat-label">离线</text>
+      </view>
+      <view class="stat-block stat-danger">
+        <text class="stat-icon">⚠️</text>
+        <text class="stat-num text-danger">{{dangerCount}}</text>
+        <text class="stat-label">告警</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 刷新栏 -->
+  <view class="refresh-bar">
+    <view class="refresh-btn {{autoRefresh ? 'active' : ''}}" bindtap="onToggleRefresh">
+      <view class="refresh-icon {{autoRefresh ? 'spinning' : ''}}">🔄</view>
+      <text>{{autoRefresh ? '自动刷新中' : '自动刷新'}}</text>
+    </view>
+    <view class="refresh-info">
+      <text class="last-time text-sm text-gray" wx:if="{{lastRefreshTime}}">更新于 {{lastRefreshTime}}</text>
+      <view class="manual-refresh" bindtap="onRefresh">
+        <text class="manual-icon">⟳</text>
+        <text>刷新</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 过滤Tab -->
+  <view class="filter-tabs">
+    <view
+      wx:for="{{filterTabs}}"
+      wx:key="value"
+      class="filter-tab {{activeFilter === item.value ? 'active' : ''}}"
+      data-value="{{item.value}}"
+      bindtap="onFilterChange">
+      {{item.text}}
+      <text wx:if="{{item.value === 'online'}}" class="tab-count">({{onlineCount}})</text>
+      <text wx:elif="{{item.value === 'offline'}}" class="tab-count">({{offlineCount}})</text>
+    </view>
+  </view>
+
+  <!-- 加载中 -->
+  <view wx:if="{{loading}}" class="card">
+    <view class="loading-tip">正在采集数据...</view>
+  </view>
+
+  <!-- 空状态 -->
+  <view wx:elif="{{filteredDevices.length === 0}}" class="card empty-state">
+    <text class="empty-icon">📡</text>
+    <text class="empty-text">{{activeFilter === 'all' ? '暂无物联网设备' : (activeFilter === 'online' ? '暂无在线设备' : '暂无离线设备')}}</text>
+  </view>
+
+  <!-- 设备列表 -->
+  <block wx:else>
+    <view
+      wx:for="{{filteredDevices}}"
+      wx:key="id"
+      class="device-card card {{item.hasDanger ? 'device-alert' : ''}} {{!item.online ? 'device-offline' : ''}}"
+      data-id="{{item.id}}"
+      data-equipid="{{item.equipId}}"
+      bindtap="onDeviceTap">
+
+      <!-- 告警条 -->
+      <view wx:if="{{item.hasDanger}}" class="alert-banner">
+        <text class="alert-icon">🚨</text>
+        <text>检测到危险传感器数值，请及时处理</text>
+      </view>
+
+      <!-- 设备头部 -->
+      <view class="device-header">
+        <view class="device-info">
+          <view class="device-status-dot {{item.online ? 'dot-online' : 'dot-offline'}}"></view>
+          <view class="flex-col">
+            <text class="device-name text-ellipsis">{{item.equipName}}</text>
+            <text class="device-code text-sm text-gray">{{item.equipCode}}</text>
+          </view>
+        </view>
+        <view class="device-status-tag">
+          <text wx:if="{{item.online}}" class="tag tag-success">● 在线</text>
+          <text wx:else class="tag tag-gray">● 离线</text>
+        </view>
+      </view>
+
+      <!-- 最后更新时间 -->
+      <view class="device-update">
+        <text class="text-sm text-gray">⏱ 最后更新：{{item.lastUpdate}}</text>
+      </view>
+
+      <!-- 传感器读数网格 -->
+      <view class="sensor-grid">
+        <view
+          wx:for="{{item.sensors}}"
+          wx:for-item="sensor"
+          wx:key="name"
+          class="sensor-item sensor-{{sensor.status}}">
+          <view class="sensor-header">
+            <text class="sensor-name">{{sensor.name}}</text>
+            <text class="sensor-status-dot" style="background:{{sensor.statusColor}};"></text>
+          </view>
+          <view class="sensor-value-row">
+            <text class="sensor-value" style="color:{{sensor.statusColor}};">{{sensor.value}}</text>
+            <text class="sensor-unit">{{sensor.unit}}</text>
+          </view>
+          <!-- 进度条：值 vs 阈值 -->
+          <view class="sensor-progress">
+            <view class="progress-bar sensor-bar">
+              <view
+                class="progress-bar-fill"
+                style="width:{{sensor.percent}}%;background:{{sensor.statusColor}};"></view>
+            </view>
+            <text class="sensor-threshold text-sm text-gray">阈值 {{sensor.threshold}}{{sensor.unit}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 查看详情提示 -->
+      <view class="device-footer">
+        <text class="text-sm text-primary">查看设备详情 ›</text>
+      </view>
+
+      <!-- 快捷操作按钮 -->
+      <view class="card-actions" catchtap="">
+        <view class="action-btn" data-id="{{item.id}}" catchtap="onEdit">
+          <text>✏️ 编辑</text>
+        </view>
+        <view class="action-btn danger" data-id="{{item.id}}" catchtap="onDelete">
+          <text>🗑️ 删除</text>
+        </view>
+      </view>
+    </view>
+  </block>
+
+  <!-- 悬浮按钮 -->
+  <view class="fab-btn" bindtap="onAdd">
+    <text class="fab-icon">+</text>
+  </view>
+
+  <!-- 表单弹窗 -->
+  <view class="detail-mask" wx:if="{{showForm}}" bindtap="onCloseForm">
+    <view class="detail-popup" catchtap="stopPropagation">
+      <view class="popup-header">
+        <text class="popup-title">{{formMode === 'edit' ? '编辑IoT设备' : '新增IoT设备'}}</text>
+        <text class="popup-close" bindtap="onCloseForm">✕</text>
+      </view>
+
+      <scroll-view scroll-y class="popup-scroll">
+        <view class="card form-card">
+          <!-- 设备名称 -->
+          <view class="form-item">
+            <text class="form-label">设备名称 <text class="required">*</text></text>
+            <input class="form-input" placeholder="请输入设备名称" value="{{form.deviceName}}" data-field="deviceName" bindinput="onFormInput" />
+          </view>
+          <!-- 关联设备 -->
+          <view class="form-item">
+            <text class="form-label">关联设备 <text class="required">*</text></text>
+            <picker mode="selector" range="{{equipmentList}}" range-key="equipName" value="{{equipPickerIndex}}" bindchange="onEquipChange">
+              <view class="form-picker {{equipPickerIndex >= 0 ? '' : 'placeholder'}}">
+                <text wx:if="{{equipPickerIndex >= 0}}">{{equipmentList[equipPickerIndex].equipName}}（{{equipmentList[equipPickerIndex].equipCode}}）</text>
+                <text wx:else>请选择关联设备</text>
+                <text class="picker-arrow">›</text>
+              </view>
+            </picker>
+          </view>
+          <!-- 设备类型 -->
+          <view class="form-item">
+            <text class="form-label">设备类型</text>
+            <picker mode="selector" range="{{deviceTypes}}" value="{{form.deviceTypeIndex}}" bindchange="onTypeChange">
+              <view class="form-picker {{form.deviceTypeIndex >= 0 ? '' : 'placeholder'}}">
+                <text wx:if="{{form.deviceTypeIndex >= 0}}">{{form.deviceType}}</text>
+                <text wx:else>请选择设备类型</text>
+                <text class="picker-arrow">›</text>
+              </view>
+            </picker>
+          </view>
+          <!-- 安装位置 -->
+          <view class="form-item">
+            <text class="form-label">安装位置</text>
+            <input class="form-input" placeholder="请输入安装位置" value="{{form.location}}" data-field="location" bindinput="onFormInput" />
+          </view>
+          <!-- 通信协议 -->
+          <view class="form-item">
+            <text class="form-label">通信协议</text>
+            <picker mode="selector" range="{{protocols}}" value="{{form.protocolIndex}}" bindchange="onProtocolChange">
+              <view class="form-picker {{form.protocolIndex >= 0 ? '' : 'placeholder'}}">
+                <text wx:if="{{form.protocolIndex >= 0}}">{{form.protocol}}</text>
+                <text wx:else>请选择通信协议</text>
+                <text class="picker-arrow">›</text>
+              </view>
+            </picker>
+          </view>
+          <!-- 在线状态 -->
+          <view class="form-item form-item-row">
+            <text class="form-label">在线状态</text>
+            <switch checked="{{form.online}}" bindchange="onOnlineChange" color="#2563eb" />
+          </view>
+          <!-- 备注 -->
+          <view class="form-item">
+            <text class="form-label">备注</text>
+            <textarea class="form-textarea" placeholder="请输入备注信息" value="{{form.remark}}" data-field="remark" bindinput="onFormInput" maxlength="200"></textarea>
+          </view>
+        </view>
+
+        <!-- 底部操作按钮 -->
+        <view class="form-actions">
+          <view class="form-btn form-btn-cancel" bindtap="onCloseForm">
+            <text>取消</text>
+          </view>
+          <view class="form-btn form-btn-save" bindtap="onSubmitForm">
+            <text>保存</text>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+</view>

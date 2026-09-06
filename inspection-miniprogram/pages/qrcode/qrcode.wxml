@@ -1,0 +1,68 @@
+<!--pages/qrcode/qrcode.wxml-->
+<view class="page-bg container">
+  <!-- 巡检点选择 -->
+  <view class="card">
+    <view class="card-title">选择巡检点</view>
+    <picker mode="selector" range="{{pointNames}}" value="{{pointIndex}}" bindchange="onPointChange">
+      <view class="picker-box">
+        <text class="picker-label">巡检点：</text>
+        <text class="picker-value {{pointIndex < 0 ? 'placeholder' : ''}}">{{pointIndex < 0 ? '请选择巡检点' : pointNames[pointIndex]}}</text>
+        <text class="picker-arrow">›</text>
+      </view>
+    </picker>
+  </view>
+
+  <!-- 二维码展示 -->
+  <view class="card qr-card" wx:if="{{qrcode}}">
+    <view class="card-title">二维码图案</view>
+    <view class="qr-wrapper">
+      <canvas canvas-id="qrcodeCanvas" id="qrcodeCanvas" type="2d" class="qr-canvas"></canvas>
+      <view class="qr-loading" wx:if="{{drawing}}">生成中...</view>
+    </view>
+    <view class="qr-info">
+      <view class="info-row">
+        <text class="info-label">巡检点名称</text>
+        <text class="info-value">{{pointName}}</text>
+      </view>
+      <view class="info-row">
+        <text class="info-label">二维码编号</text>
+        <text class="info-value text-primary">{{qrcode}}</text>
+      </view>
+    </view>
+    <view class="qr-actions">
+      <view class="btn btn-outline btn-sm flex-1" bindtap="onSaveAlbum">
+        <text>💾 保存到相册</text>
+      </view>
+      <view class="btn btn-primary btn-sm flex-1" bindtap="onPrint">
+        <text>🖨️ 打印标签</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="card" wx:if="{{!qrcode && !loading}}">
+    <view class="empty-tip">
+      <text class="empty-icon">🔳</text>
+      <text class="empty-text">请选择巡检点生成二维码</text>
+    </view>
+  </view>
+
+  <!-- 加载中 -->
+  <view class="card" wx:if="{{loading}}">
+    <view class="empty-tip">
+      <text class="empty-icon loading-icon">⏳</text>
+      <text class="empty-text">正在生成二维码...</text>
+    </view>
+  </view>
+
+  <!-- 说明 -->
+  <view class="card">
+    <view class="card-title">使用说明</view>
+    <view class="help-list">
+      <view class="help-item"><text class="help-dot">1</text><text>选择需要生成二维码的巡检点</text></view>
+      <view class="help-item"><text class="help-dot">2</text><text>系统自动生成对应的二维码图案</text></view>
+      <view class="help-item"><text class="help-dot">3</text><text>点击"保存到相册"将二维码保存至手机</text></view>
+      <view class="help-item"><text class="help-dot">4</text><text>将二维码打印后贴于设备上，巡检时扫码签到</text></view>
+    </view>
+  </view>
+</view>

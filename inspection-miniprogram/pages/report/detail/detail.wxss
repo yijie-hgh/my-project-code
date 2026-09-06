@@ -1,0 +1,203 @@
+/* pages/report/detail/detail.wxss - 报表详情样式 */
+
+/* 报表标题 */
+.report-title-card {
+  margin: 20rpx 24rpx;
+}
+.report-title-row {
+  display: flex;
+  align-items: center;
+}
+.report-title-icon {
+  font-size: 48rpx;
+  margin-right: 20rpx;
+}
+.report-title-info {
+  flex: 1;
+}
+.report-title {
+  font-size: 34rpx;
+  font-weight: 700;
+  color: #1f2937;
+  display: block;
+  margin-bottom: 8rpx;
+}
+.report-title-meta {
+  display: flex;
+  align-items: center;
+}
+
+/* 完成率环形 */
+.ring-card {
+  margin: 20rpx 24rpx;
+  text-align: center;
+}
+.ring-wrap {
+  display: flex;
+  justify-content: center;
+  padding: 20rpx 0;
+}
+.ring-outer {
+  width: 280rpx;
+  height: 280rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ring-inner {
+  width: 280rpx;
+  height: 280rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ring-center {
+  width: 200rpx;
+  height: 200rpx;
+  border-radius: 50%;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.ring-num {
+  font-size: 64rpx;
+  font-weight: 700;
+  color: #1f2937;
+  line-height: 1;
+}
+.ring-unit {
+  font-size: 28rpx;
+  color: #6b7280;
+  margin-top: 4rpx;
+}
+.ring-desc {
+  margin-top: 16rpx;
+}
+
+/* 统计卡片网格 */
+.stats-card {
+  margin: 20rpx 24rpx;
+}
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24rpx;
+}
+.stat-grid-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20rpx 0;
+  background: #f9fafb;
+  border-radius: 16rpx;
+}
+.stat-grid-icon {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32rpx;
+  margin-bottom: 12rpx;
+}
+.stat-grid-num {
+  font-size: 36rpx;
+  font-weight: 700;
+  line-height: 1.2;
+}
+.stat-grid-label {
+  font-size: 22rpx;
+  color: #6b7280;
+  margin-top: 6rpx;
+}
+
+/* 趋势图 */
+.trend-card {
+  margin: 20rpx 24rpx;
+}
+.trend-chart {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  height: 260rpx;
+  padding: 20rpx 0;
+}
+.trend-bar-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+.trend-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 4rpx;
+  height: 200rpx;
+}
+.trend-bar {
+  width: 20rpx;
+  border-radius: 4rpx 4rpx 0 0;
+  min-height: 4rpx;
+  transition: height 0.5s;
+}
+.bar-done {
+  background: linear-gradient(180deg, #3b82f6, #2563eb);
+}
+.bar-abnormal {
+  background: linear-gradient(180deg, #f87171, #ef4444);
+}
+.trend-date {
+  font-size: 20rpx;
+  color: #9ca3af;
+  margin-top: 8rpx;
+}
+.trend-num {
+  font-size: 22rpx;
+  color: #2563eb;
+  font-weight: 600;
+  margin-top: 4rpx;
+}
+.trend-legend {
+  display: flex;
+  justify-content: center;
+  gap: 40rpx;
+  margin-top: 16rpx;
+  padding-top: 16rpx;
+  border-top: 1rpx solid #f0f0f0;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  font-size: 24rpx;
+  color: #6b7280;
+}
+.legend-dot {
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: 4rpx;
+  margin-right: 8rpx;
+}
+.legend-dot.done {
+  background: #2563eb;
+}
+.legend-dot.abnormal {
+  background: #ef4444;
+}
+
+/* 底部操作区 */
+.bottom-action {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #fff;
+  padding: 20rpx 24rpx;
+  padding-bottom: calc(20rpx + env(safe-area-inset-bottom));
+  box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, 0.06);
+  z-index: 100;
+}

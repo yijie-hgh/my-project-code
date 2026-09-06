@@ -1,0 +1,86 @@
+<!--pages/event/track/track.wxml-->
+<view class="page-bg" style="padding-bottom: 160rpx;">
+  <block wx:if="{{event}}">
+    <!-- 顶部事件标题 -->
+    <view class="card event-header-card">
+      <view class="event-header-top">
+        <text class="event-title text-ellipsis">{{event.title}}</text>
+        <text class="tag {{event.statusInfo.tag}}">{{event.statusInfo.text}}</text>
+      </view>
+      <view class="track-count">
+        <text class="text-sm text-gray">共 {{tracks.length}} 条跟踪记录</text>
+      </view>
+    </view>
+
+    <!-- 时间线列表 -->
+    <view class="card track-list-card">
+      <view class="card-title">跟踪记录</view>
+
+      <view wx:if="{{tracks.length > 0}}" class="track-timeline">
+        <view 
+          class="track-item" 
+          wx:for="{{tracks}}" 
+          wx:key="id">
+          <!-- 左侧时间线 -->
+          <view class="track-line-col">
+            <view class="track-icon {{index === 0 ? 'icon-active' : ''}}">
+              <text>{{item.icon}}</text>
+            </view>
+            <view class="track-line" wx:if="{{index !== tracks.length - 1}}"></view>
+          </view>
+          <!-- 右侧内容 -->
+          <view class="track-content-wrap">
+            <view class="track-content-card">
+              <view class="track-content-header">
+                <text class="track-action">{{item.action}}</text>
+                <text class="track-time text-sm text-gray">{{item.operateTimeText}}</text>
+              </view>
+              <view class="track-operator">
+                <text class="text-sm text-sub">👤 {{item.operator}}</text>
+              </view>
+              <view class="track-text">{{item.content}}</view>
+              <!-- 图片展示 -->
+              <view class="track-images" wx:if="{{item.images && item.images.length > 0}}">
+                <image 
+                  wx:for="{{item.images}}" 
+                  wx:for-item="img" 
+                  wx:key="*this"
+                  class="track-image" 
+                  src="{{img}}" 
+                  mode="aspectFill"
+                  data-urls="{{item.images}}" 
+                  data-current="{{img}}" 
+                  bindtap="onPreviewImage" />
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <empty-state wx:if="{{tracks.length === 0}}" text="暂无跟踪记录" icon="📝"></empty-state>
+    </view>
+
+    <!-- 底部添加按钮 -->
+    <view class="bottom-action">
+      <button class="btn btn-primary btn-block" bindtap="onShowInput">添加跟踪记录</button>
+    </view>
+
+    <!-- 输入弹窗 -->
+    <view class="track-mask" wx:if="{{showInput}}" bindtap="onHideInput">
+      <view class="track-popup" catchtap="">
+        <view class="popup-title">添加跟踪记录</view>
+        <textarea 
+          class="track-textarea" 
+          placeholder="请输入跟踪内容..." 
+          value="{{trackContent}}" 
+          bindinput="onInput" 
+          maxlength="500" 
+          auto-height />
+        <view class="popup-actions">
+          <button class="btn btn-plain btn-sm" style="flex:1;margin-right:20rpx;" bindtap="onHideInput">取消</button>
+          <button class="btn btn-primary btn-sm" style="flex:1;" bindtap="onSubmit">提交</button>
+        </view>
+      </view>
+    </view>
+  </block>
+</view>

@@ -1,0 +1,73 @@
+<!--pages/event/list/list.wxml-->
+<view class="page-bg" style="padding-bottom: 140rpx;">
+  <!-- 状态筛选Tab -->
+  <scroll-view class="filter-tabs" scroll-x enable-flex>
+    <view 
+      wx:for="{{tabs}}" 
+      wx:key="key" 
+      class="filter-tab {{activeTab === item.key ? 'active' : ''}}" 
+      data-key="{{item.key}}" 
+      bindtap="onTabChange">
+      {{item.text}}
+    </view>
+  </scroll-view>
+
+  <!-- 搜索框 -->
+  <view class="search-bar">
+    <view class="search-input-wrap">
+      <text class="search-icon">🔍</text>
+      <input 
+        class="search-input" 
+        placeholder="搜索事件标题" 
+        value="{{queryParams.title}}" 
+        bindinput="onSearchInput" 
+        confirm-type="search" 
+        bindconfirm="onSearchConfirm" />
+      <text wx:if="{{queryParams.title}}" class="search-clear" bindtap="onSearchClear">✕</text>
+    </view>
+  </view>
+
+  <!-- 事件列表 -->
+  <view class="event-list" wx:if="{{list.length > 0}}">
+    <view 
+      class="card event-card" 
+      wx:for="{{list}}" 
+      wx:key="id" 
+      data-id="{{item.id}}" 
+      bindtap="goDetail">
+      <!-- 卡片头部：标题+状态 -->
+      <view class="event-card-header">
+        <text class="event-title text-ellipsis">{{item.title}}</text>
+        <text class="tag {{item.statusInfo.tag}}">{{item.statusInfo.text}}</text>
+      </view>
+      <!-- 级别标签 -->
+      <view class="event-card-tags">
+        <text class="tag {{item.levelInfo.tag}}">级别: {{item.levelInfo.text}}</text>
+      </view>
+      <!-- 关联信息 -->
+      <view class="event-card-info">
+        <view class="info-row">
+          <text class="info-label">巡检点</text>
+          <text class="info-value text-ellipsis">{{item.pointName || '无'}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">项目</text>
+          <text class="info-value text-ellipsis">{{item.projectName || '无'}}</text>
+        </view>
+      </view>
+      <!-- 描述 -->
+      <view class="event-card-desc text-ellipsis">{{item.description}}</view>
+      <!-- 底部：时间+处理人 -->
+      <view class="event-card-footer">
+        <text class="footer-time text-sm text-gray">{{item.timeAgoText}}</text>
+        <text class="footer-handler text-sm text-sub" wx:if="{{item.handlerName}}">👤 {{item.handlerName}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <empty-state wx:if="{{!loading && list.length === 0}}" text="暂无事件" icon="📭"></empty-state>
+
+  <!-- 浮动添加按钮 -->
+  <view class="fab-btn" bindtap="goCreate">+</view>
+</view>

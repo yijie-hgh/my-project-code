@@ -1,0 +1,58 @@
+<!--pages/task/list/list.wxml-->
+<view class="page-bg" style="padding-bottom: 140rpx;">
+  <!-- 搜索栏 -->
+  <view class="search-bar">
+    <view class="search-input-wrap">
+      <text class="search-icon">🔍</text>
+      <input class="search-input" placeholder="搜索任务名称" value="{{queryParams.taskName}}" bindinput="onSearch" confirm-type="search"></input>
+    </view>
+  </view>
+
+  <!-- 状态筛选 -->
+  <scroll-view class="tab-bar-scroll" scroll-x="true" enhanced show-scrollbar="{{false}}">
+    <view class="tab-list">
+      <view wx:for="{{tabs}}" wx:key="key" class="tab-item {{activeTab === item.key ? 'active' : ''}}" data-key="{{item.key}}" bindtap="onTabChange">
+        <text>{{item.label}}</text>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 任务列表 -->
+  <view class="task-list">
+    <empty-state wx:if="{{!loading && list.length === 0}}" text="暂无巡检任务" icon="📋" subText="下拉刷新或切换筛选条件"></empty-state>
+
+    <view wx:for="{{list}}" wx:key="id" class="task-card" data-id="{{item.id}}" bindtap="goDetail">
+      <view class="task-top">
+        <view class="task-title-area">
+          <text class="task-no">{{item.taskNo}}</text>
+          <text class="task-name">{{item.taskName}}</text>
+        </view>
+        <text class="tag {{item.statusInfo.tag}}">{{item.statusInfo.text}}</text>
+      </view>
+
+      <view class="task-info">
+        <view class="info-item">
+          <text class="info-icon">📁</text>
+          <text class="info-text">{{item.projectName}}</text>
+        </view>
+        <view class="info-item">
+          <text class="info-icon">👤</text>
+          <text class="info-text">{{item.inspectorName}}</text>
+        </view>
+        <view class="info-item">
+          <text class="info-icon">🕐</text>
+          <text class="info-text">{{item.timeText}}</text>
+        </view>
+      </view>
+
+      <view wx:if="{{item.remark}}" class="task-remark text-ellipsis">📝 {{item.remark}}</view>
+
+      <view class="task-progress">
+        <view class="progress-bar" style="flex:1;margin-right:20rpx;">
+          <view class="progress-bar-fill" style="width: {{item.rate}}%;"></view>
+        </view>
+        <text class="progress-text">{{item.doneCount}}/{{item.pointCount}}点</text>
+      </view>
+    </view>
+  </view>
+</view>

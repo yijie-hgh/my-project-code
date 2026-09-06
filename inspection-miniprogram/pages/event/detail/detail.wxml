@@ -1,0 +1,110 @@
+<!--pages/event/detail/detail.wxml-->
+<view class="page-bg" style="padding-bottom: 160rpx;">
+  <block wx:if="{{event}}">
+    <!-- 事件信息卡 -->
+    <view class="card detail-card">
+      <view class="detail-header">
+        <text class="detail-title">{{event.title}}</text>
+        <view class="detail-tags">
+          <text class="tag {{event.levelInfo.tag}}">级别: {{event.levelInfo.text}}</text>
+          <text class="tag {{event.statusInfo.tag}}">{{event.statusInfo.text}}</text>
+        </view>
+      </view>
+
+      <view class="detail-desc">{{event.description}}</view>
+
+      <view class="detail-info-grid">
+        <view class="info-item">
+          <text class="info-label">关联项目</text>
+          <text class="info-value">{{event.projectName || '无'}}</text>
+        </view>
+        <view class="info-item">
+          <text class="info-label">巡检点</text>
+          <text class="info-value">{{event.pointName || '无'}}</text>
+        </view>
+        <view class="info-item">
+          <text class="info-label">上报时间</text>
+          <text class="info-value">{{event.createTimeText}}</text>
+        </view>
+        <view class="info-item">
+          <text class="info-label">处理人</text>
+          <text class="info-value">{{event.handlerName || '未分配'}}</text>
+        </view>
+        <view class="info-item" wx:if="{{event.finishTime}}">
+          <text class="info-label">解决时间</text>
+          <text class="info-value">{{event.finishTimeText}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 事件跟踪时间线 -->
+    <view class="card timeline-card">
+      <view class="flex-between mb-20">
+        <view class="card-title" style="margin-bottom:0;">处理跟踪</view>
+        <text class="text-primary text-sm" bindtap="goTrack" wx:if="{{tracks.length > 0}}">查看全部 ›</text>
+      </view>
+
+      <view wx:if="{{tracks.length > 0}}" class="timeline">
+        <view 
+          class="timeline-item" 
+          wx:for="{{tracks}}" 
+          wx:key="id">
+          <view class="timeline-dot {{index === 0 ? 'dot-active' : ''}}"></view>
+          <view class="timeline-line" wx:if="{{index !== tracks.length - 1}}"></view>
+          <view class="timeline-content">
+            <view class="timeline-header">
+              <text class="timeline-action">{{item.action}}</text>
+              <text class="timeline-time text-sm text-gray">{{item.operateTimeText}}</text>
+            </view>
+            <view class="timeline-operator text-sm text-sub">操作人: {{item.operator}}</view>
+            <view class="timeline-text">{{item.content}}</view>
+          </view>
+        </view>
+      </view>
+
+      <empty-state wx:if="{{tracks.length === 0}}" text="暂无跟踪记录" icon="📝"></empty-state>
+    </view>
+
+    <!-- 底部操作区 -->
+    <view class="bottom-action">
+      <!-- 待处理：开始处理 -->
+      <block wx:if="{{event.status === '0'}}">
+        <button class="btn btn-primary btn-block" bindtap="onStartHandle">开始处理</button>
+      </block>
+
+      <!-- 处理中：添加跟踪 + 标记解决 -->
+      <block wx:if="{{event.status === '1'}}">
+        <button class="btn btn-outline" style="flex:1;margin-right:20rpx;" bindtap="onShowTrackInput">添加跟踪</button>
+        <button class="btn btn-success" style="flex:1;" bindtap="onMarkResolved">标记解决</button>
+      </block>
+
+      <!-- 已解决：关闭事件 -->
+      <block wx:if="{{event.status === '2'}}">
+        <button class="btn btn-plain btn-block" bindtap="onCloseEvent">关闭事件</button>
+      </block>
+
+      <!-- 已关闭：无操作 -->
+      <block wx:if="{{event.status === '3'}}">
+        <view class="closed-tip">该事件已关闭</view>
+      </block>
+    </view>
+
+    <!-- 跟踪输入弹窗 -->
+    <view class="track-mask" wx:if="{{showTrackInput}}" bindtap="onHideTrackInput">
+      <view class="track-popup" catchtap="">
+        <view class="popup-title">添加跟踪记录</view>
+        <textarea 
+          class="track-textarea" 
+          placeholder="请输入跟踪内容..." 
+          value="{{trackContent}}" 
+          bindinput="onTrackInput" 
+          maxlength="500" 
+          auto-height />
+        <view class="popup-actions">
+          <button class="btn btn-plain btn-sm" style="flex:1;margin-right:20rpx;" bindtap="onHideTrackInput">取消</button>
+          <button class="btn btn-primary btn-sm" style="flex:1;" bindtap="onSubmitTrack">提交</button>
+        </view>
+      </view>
+    </view>
+  </block>
+</view>

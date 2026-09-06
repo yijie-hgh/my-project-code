@@ -1,0 +1,69 @@
+<!--pages/scan/scan.wxml-->
+<view class="page-bg scan-page" style="padding-bottom: 140rpx;">
+  <!-- 扫码区域 -->
+  <view class="scan-area">
+    <view class="scan-bg">
+      <!-- 扫码框 -->
+      <view class="scan-frame {{scanType === 'qrcode' ? '' : 'hidden'}}">
+        <view class="frame-corner tl"></view>
+        <view class="frame-corner tr"></view>
+        <view class="frame-corner bl"></view>
+        <view class="frame-corner br"></view>
+        <view class="scan-beam"></view>
+      </view>
+      <view class="scan-center-icon">
+        <text wx:if="{{scanType === 'qrcode'}}">📋</text>
+        <text wx:elif="{{scanType === 'nfc'}}">📡</text>
+        <text wx:else>📍</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 方式切换 -->
+  <view class="type-tabs">
+    <view class="type-tab {{scanType === 'qrcode' ? 'active' : ''}}" data-type="qrcode" bindtap="switchType">
+      <text class="type-icon">📋</text>
+      <text>二维码</text>
+    </view>
+    <view class="type-tab {{scanType === 'nfc' ? 'active' : ''}}" data-type="nfc" bindtap="switchType">
+      <text class="type-icon">📡</text>
+      <text>NFC</text>
+    </view>
+    <view class="type-tab {{scanType === 'gps' ? 'active' : ''}}" data-type="gps" bindtap="switchType">
+      <text class="type-icon">📍</text>
+      <text>GPS定位</text>
+    </view>
+  </view>
+
+  <!-- 操作按钮 -->
+  <view class="scan-actions">
+    <block wx:if="{{scanType === 'qrcode'}}">
+      <view class="scan-tip">将二维码对准扫描框即可自动识别</view>
+      <button class="btn btn-primary btn-block scan-btn" bindtap="onScanCode">点击扫码</button>
+    </block>
+    <block wx:elif="{{scanType === 'nfc'}}">
+      <view class="scan-tip">将手机背部靠近NFC标签进行读取</view>
+      <button class="btn btn-success btn-block scan-btn" bindtap="onReadNfc">开始NFC读取</button>
+    </block>
+    <block wx:else>
+      <view class="scan-tip">点击下方按钮获取当前位置，查找附近巡检点</view>
+      <button class="btn btn-warning btn-block scan-btn {{locating ? 'locating' : ''}}" bindtap="onGetLocation">
+        {{locating ? '定位中...' : 'GPS定位签到'}}
+      </button>
+      <view wx:if="{{location}}" class="location-info">
+        <view class="loc-row"><text class="loc-label">经度</text><text class="loc-val">{{location.longitude}}</text></view>
+        <view class="loc-row"><text class="loc-label">纬度</text><text class="loc-val">{{location.latitude}}</text></view>
+        <view class="loc-row"><text class="loc-label">精度</text><text class="loc-val">{{location.accuracy}}m</text></view>
+      </view>
+    </block>
+  </view>
+
+  <!-- 说明 -->
+  <view class="card scan-help">
+    <view class="card-title">使用说明</view>
+    <view class="help-item"><text class="help-num">1</text><text>二维码巡检：扫描设备上的二维码标签进行签到</text></view>
+    <view class="help-item"><text class="help-num">2</text><text>NFC巡检：将手机靠近NFC标签碰触签到</text></view>
+    <view class="help-item"><text class="help-num">3</text><text>GPS巡检：到达设备附近通过定位签到</text></view>
+    <view class="help-item"><text class="help-num">4</text><text>签到后按提示完成各项巡检内容填写</text></view>
+  </view>
+</view>

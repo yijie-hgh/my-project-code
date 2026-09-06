@@ -1,0 +1,314 @@
+<!--pages/spotcheck/list/list.wxml-->
+<view class="page-bg" style="padding-bottom: 140rpx;">
+  <!-- 搜索栏 + 工具栏 -->
+  <view class="search-bar">
+    <view class="search-input-wrap">
+      <text class="search-icon">🔍</text>
+      <input class="search-input" placeholder="搜索设备名称" value="{{queryParams.equipName}}" bindinput="onSearch" confirm-type="search"></input>
+    </view>
+    <view class="view-toolbar">
+      <view class="tool-btn" bindtap="onOpenImport" title="Excel导入">
+        <text class="tool-icon">📥</text>
+      </view>
+      <view class="tool-btn" bindtap="onSyncToFeishu" title="飞书同步">
+        <text class="tool-icon">🔄</text>
+      </view>
+      <view class="tool-btn" bindtap="onToggleViewMode" title="切换视图">
+        <text class="tool-icon">{{viewMode === 'card' ? '📊' : '🗂️'}}</text>
+      </view>
+      <view class="tool-btn" bindtap="onOpenFieldConfig" title="字段配置">
+        <text class="tool-icon">⚙️</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 统计概览 -->
+  <view class="mini-stats" wx:if="{{stats.total > 0}}">
+    <view class="mini-stat">
+      <text class="mini-stat-num text-primary">{{stats.total}}</text>
+      <text class="mini-stat-label">点检总数</text>
+    </view>
+    <view class="mini-stat">
+      <text class="mini-stat-num text-success">{{stats.normal}}</text>
+      <text class="mini-stat-label">正常</text>
+    </view>
+    <view class="mini-stat">
+      <text class="mini-stat-num text-danger">{{stats.abnormal}}</text>
+      <text class="mini-stat-label">异常</text>
+    </view>
+    <view class="mini-stat">
+      <text class="mini-stat-num text-primary">{{stats.passRate}}%</text>
+      <text class="mini-stat-label">合格率</text>
+    </view>
+  </view>
+
+  <!-- 状态筛选 -->
+  <scroll-view class="tab-bar-scroll" scroll-x="true" enhanced show-scrollbar="{{false}}">
+    <view class="tab-list">
+      <view wx:for="{{tabs}}" wx:key="key" class="tab-item {{activeTab === item.key ? 'active' : ''}}" data-key="{{item.key}}" bindtap="onTabChange">
+        <text>{{item.label}}</text>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- ========== 卡片视图 ========== -->
+  <view wx:if="{{viewMode === 'card'}}" class="record-list">
+    <empty-state wx:if="{{!loading && list.length === 0}}" text="暂无点检记录" icon="📋" subText="点击右下角按钮发起点检"></empty-state>
+
+    <view wx:for="{{list}}" wx:key="id" class="record-card" data-id="{{item.id}}" bindtap="viewDetail">
+      <view class="card-top">
+        <view class="card-title-area">
+          <text class="equip-name">{{item.equipName}}</text>
+          <text class="equip-code">{{item.equipCode}}</text>
+        </view>
+        <text class="tag {{item.result === '正常' ? 'tag-success' : 'tag-danger'}}">{{item.result}}</text>
+      </view>
+
+      <view class="card-info">
+        <view wx:for="{{visibleFieldInfos}}" wx:for-item="field" wx:key="key" wx:if="{{field.key !== 'equipName' && field.key !== 'equipCode' && field.key !== 'result'}}" class="info-item">
+          <text class="info-icon">📌</text>
+          <text class="info-label">{{field.label}}:</text>
+          <text class="info-text">{{item[field.key] || '-'}}</text>
+        </view>
+      </view>
+
+      <view wx:if="{{item.remark}}" class="card-remark text-ellipsis">📝 {{item.remark}}</view>
+
+      <!-- 快捷操作按钮 -->
+      <view class="card-actions" catchtap="">
+        <view class="action-btn" data-equipid="{{item.equipId}}" catchtap="goEquipDetail">
+          <text>📦 设备详情</text>
+        </view>
+        <view class="action-btn" data-equipid="{{item.equipId}}" data-equipname="{{item.equipName}}" catchtap="goRepair">
+          <text>🔧 报修</text>
+        </view>
+        <view class="action-btn danger" data-id="{{item.id}}" catchtap="onDeleteRecord">
+          <text>🗑️ 删除</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- ========== 表格视图 ========== -->
+  <view wx:if="{{viewMode === 'table'}}" class="table-view-wrap">
+    <view wx:if="{{loading}}" class="loading-tip">加载中...</view>
+    <empty-state wx:if="{{!loading && list.length === 0}}" text="暂无点检记录" icon="📋"></empty-state>
+
+    <scroll-view wx:if="{{list.length > 0}}" scroll-x scroll-y class="table-scroll">
+      <view class="table-header">
+        <text class="table-cell table-cell-idx">#</text>
+        <text wx:for="{{visibleFieldInfos}}" wx:for-item="field" wx:key="key" class="table-cell table-cell-head" style="min-width: {{field.width}}rpx;">{{field.label}}</text>
+        <text class="table-cell table-cell-action">操作</text>
+      </view>
+      <view wx:for="{{list}}" wx:key="id" class="table-row" data-id="{{item.id}}" bindtap="viewDetail">
+        <text class="table-cell table-cell-idx">{{index + 1}}</text>
+        <text wx:for="{{visibleFieldInfos}}" wx:for-item="field" wx:key="key" class="table-cell" style="min-width: {{field.width}}rpx;">
+          <block wx:if="{{field.key === 'result'}}">
+            <text class="tag {{item.result === '正常' ? 'tag-success' : 'tag-danger'}}">{{item.result}}</text>
+          </block>
+          <block wx:else>
+            {{item[field.key] || '-'}}
+          </block>
+        </text>
+        <view class="table-cell table-cell-action">
+          <text class="row-action-btn" catchtap="viewDetail" data-id="{{item.id}}">详情</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 悬浮按钮 -->
+  <view class="fab-btn" bindtap="goExecute">
+    <text class="fab-icon">+</text>
+  </view>
+
+  <!-- 详情弹窗 -->
+  <view class="detail-mask" wx:if="{{showDetail}}" bindtap="closeDetail">
+    <view class="detail-popup" catchtap="">
+      <view class="popup-header">
+        <text class="popup-title">点检详情</text>
+        <text class="popup-close" bindtap="closeDetail">✕</text>
+      </view>
+
+      <block wx:if="{{detailRecord}}">
+        <scroll-view scroll-y class="popup-scroll">
+          <!-- 设备信息区 -->
+          <view class="popup-equip-header">
+            <view class="flex-between">
+              <text class="popup-equip-name">{{detailRecord.equipName}}</text>
+              <text class="tag {{detailRecord.result === '正常' ? 'tag-success' : 'tag-danger'}}">{{detailRecord.result}}</text>
+            </view>
+            <text class="popup-equip-code" data-equipid="{{detailRecord.equipId}}" bindtap="goEquipDetail">编号：{{detailRecord.equipCode}} ›</text>
+          </view>
+
+          <view class="popup-info-row">
+            <text class="popup-info-label">点检人</text>
+            <text class="popup-info-value">{{detailRecord.checker}}</text>
+          </view>
+          <view class="popup-info-row">
+            <text class="popup-info-label">点检时间</text>
+            <text class="popup-info-value">{{detailRecord.checkTime}}</text>
+          </view>
+
+          <view class="popup-divider"></view>
+
+          <!-- 检查项 -->
+          <view wx:if="{{detailRecord.items && detailRecord.items.length}}" class="popup-section-title">检查项详情</view>
+          <view wx:for="{{detailRecord.items}}" wx:key="itemName" class="popup-check-item">
+            <text class="popup-check-name">{{item.itemName}}</text>
+            <text class="tag {{item.value === '正常' || item.value === '清洁' ? 'tag-success' : 'tag-danger'}}">{{item.value}}</text>
+          </view>
+
+          <view wx:if="{{detailRecord.remark}}" class="popup-remark">
+            <text class="popup-section-title">备注</text>
+            <view class="popup-remark-content">{{detailRecord.remark}}</view>
+          </view>
+
+          <!-- 关联模块信息 -->
+          <view class="popup-divider"></view>
+          <view class="popup-section-title">关联模块信息</view>
+
+          <view class="related-loading" wx:if="{{loadingRelated}}">
+            <text>加载中...</text>
+          </view>
+
+          <block wx:if="{{relatedData && !loadingRelated}}">
+            <!-- 维修记录 -->
+            <view class="related-section">
+              <view class="related-header">
+                <text class="related-title">🔧 报修维修 ({{relatedData.repairs.length}})</text>
+                <text class="related-action" data-equipid="{{detailRecord.equipId}}" data-equipname="{{detailRecord.equipName}}" bindtap="goRepair">+报修</text>
+              </view>
+              <view wx:if="{{relatedData.repairs.length === 0}}" class="related-empty">暂无维修记录</view>
+              <view wx:for="{{relatedData.repairs}}" wx:key="id" class="related-item">
+                <view class="related-item-top">
+                  <text class="related-item-title">{{item.title}}</text>
+                  <text class="tag {{item.status === '3' ? 'tag-success' : (item.status === '0' ? 'tag-warning' : 'tag-primary')}}">{{item.status === '3' ? '已完成' : (item.status === '0' ? '待受理' : '维修中')}}</text>
+                </view>
+                <text class="related-item-desc text-sm text-gray">{{item.createTime}} · {{item.faultType}}</text>
+              </view>
+            </view>
+
+            <!-- 保养记录 -->
+            <view class="related-section">
+              <view class="related-header">
+                <text class="related-title">🛠️ 维护保养 ({{relatedData.maintains.length}})</text>
+                <text class="related-action" data-equipid="{{detailRecord.equipId}}" bindtap="goMaintain">查看</text>
+              </view>
+              <view wx:if="{{relatedData.maintains.length === 0}}" class="related-empty">暂无保养记录</view>
+              <view wx:for="{{relatedData.maintains}}" wx:key="id" class="related-item">
+                <view class="related-item-top">
+                  <text class="related-item-title">{{item.planName}} - {{item.type}}</text>
+                  <text class="tag {{item.status === '2' ? 'tag-success' : (item.status === '0' ? 'tag-warning' : (item.status === '3' ? 'tag-danger' : 'tag-primary'))}}">{{item.status === '2' ? '已完成' : (item.status === '0' ? '待执行' : (item.status === '3' ? '已逾期' : '执行中'))}}</text>
+                </view>
+                <text class="related-item-desc text-sm text-gray">{{item.planDate}} · {{item.maintainer}}</text>
+              </view>
+            </view>
+          </block>
+
+          <!-- 底部操作按钮 -->
+          <view class="popup-actions">
+            <view class="popup-action-btn" data-equipid="{{detailRecord.equipId}}" bindtap="goEquipDetail">
+              <text>📦 设备详情</text>
+            </view>
+            <view class="popup-action-btn" data-equipid="{{detailRecord.equipId}}" data-equipname="{{detailRecord.equipName}}" bindtap="goRepair">
+              <text>🔧 报修维修</text>
+            </view>
+          </view>
+        </scroll-view>
+      </block>
+    </view>
+  </view>
+
+  <!-- ========== 字段配置弹窗 ========== -->
+  <view wx:if="{{showFieldConfig}}" class="modal-mask" bindtap="onCloseFieldConfig">
+    <view class="modal-popup field-config-popup" catchtap="">
+      <view class="popup-header">
+        <text class="popup-title">字段显示配置</text>
+        <text class="popup-close" bindtap="onCloseFieldConfig">✕</text>
+      </view>
+      <view class="popup-subtitle">选择需要在列表中显示的字段（已选{{configVisibleFields.length}}个）</view>
+
+      <scroll-view scroll-y class="field-config-scroll">
+        <view wx:for="{{fieldGroups}}" wx:for-item="fields" wx:for-index="groupName" wx:key="groupName" class="field-group">
+          <view class="field-group-title">{{groupName}}</view>
+          <view class="field-list">
+            <view wx:for="{{fields}}" wx:for-item="field" wx:key="key" class="field-item {{configVisibleFields.indexOf(field.key) > -1 ? 'selected' : ''}} {{field.required ? 'required' : ''}}" data-key="{{field.key}}" bindtap="onToggleField">
+              <view class="field-checkbox">{{configVisibleFields.indexOf(field.key) > -1 ? '✓' : ''}}</view>
+              <view class="field-info">
+                <text class="field-label">{{field.label}}</text>
+                <text wx:if="{{field.required}}" class="field-badge">必填</text>
+              </view>
+            </view>
+          </view>
+        </view>
+      </scroll-view>
+
+      <view class="popup-actions">
+        <view class="popup-action-btn secondary" bindtap="onSelectAllFields">全选</view>
+        <view class="popup-action-btn secondary" bindtap="onResetFieldConfig">恢复默认</view>
+        <view class="popup-action-btn primary" bindtap="onSaveFieldConfig">保存</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- ========== Excel导入弹窗 ========== -->
+  <view wx:if="{{showImportModal}}" class="modal-mask" bindtap="onCloseImport">
+    <view class="modal-popup import-popup" catchtap="">
+      <view class="popup-header">
+        <text class="popup-title">点检记录导入</text>
+        <text class="popup-close" bindtap="onCloseImport">✕</text>
+      </view>
+
+      <view class="import-content">
+        <view class="import-tip">
+          <text>支持 .xlsx / .xls / .csv 格式文件导入</text>
+        </view>
+
+        <view class="import-actions">
+          <view class="import-btn primary" bindtap="onChooseImportFile">
+            <text class="import-btn-icon">📁</text>
+            <text class="import-btn-text">选择文件</text>
+          </view>
+          <view class="import-btn" bindtap="onDownloadTemplate">
+            <text class="import-btn-icon">📄</text>
+            <text class="import-btn-text">下载模板</text>
+          </view>
+        </view>
+
+        <!-- 导入结果 -->
+        <view wx:if="{{importResult}}" class="import-result">
+          <view class="result-header">
+            <text class="result-title">解析结果</text>
+            <text class="result-status {{importResult.success ? 'success' : 'fail'}}">{{importResult.success ? '成功' : '失败'}}</text>
+          </view>
+          <view wx:if="{{importResult.success}}" class="result-stats">
+            <view class="result-stat">
+              <text class="stat-num">{{importResult.total}}</text>
+              <text class="stat-label">总数</text>
+            </view>
+            <view class="result-stat">
+              <text class="stat-num text-success">{{importResult.validCount}}</text>
+              <text class="stat-label">有效</text>
+            </view>
+            <view class="result-stat">
+              <text class="stat-num text-danger">{{importResult.failCount}}</text>
+              <text class="stat-label">失败</text>
+            </view>
+          </view>
+          <view wx:if="{{importResult.errors && importResult.errors.length > 0}}" class="result-errors">
+            <view class="errors-title">错误详情（前3条）：</view>
+            <view wx:for="{{importResult.errors}}" wx:for-item="err" wx:key="row" wx:if="{{index < 3}}" class="error-item">
+              第{{err.row}}行: {{err.errors[0]}}
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view wx:if="{{importResult && importResult.success}}" class="popup-actions">
+        <view class="popup-action-btn secondary" bindtap="onCloseImport">取消</view>
+        <view class="popup-action-btn primary" bindtap="onConfirmImport">确认导入</view>
+      </view>
+    </view>
+  </view>
+</view>

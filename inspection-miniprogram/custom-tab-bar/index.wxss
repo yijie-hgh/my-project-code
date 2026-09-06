@@ -1,0 +1,122 @@
+/* custom-tab-bar/index.wxss */
+.tab-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 120rpx;
+  padding-bottom: env(safe-area-inset-bottom);
+  background: #ffffff;
+  display: flex;
+  z-index: 999;
+  box-shadow: 0 -2rpx 12rpx rgba(0,0,0,0.06);
+}
+
+.tab-bar-border {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1rpx;
+  background: rgba(0,0,0,0.05);
+}
+
+.tab-bar-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.icon-wrap {
+  height: 48rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-emoji {
+  font-size: 40rpx;
+  opacity: 0.6;
+  transition: all 0.2s;
+}
+.icon-emoji.active {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+.tab-text {
+  font-size: 22rpx;
+  color: #7a7e83;
+  margin-top: 6rpx;
+  transition: color 0.2s;
+}
+.tab-text.active {
+  color: #2563eb;
+  font-weight: 600;
+}
+
+/* 中间凸起扫码按钮 */
+.center-btn-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: absolute;
+  top: -36rpx;
+}
+
+.center-btn {
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8rpx 24rpx rgba(37, 99, 235, 0.4);
+  border: 6rpx solid #fff;
+}
+
+.center-text {
+  font-size: 22rpx;
+  color: #2563eb;
+  font-weight: 600;
+  margin-top: 8rpx;
+}
+
+/* 扫码图标 */
+.scan-icon {
+  width: 44rpx;
+  height: 44rpx;
+  position: relative;
+}
+
+.scan-corner {
+  position: absolute;
+  width: 12rpx;
+  height: 12rpx;
+  border: 4rpx solid #fff;
+}
+.scan-corner.tl { top: 0; left: 0; border-right: none; border-bottom: none; border-radius: 4rpx 0 0 0; }
+.scan-corner.tr { top: 0; right: 0; border-left: none; border-bottom: none; border-radius: 0 4rpx 0 0; }
+.scan-corner.bl { bottom: 0; left: 0; border-right: none; border-top: none; border-radius: 0 0 0 4rpx; }
+.scan-corner.br { bottom: 0; right: 0; border-left: none; border-top: none; border-radius: 0 0 4rpx 0; }
+
+.scan-line {
+  position: absolute;
+  top: 50%;
+  left: 4rpx;
+  right: 4rpx;
+  height: 4rpx;
+  background: #fff;
+  border-radius: 2rpx;
+  transform: translateY(-50%);
+  animation: scanMove 1.5s ease-in-out infinite;
+}
+
+@keyframes scanMove {
+  0%, 100% { transform: translateY(-10rpx); opacity: 0.5; }
+  50% { transform: translateY(10rpx); opacity: 1; }
+}

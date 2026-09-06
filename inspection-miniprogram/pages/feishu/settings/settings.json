@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "飞书集成",
+  "usingComponents": {
+    "empty-state": "/components/empty-state/index"
+  }
+}
