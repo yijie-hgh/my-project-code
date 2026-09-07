@@ -64,10 +64,20 @@ function request(options) {
         if (loading) wx.hideLoading()
 
         const statusCode = res.statusCode
-        if (statusCode === 200) {
+
+        // 处理常见的成功码和无内容响应
+        if (statusCode === 200 || statusCode === 201) {
           const resData = res.data
+
+          // 后端可能返回空体或非若依格式，兼容处理
+          if (resData === null || resData === '' || typeof resData === 'undefined') {
+            auditLog.log(method + ' ' + url, 'request', { status: 'success', httpStatus: statusCode })
+            resolve({ code: 200, msg: 'OK', data: null })
+            return
+          }
+
           // 若依统一返回格式 { code, msg, data }
-          if (resData.code !== undefined) {
+          if (typeof resData === 'object' && resData.code !== undefined) {
             if (resData.code === 200) {
               // 记录审计日志
               auditLog.log(method + ' ' + url, 'request', { status: 'success' })
@@ -82,13 +92,20 @@ function request(options) {
               reject(resData)
             }
           } else {
+            // 非若依标准格式，直接返回解析后的数据
             resolve(resData)
           }
+
+        } else if (statusCode === 204) {
+          // No Content
+          auditLog.log(method + ' ' + url, 'request', { status: 'success', httpStatus: 204 })
+          resolve({ code: 200, msg: 'No Content', data: null })
         } else if (statusCode === 401) {
           handleUnauthorized()
           reject(res)
         } else {
           wx.showToast({ title: '网络错误(' + statusCode + ')', icon: 'none' })
+          auditLog.log(method + ' ' + url, 'request', { status: 'error', httpStatus: statusCode })
           reject(res)
         }
       },

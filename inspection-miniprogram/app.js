@@ -42,10 +42,12 @@ App({
     // 检查隐私授权（解决 backgroundfetch privacy 警告）
     this.checkPrivacyAuth()
 
-    // 检查登录状态
-    if (!checkLogin()) {
-      // 未登录跳转登录页
-      wx.reLaunch({ url: '/pages/login/login' })
+    // 检查登录状态（在 Mock 模式下跳过强制登录以便调试）
+    if (!this.globalData.useMock) {
+      if (!checkLogin()) {
+        // 未登录跳转登录页
+        wx.reLaunch({ url: '/pages/login/login' })
+      }
     }
 
     // 检查飞书账号登录状态

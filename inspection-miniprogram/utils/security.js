@@ -77,7 +77,8 @@ const validator = {
   // 检测SQL注入风险
   hasSQLInjection(input) {
     if (typeof input !== 'string') return false
-    const patterns = /('OR'|'1'='1|UNION\s+SELECT|DROP\s+TABLE|DELETE\s+FROM|INSERT\s+INTO|UPDATE\s+SET|--|;DROP)/i
+    // 更稳健的注入检测，捕获常见注入关键词和模式，减少误报
+    const patterns = /(\bunion\b\s*\bselect\b|\bor\b\s*1=1|drop\s+table|delete\s+from|insert\s+into|update\s+set|--|;|exec\(|declare\s+)/i
     return patterns.test(input)
   },
 
@@ -134,9 +135,11 @@ function signData(data) {
   for (let i = 0; i < str.length; i++) {
     const char = str.charCodeAt(i)
     hash = ((hash << 5) - hash) + char
-    hash = hash & hash
+    // force to 32-bit signed integer
+    hash |= 0
   }
-  return 'sig_' + Math.abs(hash).toString(36)
+  // convert to unsigned 32-bit and string in base36 for compactness
+  return 'sig_' + (hash >>> 0).toString(36)
 }
 
 function verifyData(data, signature) {
